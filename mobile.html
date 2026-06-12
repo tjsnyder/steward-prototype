@@ -254,6 +254,7 @@
     </div>
     <div class="scroll" id="homeScroll">
 
+      <div id="caseSlotWarm"><div id="caseCards">
       <div class="card" id="promptCard" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">From your email · just now</div>
         <div style="font-size:14.5px;font-weight:600;margin-bottom:4px">One Medical: "Your statement is ready"</div>
@@ -295,6 +296,7 @@
       </div>
 
       <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('activity')"><span class="ok"></span>Nothing needs you — your weekly brief is ready<span class="chev">›</span></div>
+      </div></div>
 
       <div class="card">
         <div class="eyebrow">Net Worth</div>
@@ -1044,6 +1046,7 @@
     </div>
     <div class="scroll">
       <div class="statusline"><span class="ok"></span>First session — I'm ready when you are</div>
+      <div id="caseSlotCold"></div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">A bill that looks wrong</div>
@@ -1268,7 +1271,10 @@
 
   function render() {
     const p = state.phase;
-    show('promptCard', p === 'prompt');
+    show('promptCard', p === 'prompt' && !state.cold);
+    const slot = document.getElementById(state.cold ? 'caseSlotCold' : 'caseSlotWarm');
+    const cc = document.getElementById('caseCards');
+    if (cc.parentElement !== slot) slot.appendChild(cc);
     show('attentionBlock', p === 'found');
     show('allClearLine', p === 'sent' || p === 'dismissed' || p === 'appealed');
     show('rejectedCard', p === 'rejected');
