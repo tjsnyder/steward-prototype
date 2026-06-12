@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steward — Clickable Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#F7F8FA; --card:#FFFFFF; --ink:#143A3D; --ink-2:#334E50;
+    --money:#0A7C5A; --text:#1C2526; --muted:#66757A; --hairline:#E2E7EA;
+    --amber:#B07C10; --red:#B0421A; --r:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Geist',-apple-system,sans-serif;background:#E8EBEE;color:var(--text);
+       display:flex;justify-content:center;align-items:center}
+  .num{font-variant-numeric:tabular-nums}
+  .phone{width:390px;height:844px;background:var(--canvas);border:1px solid #CDD4D9;border-radius:36px;
+         overflow:hidden;box-shadow:0 24px 60px rgba(20,58,61,.14);display:flex;flex-direction:column;position:relative}
+  @media (max-width:430px){body{align-items:stretch}.phone{width:100%;height:100%;border:none;border-radius:0}}
+  .statusbar{display:flex;justify-content:space-between;padding:14px 28px 8px;font-size:13px;font-weight:600;color:var(--ink);flex:none}
+
+  .view{display:none;flex:1;min-height:0;flex-direction:column}
+  .view.active{display:flex}
+  .scroll{flex:1;overflow-y:auto;padding:0 16px 12px;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 20px 14px;flex:none}
+  .wordmark{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+  .topbar .icons{display:flex;gap:14px;align-items:center;color:var(--ink-2)}
+  .bell{position:relative;width:22px;height:22px;cursor:pointer}
+  .bell svg{width:22px;height:22px}
+  .bell .dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--amber);border:1.5px solid var(--canvas)}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+  .navhead{display:flex;align-items:center;gap:12px;padding:8px 20px 14px;flex:none}
+  .navhead .back{font-size:24px;color:var(--ink);line-height:1;cursor:pointer;background:none;border:none;font-family:inherit;padding:0 4px}
+  .navhead .title{font-size:17px;font-weight:700;color:var(--ink)}
+  .navhead .sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .chip{font-size:10.5px;font-weight:600;letter-spacing:.04em;border-radius:4px;padding:2px 7px;flex:none}
+  .chip.ok{color:var(--money);background:rgba(10,124,90,.08)}
+  .chip.pend{color:var(--amber);background:rgba(176,124,16,.1)}
+  .chip.draft{color:var(--ink-2);background:rgba(51,78,80,.08);border:1px solid var(--hairline)}
+  .card{background:var(--card);border:1px solid var(--hairline);border-radius:var(--r);padding:16px;margin-bottom:12px}
+  .btn{border-radius:6px;padding:11px 0;font-size:14px;font-weight:600;text-align:center;cursor:pointer;font-family:inherit}
+  .btn.primary{background:var(--ink);color:#fff;border:1px solid var(--ink)}
+  .btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--hairline)}
+  .btnrow{display:flex;gap:10px}
+  .btnrow .btn{flex:1}
+
+  /* home */
+  .statusline{display:flex;align-items:center;gap:8px;padding:2px 4px 14px;font-size:13px;color:var(--muted)}
+  .statusline .ok{width:7px;height:7px;border-radius:50%;background:var(--money);flex:none}
+  .statusline .chev{margin-left:auto;color:#9AA7AC}
+  .hero-amount{font-size:34px;font-weight:700;letter-spacing:-.02em}
+  .delta{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:var(--money);
+         background:rgba(10,124,90,.08);border-radius:4px;padding:2px 8px;margin-top:6px}
+  .spark{margin:14px 0 12px}
+  .hero-split{display:flex;border-top:1px solid var(--hairline);padding-top:12px;margin-top:2px}
+  .hero-split>div{flex:1}
+  .hero-split>div+div{border-left:1px solid var(--hairline);padding-left:14px}
+  .mini-label{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .mini-val{font-size:15px;font-weight:600;margin-top:3px}
+  .mini-val .up{color:var(--money);font-size:12px;font-weight:600;margin-left:6px}
+  .sechead{display:flex;justify-content:space-between;align-items:baseline;margin:4px 4px 8px}
+  .sechead h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .row{display:flex;align-items:center;gap:12px;padding:12px 0}
+  .row+.row{border-top:1px solid var(--hairline)}
+  .row .body{flex:1;min-width:0}
+  .row .t{font-size:14px;font-weight:500}
+  .row .s{font-size:12px;color:var(--muted);margin-top:2px}
+  .row .right{font-size:13px;font-weight:600;text-align:right}
+  .chevron{color:#9AA7AC;flex:none}
+  .goalbar{height:4px;border-radius:2px;background:var(--hairline);margin-top:7px;overflow:hidden}
+  .goalbar i{display:block;height:100%;background:var(--money)}
+  .value-card{background:linear-gradient(135deg,#143A3D 0%,#1C4A4E 100%);border:none;color:#fff;position:relative}
+  .value-card .eyebrow{color:rgba(255,255,255,.55)}
+  .value-card .amt{font-size:21px;font-weight:700}
+  .value-card .amt em{font-style:normal;color:#7CD9B8}
+  .value-card a{color:#A9E7CF;font-size:12.5px;font-weight:600;text-decoration:none;cursor:pointer}
+  .attention{border:1px solid var(--ink);border-left:4px solid var(--ink);padding:18px 16px;
+             box-shadow:0 8px 24px rgba(20,58,61,.10);transition:opacity .25s,transform .25s}
+  .attention.bye{opacity:0;transform:translateY(-12px)}
+  .attention .eyebrow{color:var(--ink);display:flex;align-items:center;gap:6px}
+  .attention .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .attention h4{font-size:17px;font-weight:700;margin:2px 0 8px}
+  .attention .evidence{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+  .figures{display:flex;gap:12px;margin:14px 0}
+  .figbox{flex:1;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;background:#FAFBFC}
+  .figbox .l{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .figbox .v{font-size:17px;font-weight:700;margin-top:3px}
+  .figbox .v.money{color:var(--money)}
+  .deadline{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .why{display:block;text-align:center;font-size:12px;color:var(--muted);margin-top:12px;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .queueline{display:flex;align-items:center;gap:8px;padding:2px 6px 12px;font-size:12.5px;color:var(--muted)}
+  .queueline .chev{margin-left:auto;color:#9AA7AC}
+
+  /* dock + tabs */
+  .dock{border-top:1px solid var(--hairline);background:var(--card);padding:10px 16px 6px;flex:none}
+  .chatpill{display:flex;align-items:center;gap:10px;border:1px solid var(--hairline);border-radius:22px;
+            padding:10px 16px;font-size:13.5px;color:var(--muted);background:var(--canvas);cursor:pointer}
+  .tabbar{display:flex;justify-content:space-around;padding:10px 8px 18px;background:var(--card);flex:none;border-top:1px solid var(--hairline)}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#9AA7AC;position:relative;cursor:pointer;background:none;border:none;font-family:inherit}
+  .tab.active{color:var(--ink)}
+  .tab svg{width:21px;height:21px}
+  .tab .adot{position:absolute;top:-1px;right:2px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+
+  /* chat */
+  .day{text-align:center;font-size:11px;color:var(--muted);margin:14px 0 10px}
+  .msg{max-width:84%;margin-bottom:10px}
+  .msg .bubble{border-radius:10px;padding:11px 14px;font-size:14px;line-height:1.5}
+  .msg.user{margin-left:auto}
+  .msg.user .bubble{background:var(--ink);color:#fff;border-bottom-right-radius:3px}
+  .msg.steward .bubble{background:var(--card);border:1px solid var(--hairline);border-bottom-left-radius:3px}
+  .msg .who{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 4px 4px}
+  .inline-card{background:var(--card);border:1px solid var(--hairline);border-radius:10px;padding:14px;margin:4px 0 12px;max-width:92%}
+  .inline-card.action{border-color:var(--ink);border-left:3px solid var(--ink)}
+  .inline-card h5{font-size:14.5px;font-weight:700;margin-bottom:4px}
+  .inline-card p{font-size:13px;line-height:1.5;color:var(--ink-2)}
+  .recover{font-size:18px;font-weight:700;color:var(--money);margin:8px 0 2px}
+  .recover small{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-left:6px;text-transform:uppercase}
+  .bars{display:flex;align-items:flex-end;gap:7px;height:64px;margin:12px 2px 4px}
+  .bars i{flex:1;background:rgba(10,124,90,.18);border-radius:2px 2px 0 0}
+  .bars i.hot{background:var(--money)}
+  .axis{display:flex;gap:7px;font-size:9px;color:var(--muted)}
+  .axis span{flex:1;text-align:center}
+  .receipt{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--hairline);margin-top:10px;padding-top:10px}
+  .receipt .tick{color:var(--money);font-weight:700}
+  .chatinput{display:flex;gap:10px;align-items:center}
+  .chatinput input{flex:1;border:1px solid var(--hairline);border-radius:22px;padding:10px 16px;font-size:13.5px;font-family:inherit;background:var(--canvas);outline:none}
+  .chatinput button{width:38px;height:38px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:15px;cursor:pointer;flex:none}
+  .chatinput .attachbtn{background:var(--card);border:1px solid var(--hairline);color:var(--ink-2);font-size:18px}
+  .chips{display:flex;gap:8px;padding:0 2px 10px;overflow-x:auto}
+  .chips span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--canvas);white-space:nowrap;cursor:pointer}
+
+  /* case file */
+  .compare{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+  .compare th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--hairline)}
+  .compare td{padding:8px;border-bottom:1px solid var(--hairline)}
+  .compare tr:last-child td{border-bottom:none}
+  .compare .bad{color:var(--red);font-weight:600}
+  .compare .good{color:var(--money);font-weight:600}
+  .steps{counter-reset:s;margin-top:4px}
+  .step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--hairline);font-size:13.5px;line-height:1.45}
+  .step:last-child{border-bottom:none}
+  .step::before{counter-increment:s;content:counter(s);width:22px;height:22px;border-radius:50%;
+                background:rgba(20,58,61,.07);color:var(--ink);font-size:11px;font-weight:700;
+                display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+  .letter{background:#FAFBFC;border:1px dashed #C8D2D6;border-radius:6px;padding:12px;font-size:12.5px;line-height:1.6;color:var(--ink-2);margin-top:4px}
+  .letter .edit{float:right;font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px}
+
+  /* activity */
+  .summary{display:flex;text-align:center}
+  .summary>div{flex:1}
+  .summary>div+div{border-left:1px solid var(--hairline)}
+  .summary .v{font-size:19px;font-weight:700}
+  .summary .v.money{color:var(--money)}
+  .summary .l{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .filters{display:flex;gap:8px;margin:2px 2px 12px}
+  .filters span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--card);cursor:pointer}
+  .filters span.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 4px 8px}
+  .event{display:flex;gap:12px;padding:13px 0}
+  .event+.event{border-top:1px solid var(--hairline)}
+  .event .ico{width:30px;height:30px;border-radius:50%;background:rgba(20,58,61,.06);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  .event .body{flex:1;min-width:0}
+  .event .t{font-size:14px;font-weight:600}
+  .event .s{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+  .event .meta{display:flex;gap:10px;margin-top:7px;font-size:11.5px}
+  .event .meta a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .event .amt{font-size:13.5px;font-weight:700;text-align:right;flex:none}
+  .event .amt.money{color:var(--money)}
+
+  /* autonomy */
+  .lead{font-size:13px;color:var(--ink-2);line-height:1.55;margin:2px 4px 14px}
+  .pb .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .pb .head .t{font-size:14.5px;font-weight:700}
+  .pb .head .cap{font-size:11.5px;color:var(--muted)}
+  .levels{display:flex;gap:6px}
+  .lvl{flex:1;text-align:center;font-size:10.5px;font-weight:600;padding:7px 2px;border:1px solid var(--hairline);border-radius:6px;color:var(--muted);background:var(--card);cursor:pointer}
+  .lvl b{display:block;font-size:11px;color:inherit}
+  .lvl.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .lvl.locked{opacity:.45;cursor:not-allowed}
+  .earn{font-size:11px;color:var(--amber);margin-top:8px}
+  .earn.good{color:var(--money)}
+  .hardblock{background:rgba(176,66,26,.05);border:1px solid rgba(176,66,26,.25)}
+  .hardblock .t{font-size:13.5px;font-weight:700;color:var(--red);margin-bottom:4px}
+  .hardblock p{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+  .threshold p{font-size:13px;line-height:1.5;color:var(--ink-2)}
+  .opts{display:flex;gap:8px;margin-top:10px}
+  .opts span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--hairline);background:var(--card);color:var(--ink-2);cursor:pointer}
+  .opts span.on{background:var(--ink);border-color:var(--ink);color:#fff}
+
+  /* empty-state modules (cold home) */
+  .empty{border:1.5px dashed #C3CDD2;background:transparent;box-shadow:none}
+  .empty .eyebrow{color:var(--ink-2)}
+  .empty p{font-size:13px;line-height:1.55;color:var(--ink-2);margin-bottom:12px}
+  .empty .btn{padding:9px 0}
+
+  /* cold start */
+  .welcome{display:flex;flex-direction:column;justify-content:flex-end;flex:1;border-radius:16px;margin:4px 0 12px;
+           padding:28px 22px;background:linear-gradient(180deg,#143A3D 0%,#1C4A4E 100%);color:#fff}
+  .welcome .wm{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .welcome h1{font-size:25px;font-weight:700;line-height:1.28;margin:12px 0 16px}
+  .wfeat{display:flex;gap:10px;margin-top:11px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.92)}
+  .wfeat .tick{color:#7CD9B8;font-weight:700;flex:none}
+  .welcome .btn.light{background:#fff;color:var(--ink);border:none;margin-top:24px;width:100%}
+  .price{font-size:30px;font-weight:700;margin:8px 0 10px}
+  .price small{font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
+
+  /* invest + credential sheet */
+  .prog{font-size:13px;line-height:2.1;color:var(--ink-2)}
+  .prog .tick{color:var(--money);font-weight:700;margin-right:8px}
+  .hideme{display:none!important}
+  .sheet-back{position:absolute;inset:0;background:rgba(20,37,38,.45);display:none;align-items:flex-end;z-index:40}
+  .sheet-back.open{display:flex}
+  .sheet{background:var(--card);border-radius:16px 16px 0 0;padding:20px 18px 28px;width:100%;animation:up .22s ease}
+  @keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
+  .sheet h4{font-size:16px;font-weight:700;margin-bottom:2px}
+  .sheet .sub2{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .sheet label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 2px 5px}
+  .sheet input{width:100%;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:14px;font-family:inherit;background:var(--canvas);outline:none}
+  .vaultnote{display:flex;gap:8px;font-size:11.5px;color:var(--muted);line-height:1.5;margin:14px 0}
+  .vaultnote .lock{flex:none}
+
+  /* toast */
+  #toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
+         font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
+         transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="statusbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+
+  <!-- ── HOME ── -->
+  <section class="view" data-view="home">
+    <div class="topbar">
+      <span class="wordmark">Steward</span>
+      <span class="icons">
+        <span class="bell" onclick="toggleAttention()" title="demo: toggle attention state">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="dot" id="bellDot"></span>
+        </span>
+        <span class="avatar">T</span>
+      </span>
+    </div>
+    <div class="scroll" id="homeScroll">
+
+      <div class="card" id="promptCard" style="border-left:3px solid var(--ink)">
+        <div class="eyebrow">From your email · just now</div>
+        <div style="font-size:14.5px;font-weight:600;margin-bottom:4px">One Medical: "Your statement is ready"</div>
+        <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">The email doesn't include the bill itself — it's in their patient portal. Want me to take a look?</p>
+        <div class="btnrow" style="margin-top:12px">
+          <button class="btn primary" onclick="go('invest')">Take a look</button>
+          <button class="btn ghost" onclick="promptDismiss()">Not now</button>
+        </div>
+      </div>
+
+      <div id="attentionBlock">
+        <div class="card attention" id="attentionCard">
+          <div class="eyebrow">Needs you</div>
+          <h4>Your One Medical bill looks overcharged</h4>
+          <p class="evidence">Billed <b class="num">$300</b> — your Anthem EOB says you owe <b class="num">$86</b>. Two line items don't match the claim.</p>
+          <div class="figures">
+            <div class="figbox"><div class="l">They billed</div><div class="v num">$300</div></div>
+            <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
+            <div class="figbox"><div class="l">Your recovery</div><div class="v money num">$214</div></div>
+          </div>
+          <div class="deadline">Dispute window closes Jun 28 — I've drafted the letter.</div>
+          <div class="btnrow">
+            <button class="btn primary" onclick="go('case')">Review dispute</button>
+            <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
+          </div>
+          <span class="why" onclick="toast('Flagged because the billed CPT rates exceed your plan\'s contracted rates')">Why I flagged this</span>
+        </div>
+        <div class="queueline" onclick="toast('Queue view — not in this prototype yet')">2 more need attention<span class="chev">›</span></div>
+      </div>
+
+      <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('briefing')"><span class="ok"></span>Nothing needs you — your weekly brief is ready<span class="chev">›</span></div>
+
+      <div class="card">
+        <div class="eyebrow">Net Worth</div>
+        <div class="hero-amount num">$284,610</div>
+        <span class="delta num">▲ $3,120 (1.1%) this month</span>
+        <div class="spark">
+          <svg width="100%" height="44" viewBox="0 0 330 44" preserveAspectRatio="none">
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6" fill="none" stroke="#0A7C5A" stroke-width="2"/>
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6 L330,44 L0,44 Z" fill="rgba(10,124,90,.06)"/>
+          </svg>
+        </div>
+        <div class="hero-split">
+          <div><div class="mini-label">Investments</div><div class="mini-val num">$146,900<span class="up">+2.4% MTD</span></div></div>
+          <div><div class="mini-label">Cash</div><div class="mini-val num">$18,240</div></div>
+        </div>
+      </div>
+
+      <div class="sechead"><h3>Goals</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row">
+          <div class="body"><div class="t">College fund</div><div class="goalbar"><i style="width:62%"></i></div></div>
+          <span class="chip ok">On track</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Emergency fund</div><div class="goalbar"><i style="width:70%"></i></div></div>
+          <span class="right num" style="color:var(--muted);font-weight:500">$14k / $20k</span>
+        </div>
+      </div>
+
+      <div class="sechead"><h3 id="toReviewHead">To review (2)</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row" id="homeHuluRow" onclick="go('subs')" style="cursor:pointer">
+          <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more finding</div></div>
+          <span class="right num">$18/mo</span><span class="chevron">›</span>
+        </div>
+        <div class="row" onclick="toast('Transaction detail — not in this prototype yet')" style="cursor:pointer">
+          <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
+          <span class="right num">$642</span><span class="chevron">›</span>
+        </div>
+      </div>
+
+      <div class="sechead"><h3>Upcoming</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row">
+          <div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div>
+          <span class="right num">$2,110</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
+          <span class="chip draft">Coming soon</span>
+        </div>
+      </div>
+
+      <div class="card value-card">
+        <div class="eyebrow">June so far</div>
+        <div class="amt num">Steward recovered <em id="recoveredAmt">$259</em> for you</div>
+        <a onclick="go('activity')">See the receipt →</a>
+      </div>
+    </div>
+    <div class="dock"><div class="chatpill" onclick="go('chat')">💬&ensp;Message Steward…</div></div>
+  </section>
+
+  <!-- ── CHAT ── -->
+  <section class="view" data-view="chat">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div><div class="title">Steward</div><div class="sub">Acting at your direction · audit logged</div></div>
+      <span class="avatar" style="margin-left:auto">T</span>
+    </div>
+    <div class="scroll" id="chatScroll">
+      <div class="day">Today, 9:32 AM</div>
+      <div class="msg user warm"><div class="bubble">How much have we spent on medical this year?</div></div>
+      <div class="msg steward warm"><div class="who">Steward</div>
+        <div class="bubble"><span class="num"><b>$4,120</b></span> so far — most of it in March (Mia's urgent care visit). You're tracking under last year.</div>
+      </div>
+      <div class="inline-card warm">
+        <div class="eyebrow">Medical spend · 2026</div>
+        <div class="bars"><i style="height:22%"></i><i style="height:18%"></i><i class="hot" style="height:92%"></i><i style="height:30%"></i><i style="height:24%"></i><i style="height:38%"></i></div>
+        <div class="axis"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+      </div>
+      <div id="chatFindingBlock">
+      <div class="msg steward"><div class="who">Steward</div>
+        <div class="bubble">One thing while you're here — yesterday's One Medical bill doesn't match your Anthem EOB. I've prepared a dispute.</div>
+      </div>
+      <div class="inline-card action" id="chatActionCard">
+        <div class="eyebrow">Needs you</div>
+        <h5>One Medical billed $300 — EOB says $86</h5>
+        <p>Two line items don't match the claim. Draft dispute is ready for your review.</p>
+        <div class="recover num">$214 back<small>projected</small></div>
+        <div class="btnrow" style="margin-top:10px">
+          <button class="btn primary" onclick="go('case')">Review dispute</button>
+          <button class="btn ghost" onclick="toast('Okay — it stays in Needs attention')">Not now</button>
+        </div>
+      </div>
+      </div>
+
+      <div class="hideme" id="ho1">
+        <div class="inline-card">
+          <div class="eyebrow">From your email · catching up</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Found the thread — 2 messages</div>
+            <div><span class="tick">·</span><b>Jun 2</b> — you → One Medical billing: disputed the charge</div>
+            <div><span class="tick">·</span><b>Jun 9</b> — One Medical: claim went to <b>Cigna</b>, which is inactive — "please provide current insurance"</div>
+          </div>
+        </div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Caught up. They billed your old <b>Cigna</b> plan — inactive since 2023. They need your current <b>Anthem</b> details, then they'll resubmit the claim.</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="ho2">
+        <div class="inline-card">
+          <div class="eyebrow">Anthem · from your vault</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in with your saved connection</div>
+            <div><span class="tick">✓</span>Member ID <b>ANT-447-1220</b> · Group <b>#GA-8812</b></div>
+            <div><span class="tick">✓</span>Coverage active · effective Jan 1, 2024</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hideme" id="ho3">
+        <div class="inline-card action">
+          <div class="eyebrow">Ready to send — your approval</div>
+          <h5>Reply to One Medical billing</h5>
+          <p>"Re: invoice #OM-44218 — this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
+          <div class="btnrow" style="margin-top:10px" id="ho3btns">
+            <button class="btn primary" onclick="handoffSend()">Send reply</button>
+            <button class="btn ghost" onclick="toast('Letter editing — not in this prototype yet')">Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hideme" id="ho4">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Sent through their billing portal at 9:44 AM.
+            <div class="receipt"><span class="tick">✓</span>I'll track the resubmission — typically 2–3 weeks — and verify the corrected claim shows up on your Anthem EOB. It's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+          </div>
+        </div>
+        <div class="inline-card">
+          <div class="eyebrow">One more thing — only if you want</div>
+          <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
+          <div class="btnrow" style="margin-top:10px" id="ho5btns">
+            <button class="btn primary" onclick="openOauth()">Connect email</button>
+            <button class="btn ghost" onclick="toast('No problem — I\'m here when something comes up')">Maybe later</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- truly-cold handoff: no email connected -->
+      <div class="hideme" id="hc1">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Let's sort it out. I can't see your email yet — upload what they sent you (their reply or the bill) and I'll read it.</div>
+        </div>
+        <div class="btnrow" id="hc1btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="coldUploadReply()">📎 Upload their reply</button>
+        </div>
+      </div>
+      <div class="hideme" id="hc2">
+        <div class="msg user"><div class="bubble">📄 one-medical-reply.pdf</div></div>
+        <div class="inline-card">
+          <div class="eyebrow">Uploaded · read by Steward</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Claim was submitted to <b>Cigna</b> — marked inactive</div>
+            <div><span class="tick">✓</span>They'll resubmit once they have your current insurance</div>
+          </div>
+        </div>
+      </div>
+      <div class="hideme" id="hc3">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">So they billed the wrong insurer. They need your current <b>Anthem</b> details. Connect Anthem and I'll pull them — or upload a photo of your insurance card.</div>
+        </div>
+        <div id="hc3btns" style="max-width:84%;margin-bottom:12px">
+          <div class="btnrow">
+            <button class="btn primary" onclick="openCred('ancold')">Connect Anthem</button>
+          </div>
+          <div class="why" onclick="coldUploadCard()">or upload your insurance card</div>
+        </div>
+      </div>
+      <div class="hideme" id="hcCardUp">
+        <div class="msg user"><div class="bubble">📄 insurance-card.jpg</div></div>
+      </div>
+      <div class="hideme" id="hc4">
+        <div class="inline-card">
+          <div class="eyebrow">Your current coverage</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Anthem · Member ID <b>ANT-447-1220</b> · Group <b>#GA-8812</b></div>
+            <div><span class="tick">✓</span>Coverage active · effective Jan 1, 2024</div>
+          </div>
+        </div>
+      </div>
+      <div class="hideme" id="hc5">
+        <div class="inline-card action">
+          <div class="eyebrow">Ready when you are</div>
+          <h5>Reply to One Medical billing</h5>
+          <p>"Re: invoice #OM-44218 — this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
+          <div class="btnrow" style="margin-top:10px" id="hc5btns">
+            <button class="btn primary" onclick="openCred('omcold')">Submit via their portal</button>
+            <button class="btn ghost" onclick="toast('Copied — paste it into their portal or email')">Copy — I'll send it</button>
+          </div>
+        </div>
+      </div>
+      <div class="hideme" id="hc6">
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · billing portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in</div>
+            <div><span class="tick">✓</span>Reply submitted with corrected insurance</div>
+            <div><span class="tick">✓</span>Tracking — typical resubmission 2–3 weeks</div>
+          </div>
+        </div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Done — your first fix. I'll watch for their response and verify the corrected claim.
+            <div class="receipt"><span class="tick">✓</span>It's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+          </div>
+        </div>
+        <div class="inline-card">
+          <div class="eyebrow">One more thing — only if you want</div>
+          <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
+          <div class="btnrow" style="margin-top:10px">
+            <button class="btn primary" onclick="openOauth()">Connect email</button>
+            <button class="btn ghost" onclick="toast('No problem — I\'m here when something comes up')">Maybe later</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="chatSentBlock" style="display:none">
+        <div class="msg user"><div class="bubble">Looks right — send it</div></div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Done. Dispute submitted through One Medical's billing portal at 9:36 AM.
+            <div class="receipt"><span class="tick">✓</span>Tracking the response — typically 7–10 days. It's in your <u style="cursor:pointer" onclick="go('activity')">audit log</u>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="chips" id="chatChips">
+        <span onclick="sendPreset('I have a billing issue with One Medical — they say they billed the wrong insurance')">I have a billing issue…</span>
+      </div>
+      <div class="chatinput">
+        <button class="attachbtn" onclick="toast('Attach any bill, EOB, or document — I\'ll read it and take it from there')">＋</button>
+        <input id="chatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">➤</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CASE FILE ── -->
+  <section class="view" data-view="case">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Medical bill dispute</div><div class="sub">One Medical · visit of Jun 3</div></div>
+      <span class="chip draft" id="caseChip">DRAFT</span>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">What doesn't match</div>
+        <table class="compare num">
+          <tr><th>Line item</th><th>They billed</th><th>EOB allows</th></tr>
+          <tr><td>Office visit (99213)</td><td class="bad">$252</td><td>$74</td></tr>
+          <tr><td>Venipuncture (36415)</td><td class="bad">$48</td><td>$12</td></tr>
+          <tr><td><b>Your responsibility</b></td><td class="bad"><b>$300</b></td><td class="good"><b>$86</b></td></tr>
+        </table>
+        <div class="note" style="text-align:left;margin-top:8px">Sources: One Medical bill (Jun 9 email) · Anthem EOB #A-83721 — <u style="cursor:pointer" onclick="toast('Document viewer — not in this prototype yet')">view both</u></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">The plan</div>
+        <div class="steps">
+          <div class="step">Submit the dispute below through One Medical's billing portal, attaching your EOB.</div>
+          <div class="step">Track their response. If no answer in 10 days, follow up by phone script.</div>
+          <div class="step">Verify the corrected bill shows $86 — then close this case and report back.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Dispute letter <span class="edit" onclick="toast('Letter editing — not in this prototype yet')">Edit</span></div>
+        <div class="letter">
+          To One Medical Billing —<br><br>
+          I'm disputing invoice #OM-44218 for the June 3 visit. My Anthem EOB (#A-83721) shows
+          allowed member responsibility of <b>$86</b>, not the <b>$300</b> billed. Codes 99213 and 36415
+          were billed above the contracted rate. Please reissue a corrected statement…<br>
+          <span style="color:var(--muted)">— prepared by Steward as Tim's authorized agent</span>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--ink)" id="caseActions">
+        <div class="btnrow">
+          <button class="btn primary" onclick="sendDispute()">Send dispute</button>
+          <button class="btn ghost" onclick="dismissAttention();back()">Dismiss case</button>
+        </div>
+        <div class="note">Window closes Jun 28 · Nothing is sent until you approve · Every step lands in your audit log</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ACTIVITY ── -->
+  <section class="view" data-view="activity">
+    <div class="navhead">
+      <div style="flex:1"><div class="title">Activity</div><div class="sub">Everything I do, on the record · <u style="cursor:pointer" onclick="go('briefing')">weekly brief</u></div></div>
+      <span class="avatar">T</span>
+    </div>
+    <div class="scroll">
+      <div class="card summary num">
+        <div><div class="v money" id="activityTotal">$259</div><div class="l">Recovered in June</div></div>
+        <div><div class="v" id="activityCount">7</div><div class="l">Actions taken</div></div>
+        <div><div class="v">41</div><div class="l">Charges checked</div></div>
+      </div>
+      <div class="filters">
+        <span class="on" onclick="filterDemo(this)">All</span><span onclick="filterDemo(this)">Needs you</span>
+        <span onclick="filterDemo(this)">Watching</span><span onclick="filterDemo(this)">Done</span>
+      </div>
+
+      <div id="disputeEvent" style="display:none">
+        <div class="daylabel">Today</div>
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⇪</span>
+            <div class="body">
+              <div class="t">Sent medical bill dispute</div>
+              <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
+              <div class="meta"><a onclick="toast('Billed CPT rates exceed your plan\'s contracted rates')">Why</a><a onclick="go('case')">Evidence</a><a onclick="go('case')">Letter sent</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="proposedEvent" style="display:none">
+        <div class="daylabel">Needs your decision</div>
+        <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
+          <div class="event">
+            <span class="ico">⚑</span>
+            <div class="body">
+              <div class="t">Proposed: dispute One Medical bill</div>
+              <div class="s">Billed $300 vs. EOB $86 — draft ready, window closes Jun 28. Nothing is sent until you approve.</div>
+              <div class="meta"><a onclick="go('case')">Review dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
+            </div>
+            <div class="amt money num">$214</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="handoffEvent" style="display:none">
+        <div class="daylabel">Just now</div>
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⇪</span>
+            <div class="body">
+              <div class="t">Took over your One Medical billing issue</div>
+              <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
+              <div class="meta"><a onclick="go('chat')">Thread</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="huluEvent" style="display:none">
+        <div class="daylabel">Just now</div>
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">✕</span>
+            <div class="body">
+              <div class="t">Cancelled Hulu</div>
+              <div class="s">Price crept to $18 and your Disney+ bundle already includes it. Confirmation #4F7-220 — active until Jul 7; I'll verify no charge after Jul 8.</div>
+              <div class="meta"><a onclick="go('subdetail')">Why</a><a onclick="toast('Confirmation #4F7-220 saved to documents')">Confirmation</a></div>
+            </div>
+            <div class="amt money num">+$18/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="daylabel">Yesterday</div>
+      <div class="card" style="padding:2px 16px">
+        <div class="event">
+          <span class="ico">✓</span>
+          <div class="body">
+            <div class="t">Recovered overdraft fee</div>
+            <div class="s">Chase charged $45 on Jun 8. I requested a waiver — refund posted yesterday and I verified it on your statement.</div>
+            <div class="meta"><a onclick="toast('Waiver granted on first request — you\'re a 12-year customer')">Why</a><a onclick="toast('Evidence viewer — not in this prototype yet')">Evidence</a></div>
+          </div>
+          <div class="amt money num">+$45</div>
+        </div>
+        <div class="event">
+          <span class="ico">✕</span>
+          <div class="body">
+            <div class="t">Cancelled Paramount+</div>
+            <div class="s">Unused 4 months. You approved Mon — cancellation confirmed, and I verified no charge on your June statement.</div>
+            <div class="meta"><a onclick="toast('No charges correlated with usage since February')">Why</a><a onclick="toast('Okay — I\'ll resubscribe you to Paramount+')">Undo — resubscribe</a></div>
+          </div>
+          <div class="amt money num">+$12/mo</div>
+        </div>
+      </div>
+
+      <div class="daylabel">Jun 5</div>
+      <div class="card" style="padding:2px 16px">
+        <div class="event">
+          <span class="ico">☰</span>
+          <div class="body">
+            <div class="t">Weekly sweep — all clear</div>
+            <div class="s">Checked 41 new charges against your patterns and merchants. Nothing unusual.</div>
+            <div class="meta"><a onclick="toast('Sweep detail — not in this prototype yet')">Details</a></div>
+          </div>
+          <div class="amt"><span class="chip ok">Done</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="dock"><div class="chatpill" onclick="go('chat')">Ask about any action…</div></div>
+  </section>
+
+  <!-- ── YOU / HOW STEWARD WORKS ── -->
+  <section class="view" data-view="autonomy">
+    <div class="navhead">
+      <div style="flex:1"><div class="title">You</div><div class="sub">tim@tjsnyder.com · household of 4</div></div>
+      <span class="avatar">T</span>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">How Steward works</div>
+        <div class="row" style="border:none;padding:10px 0 8px">
+          <span style="color:var(--money);font-weight:700">✓</span>
+          <div class="body"><div class="t">I watch and prepare on my own</div>
+          <div class="s">Reading bills, reconciling EOBs, spotting subscriptions, pulling quotes, drafting letters — none of it needs your time.</div></div>
+        </div>
+        <div class="row">
+          <span style="color:var(--ink);font-weight:700">✋</span>
+          <div class="body"><div class="t">I always ask before acting for you</div>
+          <div class="s">Canceling, disputing, switching, filing, spending — nothing happens until you approve it, with the evidence in front of you.</div></div>
+        </div>
+        <div class="row">
+          <span style="color:var(--ink);font-weight:700">☰</span>
+          <div class="body"><div class="t">Everything is on the record</div>
+          <div class="s">Every action lands in your Activity log with the why and the proof.</div></div>
+        </div>
+      </div>
+
+      <div class="card hardblock">
+        <div class="t">Never, even with approval</div>
+        <p>Moving money outside your accounts, legal filings, and credential changes — I prepare these, you execute them.</p>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Standing instructions</div>
+        <div class="row" style="border:none">
+          <div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div>
+          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed — I\'ll surface everything again')">Remove</a>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">"Always keep HBO Max — the kids use it"</div><div class="s">set May 14, in chat</div></div>
+          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed')">Remove</a>
+        </div>
+        <div class="note" style="text-align:left;margin-top:8px">Tell me in chat how you want things handled — I'll remember it here.</div>
+      </div>
+
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="cursor:pointer" onclick="toast('Connected accounts — not in this prototype yet')">
+          <div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · email watcher on</div></div>
+          <span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="toast('Household — not in this prototype yet')">
+          <div class="body"><div class="t">Household</div><div class="s">Tim, Sarah, 2 dependents</div></div>
+          <span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out — we cancel subscriptions for a living')">
+          <div class="body"><div class="t">Your plan</div><div class="s">Steward subscription · $20/mo</div></div>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── INVESTIGATION (just-in-time connect) ── -->
+  <section class="view" data-view="invest">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div><div class="title">Steward</div><div class="sub">Looking into: One Medical statement</div></div>
+      <span class="avatar" style="margin-left:auto">T</span>
+    </div>
+    <div class="scroll" id="investScroll">
+      <div class="day">Today, 9:31 AM</div>
+      <div class="msg steward"><div class="who">Steward</div>
+        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
+      </div>
+      <div id="inv1" style="max-width:84%;margin-bottom:12px">
+        <div class="btnrow">
+          <button class="btn primary" onclick="openCred('om')">Connect One Medical</button>
+          <button class="btn ghost" onclick="back()">Not now</button>
+        </div>
+        <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
+      </div>
+
+      <div class="hideme" id="invUp">
+        <div class="msg user"><div class="bubble">📄 one-medical-statement.pdf</div></div>
+        <div class="inline-card">
+          <div class="eyebrow">Uploaded · read by Steward</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
+            <div><span class="tick">✓</span>Saved to your documents</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv2">
+        <div class="eyebrow">One Medical · patient portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
+          <div><span class="tick">✓</span>Saved to your documents</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv3">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Got the bill. To know what you <i>should</i> owe, I need the matching EOB from Anthem. Connect Anthem and I'll compare them line by line?</div>
+        </div>
+        <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
+          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv4">
+        <div class="eyebrow">Anthem · member portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>EOB #A-83721 found · same visit</div>
+          <div><span class="tick">✓</span>Compared line items</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv5">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
+        </div>
+        <div class="inline-card action">
+          <div class="eyebrow">Needs you</div>
+          <h5>One Medical billed $300 — EOB says $86</h5>
+          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
+          <div class="recover num">$214 back<small>projected</small></div>
+          <div class="btnrow" style="margin-top:10px">
+            <button class="btn primary" onclick="go('case')">Review dispute</button>
+            <button class="btn ghost" onclick="go('home',true)">Later</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dock"><div class="chatpill" onclick="go('chat')">Message Steward…</div></div>
+  </section>
+
+  <!-- ── SUBSCRIPTIONS AUDIT ── -->
+  <section class="view" data-view="subs">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Subscriptions</div><div class="sub">Found from your transactions — no logins needed</div></div>
+    </div>
+    <div class="scroll">
+      <div class="card summary num">
+        <div><div class="v">$86</div><div class="l">per month</div></div>
+        <div><div class="v">$1,032</div><div class="l">per year</div></div>
+        <div><div class="v">7</div><div class="l">active</div></div>
+      </div>
+
+      <div class="sechead"><h3>Worth a look (2)</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="cursor:pointer" onclick="go('subdetail')">
+          <div class="body"><div class="t">Hulu</div><div class="s">Price rose $13 → $18 · your Disney+ bundle includes it</div></div>
+          <span class="right num" id="subsHuluPrice">$18/mo</span>
+          <span class="chip ok" id="subsHuluDone" style="display:none">Cancelled</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="go('subapple')">
+          <div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Your Apple One bundle already includes 2TB iCloud</div></div>
+          <span class="right num" id="subsApplePrice">$2.99/mo</span>
+          <span class="chip pend" id="subsAppleWatch" style="display:none">Watching</span>
+          <span class="chevron">›</span>
+        </div>
+      </div>
+
+      <div class="sechead"><h3>Looks right (5)</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row"><div class="body"><div class="t">Netflix</div><div class="s">used steadily</div></div><span class="right num">$15.49/mo</span></div>
+        <div class="row"><div class="body"><div class="t">Spotify Duo</div><div class="s">used steadily</div></div><span class="right num">$14.99/mo</span></div>
+        <div class="row"><div class="body"><div class="t">Disney+ bundle</div><div class="s">includes Hulu w/ ads</div></div><span class="right num">$10.99/mo</span></div>
+        <div class="row"><div class="body"><div class="t">NYT All Access</div><div class="s">annual plan, renews Oct</div></div><span class="right num">$17/4wk</span></div>
+        <div class="row"><div class="body"><div class="t">Apple One</div><div class="s">family plan</div></div><span class="right num">$19.95/mo</span></div>
+      </div>
+      <div class="note">I check every new recurring charge and price change — you only hear about the ones worth your time.</div>
+    </div>
+  </section>
+
+  <!-- ── SUBSCRIPTION DETAIL: HULU ── -->
+  <section class="view" data-view="subdetail">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Hulu</div><div class="sub">$18/mo · billed to Visa ···6411</div></div>
+      <span class="chip draft" id="huluChip">FLAGGED</span>
+    </div>
+    <div class="scroll" id="subScroll">
+      <div class="card">
+        <div class="eyebrow">Why it's flagged</div>
+        <div class="prog">
+          <div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b class="num">$13 → $18</b> in May — no notice in your email</div>
+          <div><span class="tick" style="color:var(--amber)">▲</span>Your Disney+ bundle (<b class="num">$10.99</b>) already includes Hulu with ads</div>
+          <div><span class="tick">·</span><b class="num">12</b> charges since Jul 2025 · <b class="num">$187</b> total</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">The plan</div>
+        <div class="steps">
+          <div class="step">Sign in to your Hulu account — I'll ask for the login next.</div>
+          <div class="step">Cancel the standalone plan. It stays active until the period ends Jul 7.</div>
+          <div class="step">Verify no charge appears after Jul 8 — then report back in Activity.</div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--ink)" id="subBtns">
+        <div class="btnrow">
+          <button class="btn primary" onclick="openCred('hulu')">Cancel Hulu for me</button>
+          <button class="btn ghost" onclick="keepHulu()">Keep it</button>
+        </div>
+        <div class="note">Nothing happens until you approve · you keep Hulu through Jul 7 either way</div>
+      </div>
+
+      <div class="inline-card hideme" id="subProg" style="max-width:100%">
+        <div class="eyebrow">Hulu · account portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>Cancelled — confirmation <b>#4F7-220</b></div>
+          <div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div>
+        </div>
+      </div>
+      <div class="hideme" id="subDone">
+        <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
+          <div class="bubble">Done — that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── APPLE-BILLED: ICLOUD+ ── -->
+  <section class="view" data-view="subapple">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">iCloud+ duplicate</div><div class="sub">$2.99/mo · billed through Apple</div></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">Why it's flagged</div>
+        <div class="prog">
+          <div><span class="tick" style="color:var(--amber)">▲</span>Your Apple One family plan (<b class="num">$19.95</b>) includes <b>2TB iCloud</b></div>
+          <div><span class="tick" style="color:var(--amber)">▲</span>The separate iCloud+ plan duplicates it — <b class="num">$36/yr</b> for nothing</div>
+        </div>
+      </div>
+      <div class="card hardblock" style="background:rgba(20,58,61,.04);border-color:var(--hairline)">
+        <div class="t" style="color:var(--ink)">Only you can cancel this one</div>
+        <p>Apple doesn't let anyone cancel an Apple-billed subscription except you — even with your approval. It takes about 20 seconds:</p>
+        <div class="steps" style="margin-top:8px">
+          <div class="step">Open <b>Settings</b> → tap your name</div>
+          <div class="step"><b>Subscriptions</b> → <b>iCloud+</b></div>
+          <div class="step">Tap <b>Cancel subscription</b> — your Apple One storage takes over automatically</div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--ink)" id="appleBtns">
+        <div class="btnrow">
+          <button class="btn primary" onclick="appleDone()">Done — I cancelled it</button>
+          <button class="btn ghost" onclick="toast('Noted — saved as a standing instruction: keep both')">Keep both</button>
+        </div>
+      </div>
+      <div class="card hideme" id="appleWatch">
+        <div class="prog"><span class="tick">✓</span>Got it — I'll confirm it on your next Apple charge and report in Activity.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COLD HOME (empty-state invitations) ── -->
+  <section class="view" data-view="coldhome">
+    <div class="topbar">
+      <span class="wordmark">Steward</span>
+      <span class="icons">
+        <span class="bell" onclick="location.reload()" title="demo: restart">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </span>
+        <span class="avatar">T</span>
+      </span>
+    </div>
+    <div class="scroll">
+      <div class="statusline"><span class="ok"></span>First session — I'm ready when you are</div>
+
+      <div class="card" style="border-left:3px solid var(--ink)">
+        <div class="eyebrow">Start anywhere</div>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">A bill that looks wrong, a subscription you forgot, a question about your money — tell me and I'll take it from there.</p>
+        <button class="btn primary" style="width:100%" onclick="go('chat',true)">Tell me about a money problem</button>
+      </div>
+
+      <div class="card empty">
+        <div class="eyebrow">Net worth</div>
+        <p>See your whole picture here — accounts, investments, your home. Read-only, via Plaid.</p>
+        <div class="btnrow">
+          <button class="btn primary" onclick="openPlaid()">Connect accounts</button>
+        </div>
+        <div class="why" onclick="toast('Tell me your address in chat — I\'ll estimate your home\'s value, no connection needed')">or start manually — try your home address</div>
+      </div>
+
+      <div class="card empty" id="chSubsNoEmail">
+        <div class="eyebrow">Subscriptions</div>
+        <p>I can find your subscriptions from email receipts and renewal notices — no bank connection needed.</p>
+        <div class="btnrow">
+          <button class="btn primary" onclick="openOauth()">Connect email — read-only</button>
+        </div>
+      </div>
+
+      <div class="card" id="chSubsEmail" style="display:none">
+        <div class="eyebrow">Subscriptions · from your email</div>
+        <div class="row"><div class="body"><div class="t">7 found from receipts</div><div class="s">Netflix, Hulu, Spotify, Disney+, NYT, Apple One, iCloud+</div></div><span class="right num">~$86/mo</span></div>
+        <div class="row">
+          <div class="body"><div class="t">Catch the rest — and verify</div><div class="s">Some don't email you. And when I cancel one, I verify the billing actually stops — that takes the card statement.</div></div>
+        </div>
+        <div class="btnrow" style="margin-top:4px">
+          <button class="btn primary" onclick="openPlaid()">Connect the card they bill</button>
+          <button class="btn ghost" onclick="toast('No rush — the 7 from email are being watched')">Later</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
+  </section>
+
+  <!-- ── WELCOME (cold start) ── -->
+  <section class="view" data-view="welcome">
+    <div class="scroll" style="display:flex">
+      <div class="welcome">
+        <div class="wm">Steward</div>
+        <h1>A chief of staff for your financial life.</h1>
+        <div class="wfeat"><span class="tick">✓</span><span>Finds money you're losing — billing errors, price creep, duplicate coverage</span></div>
+        <div class="wfeat"><span class="tick">✓</span><span>Fixes it for you — and always asks before acting</span></div>
+        <div class="wfeat"><span class="tick">✓</span><span>Everything on the record, with evidence</span></div>
+        <button class="btn light" onclick="startCold()">Tell me about a money problem</button>
+        <button class="btn ghost" style="width:100%;margin-top:10px;color:#fff;border-color:rgba(255,255,255,.35)" onclick="openOauth()">Or connect email — I'll find issues myself</button>
+        <p style="font-size:11.5px;margin-top:12px;text-align:center;color:rgba(255,255,255,.55)">Nothing to connect, nothing to set up — start with whatever's in front of you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FIRST SWEEP ── -->
+  <section class="view" data-view="sweep">
+    <div class="navhead">
+      <div style="flex:1"><div class="title">First sweep</div><div class="sub">Reading 90 days of financial mail — read-only</div></div>
+    </div>
+    <div class="scroll" id="sweepScroll">
+      <div class="inline-card" style="max-width:100%">
+        <div class="prog"><div><span class="tick">✓</span>Connected <b>tim@tjsnyder.com</b> · read-only</div></div>
+      </div>
+      <div class="inline-card hideme" id="sw1" style="max-width:100%">
+        <div class="prog"><div><span class="tick">✓</span><b class="num">1,212</b> emails scanned · <b class="num">31</b> billers &amp; merchants identified</div></div>
+      </div>
+      <div class="inline-card hideme" id="sw2" style="max-width:100%">
+        <div class="prog"><div><span class="tick">✓</span><b class="num">7</b> subscriptions found from receipts &amp; renewal notices</div></div>
+      </div>
+      <div class="inline-card hideme" id="sw3" style="max-width:100%">
+        <div class="prog"><div><span class="tick">✓</span><b class="num">2</b> medical bills · <b class="num">1</b> insurance renewal noticed</div></div>
+      </div>
+      <div class="hideme" id="sw4">
+        <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
+          <div class="bubble">Done — that took 41 seconds. Here's what's worth your attention.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FIRST FINDINGS DIGEST ── -->
+  <section class="view" data-view="digest">
+    <div class="navhead">
+      <div style="flex:1"><div class="title">What I found</div><div class="sub">First sweep · just now</div></div>
+    </div>
+    <div class="scroll">
+      <div class="card value-card">
+        <div class="eyebrow">Looks recoverable</div>
+        <div class="amt num">~<em>$340</em> in the first pass</div>
+        <a>Before connecting a single account beyond email.</a>
+      </div>
+
+      <div class="sechead"><h3>Findings (4)</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="cursor:pointer" onclick="go('subdetail')">
+          <div class="body"><div class="t">Hulu — price creep + bundle overlap</div><div class="s">Rose to $18 · your Disney+ bundle includes it</div></div>
+          <span class="right num" style="color:var(--money)">$216/yr</span><span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="go('subapple')">
+          <div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Apple One already includes 2TB iCloud</div></div>
+          <span class="right num" style="color:var(--money)">$36/yr</span><span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="go('invest')">
+          <div class="body"><div class="t">One Medical bill — worth checking</div><div class="s">"Statement ready" notice · bill is behind their portal</div></div>
+          <span class="chip pend">Look closer</span><span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="toast('Carrier re-shopping is coming soon — for now I\'ll remind you before it renews')">
+          <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you before it renews</div></div>
+          <span class="chip draft">Coming soon</span><span class="chevron">›</span>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:var(--ink)">
+        <div class="btnrow">
+          <button class="btn primary" onclick="openPay()">Handle these for me</button>
+          <button class="btn ghost" onclick="payFree()">Just watch (free)</button>
+        </div>
+        <div class="note">Watching &amp; finding stays free forever. Acting is the paid part.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WEEKLY BRIEFING ── -->
+  <section class="view" data-view="briefing">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Your week</div><div class="sub">Jun 8–14 · from Steward · 2 min</div></div>
+    </div>
+    <div class="scroll">
+      <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
+        <div class="bubble" id="bfLead">A solid week — two wins verified, and one decision waiting on you.</div>
+      </div>
+
+      <div class="sechead"><h3>Needs you</h3></div>
+      <div class="card" style="border-left:3px solid var(--ink)" id="bfPrompt">
+        <div class="row" style="border:none;padding:4px 0">
+          <div class="body"><div class="t">One Medical says a statement is ready</div><div class="s">The bill is behind their portal — I haven't seen it yet.</div></div>
+        </div>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" onclick="go('invest')">Take a look</button>
+          <button class="btn ghost" onclick="promptDismiss()">Not now</button>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--ink);display:none" id="bfProposed">
+        <div class="row" style="border:none;padding:4px 0">
+          <div class="body"><div class="t">Proposed: dispute One Medical bill</div><div class="s">Billed $300 vs. EOB $86 · window closes Jun 28</div></div>
+          <span class="right num" style="color:var(--money);font-weight:700">$214</span>
+        </div>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn primary" onclick="go('case')">Review dispute</button>
+          <button class="btn ghost" onclick="dismissFromBriefing()">Not now</button>
+        </div>
+      </div>
+      <div class="card" style="display:none" id="bfNone">
+        <div class="prog"><span class="tick">✓</span>Nothing needs you — enjoy the week.</div>
+      </div>
+
+      <div class="sechead"><h3>Done this week</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row">
+          <div class="body"><div class="t">Recovered overdraft fee</div><div class="s">Refund posted · verified on your statement</div></div>
+          <span class="right num" style="color:var(--money)">+$45</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Cancelled Paramount+</div><div class="s">Verified — no charge on your June statement</div></div>
+          <span class="right num" style="color:var(--money)">+$12/mo</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Checked 41 charges</div><div class="s">Weekly sweep — all matched your patterns</div></div>
+          <span class="chip ok">All clear</span>
+        </div>
+      </div>
+
+      <div id="bfWatchWrap" style="display:none">
+      <div class="sechead"><h3>Watching</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row" id="bfWatchDispute">
+          <div class="body"><div class="t">One Medical dispute</div><div class="s">Sent — typical response 7–10 days</div></div>
+          <span class="chip pend">Watching</span>
+        </div>
+      </div>
+      </div>
+
+      <div class="sechead"><h3>Coming up</h3></div>
+      <div class="card" style="padding:6px 16px">
+        <div class="row">
+          <div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div>
+          <span class="right num">$2,110</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">NYT annual plan renews Oct</div><div class="s">I'll flag it two weeks out</div></div>
+        </div>
+      </div>
+
+      <div class="card value-card">
+        <div class="eyebrow">Running total · 2026</div>
+        <div class="amt num">Recovered <em>$1,118</em> since January</div>
+        <a onclick="go('activity')">Every action, on the record →</a>
+      </div>
+
+      <div class="note">This arrives Sunday evenings — and as an email, if you like. Want a different day, or more detail? Just tell me.</div>
+    </div>
+    <div class="dock"><div class="chatpill" onclick="go('chat')">Reply to this briefing…</div></div>
+  </section>
+
+  <!-- ── TAB BAR (shared) ── -->
+  <div class="tabbar" id="tabbar">
+    <button class="tab active" data-target="home" onclick="go('home',true)">
+      <span class="adot" id="tabDot"></span>
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Home</button>
+    <button class="tab" data-target="activity" onclick="go('activity',true)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Activity</button>
+    <button class="tab" data-target="chat" onclick="go('chat',true)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.36 8.5 8.5 0 01-3.4-.66L3 21l1.8-5.6A8.38 8.38 0 1121 11.5z"/></svg>Ask</button>
+    <button class="tab" data-target="autonomy" onclick="go('autonomy',true)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></svg>You</button>
+  </div>
+
+  <div class="sheet-back" id="plaidSheet">
+    <div class="sheet">
+      <h4>Connect accounts — via Plaid</h4>
+      <div class="sub2">Read-only access to balances and transactions.</div>
+      <div class="prog">
+        <div><span class="tick">✓</span>See balances, transactions &amp; recurring charges</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>Move money — not possible with this access</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>See your bank password — Plaid tokenizes it</div>
+      </div>
+      <div class="vaultnote"><span class="lock">🔒</span><span>Disconnect anytime in You → Connected accounts.</span></div>
+      <div class="btnrow">
+        <button class="btn primary" onclick="plaidAllow()">Continue with Plaid</button>
+        <button class="btn ghost" onclick="closePlaid()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-back" id="oauthSheet">
+    <div class="sheet">
+      <h4>Connect Google — tim@tjsnyder.com</h4>
+      <div class="sub2">Steward is requesting <b>read-only</b> access to your mail.</div>
+      <div class="prog">
+        <div><span class="tick">✓</span>Read bills, statements &amp; financial notices</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>Send, delete, or move anything</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>Train on your data — ever</div>
+      </div>
+      <div class="vaultnote"><span class="lock">🔒</span><span>Revoke anytime in You → Connected accounts. Every access is in your audit log.</span></div>
+      <div class="btnrow">
+        <button class="btn primary" onclick="oauthAllow()">Allow read-only access</button>
+        <button class="btn ghost" onclick="closeOauth()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-back" id="paySheet">
+    <div class="sheet">
+      <h4>Let Steward act</h4>
+      <div class="sub2">Watching &amp; finding stays free. Acting — canceling, disputing, re-shopping — is the full plan.</div>
+      <div class="price num">$20<small>/mo · or $192/yr</small></div>
+      <div class="prog">
+        <div><span class="tick">✓</span>Every playbook, unlimited actions</div>
+        <div><span class="tick">✓</span>Always asks before acting — nothing automatic</div>
+        <div><span class="tick">✓</span>Cancel in one tap. No retention games.</div>
+      </div>
+      <div class="vaultnote"><span>℞</span><span>Medical bills only? Pay <b>25% of what I recover</b> instead — nothing up front, credited if you ever subscribe.</span></div>
+      <div class="btnrow">
+        <button class="btn primary" onclick="paySubscribe()">Start — $20/mo</button>
+        <button class="btn ghost" onclick="payFree()">Stay free</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet-back" id="credSheet">
+    <div class="sheet">
+      <h4 id="credTitle">One Medical — patient portal</h4>
+      <div class="sub2" id="credSub">Steward signs in as you, only to retrieve your documents.</div>
+      <label>Username or email</label>
+      <input id="credUser" placeholder="tim@tjsnyder.com">
+      <label>Password</label>
+      <input type="password" placeholder="••••••••••" >
+      <div class="vaultnote"><span class="lock">🔒</span><span>Stored in your encrypted vault · used only for this purpose · every sign-in appears in your audit log · revoke anytime.</span></div>
+      <div class="btnrow">
+        <button class="btn primary" onclick="credConnect()">Connect securely</button>
+        <button class="btn ghost" onclick="credCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+  // phase: prompt → (invest flow) → found → sent | dismissed
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: false, email: false, investigated: false };
+  const stack = [];
+  let current = 'home';
+  let credTarget = null;
+
+  function show(id, on) { document.getElementById(id).style.display = on ? '' : 'none'; }
+
+  function render() {
+    const p = state.phase;
+    show('promptCard', p === 'prompt');
+    show('attentionBlock', p === 'found');
+    show('allClearLine', p === 'sent' || p === 'dismissed');
+    show('bellDot', p === 'prompt' || p === 'found');
+    show('tabDot', p === 'prompt' || p === 'found');
+    show('chatFindingBlock', p === 'found' || p === 'sent');
+    show('chatActionCard', p === 'found');
+    show('chatSentBlock', p === 'sent');
+    show('disputeEvent', p === 'sent');
+    document.getElementById('caseChip').textContent = p === 'sent' ? 'SENT' : 'DRAFT';
+    show('caseActions', p !== 'sent');
+
+    const cancelled = state.sub === 'cancelled';
+    show('homeHuluRow', !cancelled);
+    document.getElementById('toReviewHead').textContent = cancelled ? 'To review (1)' : 'To review (2)';
+    show('huluEvent', cancelled);
+    show('subsHuluPrice', !cancelled);
+    show('subsHuluDone', cancelled);
+    document.getElementById('huluChip').textContent = cancelled ? 'CANCELLED' : 'FLAGGED';
+    show('subsApplePrice', state.apple !== 'watching');
+    show('subsAppleWatch', state.apple === 'watching');
+    show('handoffEvent', state.handoff === 'sent');
+    show('proposedEvent', state.investigated && p !== 'sent');
+    // briefing projections of the same case
+    show('bfPrompt', p === 'prompt');
+    show('bfProposed', state.investigated && p !== 'sent');
+    show('bfNone', !state.investigated && p !== 'prompt');
+    show('bfWatchWrap', p === 'sent');
+    document.getElementById('bfLead').textContent =
+      p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
+      : (state.investigated ? 'A solid week — two wins verified, and one decision waiting on you.'
+      : 'A quiet week — two wins verified, and one thing worth a look.');
+    show('chSubsNoEmail', !state.email);
+    show('chSubsEmail', state.email);
+    document.getElementById('activityCount').textContent =
+      7 + (p === 'sent' ? 1 : 0) + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
+  }
+
+  const COLD = ['welcome', 'sweep', 'digest'];
+  function go(view, fromTab) {
+    if (view === 'home' && state.cold) view = 'coldhome';
+    if (view === current) return;
+    if (!fromTab) stack.push(current);
+    else stack.length = 0;
+    current = view;
+    const tabView = view === 'coldhome' ? 'home' : view;
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === view));
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.target === tabView));
+    document.querySelectorAll('.view.active .scroll').forEach(s => s.scrollTop = 0);
+    document.getElementById('tabbar').style.display = COLD.includes(view) ? 'none' : '';
+    render();
+  }
+
+  // cold start
+  function startCold() {
+    state.cold = true;
+    document.querySelectorAll('.warm').forEach(e => e.classList.add('hideme'));
+    go('chat', true);
+  }
+  function coldReveal(id) {
+    document.getElementById(id).classList.remove('hideme');
+    const sc = document.getElementById('chatScroll'); sc.scrollTop = sc.scrollHeight;
+  }
+  function coldUploadReply() {
+    document.getElementById('hc1btns').classList.add('hideme');
+    toast('Reading your upload…');
+    setTimeout(() => coldReveal('hc2'), 350);
+    setTimeout(() => coldReveal('hc3'), 1500);
+  }
+  function coldUploadCard() {
+    document.getElementById('hc3btns').classList.add('hideme');
+    toast('Reading your upload…');
+    setTimeout(() => coldReveal('hcCardUp'), 300);
+    setTimeout(() => coldReveal('hc4'), 1000);
+    setTimeout(() => coldReveal('hc5'), 1900);
+  }
+  function openOauth() { document.getElementById('oauthSheet').classList.add('open'); }
+  function closeOauth() { document.getElementById('oauthSheet').classList.remove('open'); }
+  function openPlaid() { document.getElementById('plaidSheet').classList.add('open'); }
+  function closePlaid() { document.getElementById('plaidSheet').classList.remove('open'); }
+  function plaidAllow() {
+    closePlaid();
+    state.cold = false;  // accounts connected — the home graduates
+    toast('6 accounts connected — building your picture');
+    go('home', true);
+  }
+  function oauthAllow() {
+    state.email = true;
+    closeOauth(); go('sweep');
+    const reveal = id => {
+      document.getElementById(id).classList.remove('hideme');
+      const sc = document.getElementById('sweepScroll'); sc.scrollTop = sc.scrollHeight;
+    };
+    setTimeout(() => reveal('sw1'), 700);
+    setTimeout(() => reveal('sw2'), 1600);
+    setTimeout(() => reveal('sw3'), 2500);
+    setTimeout(() => reveal('sw4'), 3300);
+    setTimeout(() => go('digest'), 4600);
+  }
+  function openPay() { document.getElementById('paySheet').classList.add('open'); }
+  function paySubscribe() {
+    document.getElementById('paySheet').classList.remove('open');
+    toast("Welcome aboard — let's go get that $340");
+    go('home', true);
+  }
+  function payFree() {
+    document.getElementById('paySheet').classList.remove('open');
+    toast("Staying free — I'll keep finding; upgrade whenever");
+    go('home', true);
+  }
+  function back() { go(stack.pop() || 'home', false); stack.pop(); }
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  function dismissAttention() {
+    const card = document.getElementById('attentionCard');
+    card.classList.add('bye');
+    setTimeout(() => { state.phase = 'dismissed'; card.classList.remove('bye'); render(); }, 260);
+    toast('Okay — it stays in Needs attention');
+  }
+  function promptDismiss() {
+    state.phase = 'dismissed'; render();
+    toast("Okay — I'll leave it. Ask me anytime to take a look");
+  }
+  function dismissFromBriefing() {
+    state.phase = 'dismissed'; render();
+    toast('De-prioritized — it stays an open decision in Activity');
+  }
+  function toggleAttention() { location.reload(); }  // bell = demo restart
+  function sendDispute() {
+    state.phase = 'sent';
+    toast('Dispute sent ✓ Tracking the response');
+    go('activity', true);
+  }
+
+  // just-in-time credential flow
+  function openCred(which) {
+    credTarget = which;
+    const meta = {
+      om:     ['One Medical — patient portal', 'Steward signs in as you, only to retrieve your documents.'],
+      an:     ['Anthem — member portal', 'Steward signs in as you, only to retrieve your documents.'],
+      hulu:   ['Hulu — your account', 'Steward signs in as you, only to cancel this subscription.'],
+      ancold: ['Anthem — member portal', 'Steward signs in as you, only to read your coverage details.'],
+      omcold: ['One Medical — billing portal', 'Steward signs in as you, only to submit your reply.'],
+    }[which];
+    document.getElementById('credTitle').textContent = meta[0];
+    document.getElementById('credSub').textContent = meta[1];
+    document.getElementById('credSheet').classList.add('open');
+  }
+  function credCancel() { document.getElementById('credSheet').classList.remove('open'); }
+  function uploadBill() {
+    const sc = document.getElementById('investScroll');
+    const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
+    document.getElementById('inv1').classList.add('hideme');
+    toast('Reading your upload…');
+    setTimeout(() => reveal('invUp'), 350);
+    setTimeout(() => reveal('inv3'), 1200);
+  }
+  function credConnect() {
+    credCancel();
+    const sc = document.getElementById('investScroll');
+    const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
+    if (credTarget === 'om') {
+      document.getElementById('inv1').classList.add('hideme');
+      toast('Connected · in your vault');
+      setTimeout(() => reveal('inv2'), 400);
+      setTimeout(() => reveal('inv3'), 1300);
+    } else if (credTarget === 'an') {
+      document.getElementById('inv3btns').classList.add('hideme');
+      toast('Connected · in your vault');
+      setTimeout(() => reveal('inv4'), 400);
+      setTimeout(() => { reveal('inv5'); state.phase = 'found'; state.investigated = true; render(); }, 1300);
+    } else if (credTarget === 'hulu') {
+      const sc2 = document.getElementById('subScroll');
+      const reveal2 = id => { document.getElementById(id).classList.remove('hideme'); sc2.scrollTop = sc2.scrollHeight; };
+      document.getElementById('subBtns').classList.add('hideme');
+      toast('Connected · in your vault');
+      setTimeout(() => reveal2('subProg'), 400);
+      setTimeout(() => { reveal2('subDone'); state.sub = 'cancelled'; render(); }, 1400);
+    } else if (credTarget === 'ancold') {
+      document.getElementById('hc3btns').classList.add('hideme');
+      toast('Connected · in your vault');
+      setTimeout(() => coldReveal('hc4'), 500);
+      setTimeout(() => coldReveal('hc5'), 1400);
+    } else if (credTarget === 'omcold') {
+      document.getElementById('hc5btns').classList.add('hideme');
+      toast('Connected · in your vault');
+      setTimeout(() => { coldReveal('hc6'); state.handoff = 'sent'; render(); }, 500);
+    }
+  }
+  function keepHulu() {
+    toast('Noted — saved as a standing instruction: keep Hulu');
+    back();
+  }
+  function appleDone() {
+    state.apple = 'watching'; render();
+    document.getElementById('appleBtns').classList.add('hideme');
+    document.getElementById('appleWatch').classList.remove('hideme');
+  }
+  function sendPreset(t) {
+    document.getElementById('chatBox').value = t;
+    sendChat();
+  }
+  function handoffSend() {
+    state.handoff = 'sent'; render();
+    document.getElementById('ho3btns').classList.add('hideme');
+    document.getElementById('ho4').classList.remove('hideme');
+    const sc = document.getElementById('chatScroll');
+    sc.scrollTop = sc.scrollHeight;
+    toast('Reply sent ✓ Tracking the resubmission');
+  }
+  function sendChat() {
+    const box = document.getElementById('chatBox');
+    const text = box.value.trim();
+    if (!text) return;
+    box.value = '';
+    const scroll = document.getElementById('chatScroll');
+    const m = document.createElement('div');
+    m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
+    m.querySelector('.bubble').textContent = text;
+    // keep the handoff blocks at the end of the thread
+    scroll.insertBefore(m, document.getElementById('ho1'));
+    if (/billing issue|wrong insurance|insurance issue/i.test(text) && !state.handoff) {
+      state.handoff = 'active';
+      document.getElementById('chatChips').classList.add('hideme');
+      const reveal = id => { document.getElementById(id).classList.remove('hideme'); scroll.scrollTop = scroll.scrollHeight; };
+      if (state.cold) {
+        setTimeout(() => reveal('hc1'), 600);
+      } else {
+        setTimeout(() => reveal('ho1'), 600);
+        setTimeout(() => reveal('ho2'), 1900);
+        setTimeout(() => reveal('ho3'), 3000);
+      }
+      scroll.scrollTop = scroll.scrollHeight;
+      return;
+    }
+    if (/send|approve|yes|do it|looks right/i.test(text) && state.phase === 'found') {
+      setTimeout(sendDispute, 500);
+    } else {
+      const r = document.createElement('div');
+      r.className = 'msg steward';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer that from your financial graph — this prototype handles the dispute and billing-issue flows.</div>';
+      setTimeout(() => { scroll.insertBefore(r, document.getElementById('ho1')); scroll.scrollTop = scroll.scrollHeight; }, 450);
+    }
+    scroll.scrollTop = scroll.scrollHeight;
+  }
+  function filterDemo(el) {
+    el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+    el.classList.add('on');
+  }
+
+  current = 'welcome';
+  document.querySelector('[data-view="welcome"]').classList.add('active');
+  document.getElementById('tabbar').style.display = 'none';
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steward — Desktop Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#F7F8FA; --card:#FFFFFF; --ink:#143A3D; --ink-2:#334E50;
+    --money:#0A7C5A; --text:#1C2526; --muted:#66757A; --hairline:#E2E7EA;
+    --amber:#B07C10; --red:#B0421A; --r:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Geist',-apple-system,sans-serif;background:var(--canvas);color:var(--text);font-size:14px}
+  .num{font-variant-numeric:tabular-nums}
+  .app{display:flex;height:100vh;overflow:hidden}
+
+  /* sidebar */
+  .sidebar{width:216px;flex:none;background:var(--card);border-right:1px solid var(--hairline);
+           display:flex;flex-direction:column;padding:20px 12px}
+  .sidebar .wordmark{font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--ink);padding:0 12px 22px}
+  .nav{display:flex;flex-direction:column;gap:2px}
+  .nav button{display:flex;align-items:center;gap:11px;padding:9px 12px;border:none;background:none;
+              font-family:inherit;font-size:13.5px;font-weight:500;color:var(--ink-2);border-radius:6px;
+              cursor:pointer;text-align:left;position:relative}
+  .nav button:hover{background:var(--canvas)}
+  .nav button.active{background:rgba(20,58,61,.07);color:var(--ink);font-weight:600}
+  .nav button svg{width:17px;height:17px;flex:none}
+  .nav .dot{position:absolute;right:12px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .sidebar .foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--hairline)}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
+  .foot .who{font-size:12.5px;font-weight:600}
+  .foot .sub{font-size:10.5px;color:var(--muted)}
+
+  /* main */
+  .main{flex:1;overflow-y:auto;padding:26px 32px}
+  .dview{display:none;max-width:1060px;margin:0 auto}
+  .dview.active{display:block}
+  .pagehead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px}
+  .pagehead h1{font-size:21px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+  .pagehead .sub{font-size:12.5px;color:var(--muted)}
+
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .chip{font-size:10.5px;font-weight:600;letter-spacing:.04em;border-radius:4px;padding:2px 8px;flex:none}
+  .chip.ok{color:var(--money);background:rgba(10,124,90,.08)}
+  .chip.pend{color:var(--amber);background:rgba(176,124,16,.1)}
+  .chip.draft{color:var(--ink-2);background:rgba(51,78,80,.08);border:1px solid var(--hairline)}
+  .card{background:var(--card);border:1px solid var(--hairline);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+  .btn{border-radius:6px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
+  .btn.primary{background:var(--ink);color:#fff;border:1px solid var(--ink)}
+  .btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--hairline)}
+
+  /* home grid */
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .span2{grid-column:span 2}
+  .span3{grid-column:span 3}
+  .hero-amount{font-size:38px;font-weight:700;letter-spacing:-.02em}
+  .delta{display:inline-flex;font-size:12.5px;font-weight:600;color:var(--money);background:rgba(10,124,90,.08);border-radius:4px;padding:2px 8px;margin-left:12px;vertical-align:middle}
+  .split{display:flex;border-top:1px solid var(--hairline);margin-top:16px;padding-top:14px}
+  .split>div{flex:1}
+  .split>div+div{border-left:1px solid var(--hairline);padding-left:18px}
+  .mini-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .mini-val{font-size:16px;font-weight:600;margin-top:4px}
+  .mini-val .up{color:var(--money);font-size:11.5px;margin-left:6px}
+  .mini-val.neg{color:var(--red)}
+  .row{display:flex;align-items:center;gap:12px;padding:11px 0}
+  .row+.row{border-top:1px solid var(--hairline)}
+  .row .body{flex:1;min-width:0}
+  .row .t{font-size:13.5px;font-weight:500}
+  .row .s{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .row .right{font-size:13px;font-weight:600}
+  .goalbar{height:4px;border-radius:2px;background:var(--hairline);margin-top:7px;overflow:hidden}
+  .goalbar i{display:block;height:100%;background:var(--money)}
+
+  .attention{border:1px solid var(--ink);border-left:4px solid var(--ink);box-shadow:0 8px 24px rgba(20,58,61,.08);
+             display:flex;align-items:center;gap:26px}
+  .attention .eyebrow{color:var(--ink);display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .attention .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .attention h3{font-size:16.5px;font-weight:700;margin-bottom:4px}
+  .attention .evidence{font-size:13px;color:var(--ink-2)}
+  .figrow{display:flex;gap:12px}
+  .figbox{border:1px solid var(--hairline);border-radius:6px;padding:8px 14px;background:#FAFBFC;text-align:center}
+  .figbox .l{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .figbox .v{font-size:16px;font-weight:700;margin-top:2px}
+  .figbox .v.money{color:var(--money)}
+  .value-card{background:linear-gradient(135deg,#143A3D 0%,#1C4A4E 100%);border:none;color:#fff}
+  .value-card .eyebrow{color:rgba(255,255,255,.55)}
+  .value-card .amt{font-size:19px;font-weight:700}
+  .value-card .amt em{font-style:normal;color:#7CD9B8}
+  .value-card a{color:#A9E7CF;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer}
+
+  /* case file: documents side by side */
+  .casegrid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
+  .docs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .doc{background:#fff;border:1px solid var(--hairline);border-radius:6px;padding:16px 18px;font-size:12px;line-height:1.7;
+       box-shadow:0 2px 10px rgba(20,58,61,.05)}
+  .doc .dochead{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+                border-bottom:1px solid var(--hairline);padding-bottom:8px;margin-bottom:10px;display:flex;justify-content:space-between}
+  .doc .line{display:flex;justify-content:space-between;gap:8px;padding:3px 4px;border-radius:3px}
+  .doc .line .c{color:var(--muted);font-size:11px}
+  .doc .hl{background:rgba(176,66,26,.10);outline:1px solid rgba(176,66,26,.35)}
+  .doc .hl-g{background:rgba(10,124,90,.10);outline:1px solid rgba(10,124,90,.35)}
+  .doc .tot{border-top:1px solid var(--hairline);margin-top:8px;padding-top:8px;font-weight:700}
+  .compare{width:100%;border-collapse:collapse;font-size:12.5px}
+  .compare th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1px solid var(--hairline)}
+  .compare td{padding:8px;border-bottom:1px solid var(--hairline)}
+  .compare tr:last-child td{border-bottom:none}
+  .compare .bad{color:var(--red);font-weight:600}
+  .compare .good{color:var(--money);font-weight:600}
+  .steps{counter-reset:s}
+  .step{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--hairline);font-size:13px;line-height:1.5}
+  .step:last-child{border-bottom:none}
+  .step::before{counter-increment:s;content:counter(s);width:21px;height:21px;border-radius:50%;
+                background:rgba(20,58,61,.07);color:var(--ink);font-size:11px;font-weight:700;
+                display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
+  .letter{background:#FAFBFC;border:1px dashed #C8D2D6;border-radius:6px;padding:14px;font-size:12.5px;line-height:1.65;color:var(--ink-2)}
+  .letter .edit{float:right;font-size:11px;color:var(--ink);font-weight:600;text-decoration:underline;cursor:pointer}
+  .note{font-size:11.5px;color:var(--muted)}
+
+  /* tables */
+  .table{width:100%;border-collapse:collapse;font-size:13px}
+  .table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+            text-align:left;padding:9px 10px;border-bottom:1px solid var(--hairline)}
+  .table td{padding:11px 10px;border-bottom:1px solid var(--hairline);vertical-align:middle}
+  .table tr:last-child td{border-bottom:none}
+  .table .name{font-weight:600}
+  .table .sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .src{font-size:10px;font-weight:600;color:var(--ink-2);background:var(--canvas);border:1px solid var(--hairline);border-radius:4px;padding:2px 7px;white-space:nowrap}
+  .src.v{color:var(--money);background:rgba(10,124,90,.06);border-color:rgba(10,124,90,.25)}
+  .linkish{font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+  .summary{display:flex;text-align:center;padding:6px 0}
+  .summary>div{flex:1}
+  .summary>div+div{border-left:1px solid var(--hairline)}
+  .summary .v{font-size:20px;font-weight:700}
+  .summary .v.money{color:var(--money)}
+  .summary .l{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}
+  .event{display:flex;gap:14px;padding:13px 4px}
+  .event+.event{border-top:1px solid var(--hairline)}
+  .event .ico{width:30px;height:30px;border-radius:50%;background:rgba(20,58,61,.06);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  .event .body{flex:1}
+  .event .t{font-size:13.5px;font-weight:600}
+  .event .s{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .event .meta{display:flex;gap:12px;margin-top:6px;font-size:11.5px}
+  .event .meta a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .event .amt{font-size:13.5px;font-weight:700;flex:none}
+  .event .amt.money{color:var(--money)}
+
+  /* chat rail */
+  .chatrail{width:330px;flex:none;border-left:1px solid var(--hairline);background:var(--card);display:flex;flex-direction:column}
+  .chatrail .head{padding:16px 18px;border-bottom:1px solid var(--hairline)}
+  .chatrail .head .t{font-size:14.5px;font-weight:700;color:var(--ink)}
+  .chatrail .head .s{font-size:11px;color:var(--muted);margin-top:2px}
+  .thread{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:88%}
+  .msg .bubble{border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.5}
+  .msg.user{margin-left:auto}
+  .msg.user .bubble{background:var(--ink);color:#fff;border-bottom-right-radius:3px}
+  .msg.steward .bubble{background:var(--canvas);border:1px solid var(--hairline);border-bottom-left-radius:3px}
+  .msg .who{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 4px 3px}
+  .minicard{background:var(--canvas);border:1px solid var(--ink);border-left:3px solid var(--ink);border-radius:8px;padding:12px;font-size:12.5px}
+  .minicard b.money{color:var(--money)}
+  .chatdock{padding:12px 14px 16px;border-top:1px solid var(--hairline);display:flex;gap:8px;align-items:center}
+  .chatdock .attach{width:34px;height:34px;border-radius:50%;border:1px solid var(--hairline);background:var(--card);color:var(--ink-2);font-size:16px;cursor:pointer;flex:none}
+  .chatdock input{flex:1;border:1px solid var(--hairline);border-radius:18px;padding:9px 14px;font-size:12.5px;font-family:inherit;background:var(--canvas);outline:none}
+  .chatdock .send{width:34px;height:34px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:13px;cursor:pointer;flex:none}
+
+  #toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
+         font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
+         transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="wordmark">Steward</div>
+    <nav class="nav">
+      <button class="active" data-nav="home" onclick="nav('home')">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>
+        Home<span class="dot" id="navDot"></span></button>
+      <button data-nav="subs" onclick="nav('subs')">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        Subscriptions</button>
+      <button data-nav="activity" onclick="nav('activity')">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Activity</button>
+    </nav>
+    <div class="foot" style="cursor:pointer" onclick="nav('you')" title="How Steward works">
+      <span class="avatar">T</span>
+      <div><div class="who">Tim</div><div class="sub">6 accounts · email on</div></div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- HOME -->
+    <section class="dview active" data-view="home">
+      <div class="pagehead">
+        <h1>Good morning, Tim</h1>
+        <span class="sub" id="homeStatus" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="nav('briefing')">1 thing needs you · your weekly brief ›</span>
+      </div>
+
+      <div class="card attention" id="dAttention">
+        <div style="flex:1">
+          <div class="eyebrow">Needs you</div>
+          <h3>Your One Medical bill looks overcharged</h3>
+          <p class="evidence">Billed <b class="num">$300</b> — your Anthem EOB says you owe <b class="num">$86</b>. Two line items don't match the claim. Window closes Jun 28.</p>
+        </div>
+        <div class="figrow">
+          <div class="figbox"><div class="l">They billed</div><div class="v num">$300</div></div>
+          <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
+          <div class="figbox"><div class="l">Recovery</div><div class="v money num">$214</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn primary" onclick="nav('case')">Review dispute</button>
+          <button class="btn ghost" onclick="dismissD()">Dismiss</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card span2">
+          <div class="eyebrow">Net worth</div>
+          <span class="hero-amount num">$284,610</span><span class="delta num">▲ $3,120 (1.1%) this month</span>
+          <div style="margin:16px 0 4px">
+            <svg width="100%" height="56" viewBox="0 0 600 56" preserveAspectRatio="none">
+              <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8" fill="none" stroke="#0A7C5A" stroke-width="2"/>
+              <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8 L600,56 L0,56 Z" fill="rgba(10,124,90,.06)"/>
+            </svg>
+          </div>
+          <div class="split num">
+            <div><div class="mini-label">Cash</div><div class="mini-val">$18,240</div></div>
+            <div><div class="mini-label">Investments</div><div class="mini-val">$146,900<span class="up">+2.4%</span></div></div>
+            <div><div class="mini-label">Home (est.)</div><div class="mini-val">$612,000</div></div>
+            <div><div class="mini-label">Mortgage</div><div class="mini-val neg">−$478,300</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow">June so far</div>
+          <div class="value-card" style="margin:-2px -4px 10px;padding:14px 16px;border-radius:6px">
+            <div class="amt num">Recovered <em>$259</em></div>
+            <a onclick="nav('activity')">See the receipts →</a>
+          </div>
+          <div class="row" style="border:none;padding-top:4px">
+            <div class="body"><div class="t">8 actions taken</div><div class="s">41 charges checked · all on the record</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow">Goals</div>
+          <div class="row" style="border:none">
+            <div class="body"><div class="t">College fund</div><div class="goalbar"><i style="width:62%"></i></div></div>
+            <span class="chip ok">On track</span>
+          </div>
+          <div class="row">
+            <div class="body"><div class="t">Emergency fund</div><div class="goalbar"><i style="width:70%"></i></div></div>
+            <span class="right num" style="color:var(--muted)">$14k/$20k</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow">To review</div>
+          <div class="row" style="border:none;cursor:pointer" onclick="nav('subs')">
+            <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more</div></div>
+            <span class="right num">$18/mo</span>
+          </div>
+          <div class="row" style="cursor:pointer" onclick="toast('Transaction detail — not in this prototype')">
+            <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
+            <span class="right num">$642</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow">Upcoming</div>
+          <div class="row" style="border:none">
+            <div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div>
+            <span class="right num">$2,110</span>
+          </div>
+          <div class="row">
+            <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
+            <span class="chip draft">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CASE FILE -->
+    <section class="dview" data-view="case">
+      <div class="pagehead">
+        <div>
+          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
+          <h1>Medical bill dispute <span class="chip draft" id="dCaseChip" style="vertical-align:3px;margin-left:8px">DRAFT</span></h1>
+          <span class="sub">One Medical · visit of Jun 3 · invoice #OM-44218</span>
+        </div>
+        <div style="display:flex;gap:10px" id="dCaseActions">
+          <button class="btn primary" onclick="sendD()">Send dispute</button>
+          <button class="btn ghost" onclick="toast('Dismissed — case stays in your records')">Dismiss case</button>
+        </div>
+      </div>
+
+      <div class="casegrid">
+        <div>
+          <div class="eyebrow" style="margin-bottom:10px">The documents — side by side</div>
+          <div class="docs">
+            <div class="doc">
+              <div class="dochead"><span>One Medical · statement</span><span>Jun 9</span></div>
+              <div class="line"><span>Patient: T. Snyder</span><span class="c">Visit 06/03</span></div>
+              <div class="line hl num"><span>Office visit — 99213</span><b>$252.00</b></div>
+              <div class="line hl num"><span>Venipuncture — 36415</span><b>$48.00</b></div>
+              <div class="line num"><span>Lab handling</span><span>$0.00</span></div>
+              <div class="line tot num"><span>Patient responsibility</span><b style="color:var(--red)">$300.00</b></div>
+            </div>
+            <div class="doc">
+              <div class="dochead"><span>Anthem · EOB #A-83721</span><span>Jun 8</span></div>
+              <div class="line"><span>Claim 06/03 · One Medical</span><span class="c">In-network</span></div>
+              <div class="line hl-g num"><span>99213 — allowed</span><b>$74.00</b></div>
+              <div class="line hl-g num"><span>36415 — allowed</span><b>$12.00</b></div>
+              <div class="line num"><span>Plan paid</span><span>$0.00 (deductible)</span></div>
+              <div class="line tot num"><span>You owe</span><b style="color:var(--money)">$86.00</b></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px">
+            <div class="eyebrow">What doesn't match</div>
+            <table class="compare num">
+              <tr><th>Line item</th><th>They billed</th><th>EOB allows</th><th>Excess</th></tr>
+              <tr><td>Office visit (99213)</td><td class="bad">$252</td><td>$74</td><td class="bad">+$178</td></tr>
+              <tr><td>Venipuncture (36415)</td><td class="bad">$48</td><td>$12</td><td class="bad">+$36</td></tr>
+              <tr><td><b>Your responsibility</b></td><td class="bad"><b>$300</b></td><td class="good"><b>$86</b></td><td class="bad"><b>+$214</b></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="eyebrow">The plan</div>
+            <div class="steps">
+              <div class="step">Submit the dispute through One Medical's billing portal, attaching the EOB.</div>
+              <div class="step">Track their response — follow up by phone script if silent for 10 days.</div>
+              <div class="step">Verify the corrected bill shows $86, close the case, report back.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="eyebrow">Dispute letter <span class="letter edit" style="background:none;border:none;padding:0" onclick="toast('Letter editing — desktop editor not in this prototype')">Edit</span></div>
+            <div class="letter">
+              To One Medical Billing —<br><br>
+              I'm disputing invoice #OM-44218 for the June 3 visit. My Anthem EOB (#A-83721) shows allowed member
+              responsibility of <b>$86</b>, not the <b>$300</b> billed. Codes 99213 and 36415 were billed above the
+              contracted rate. Please reissue a corrected statement…<br>
+              <span style="color:var(--muted)">— prepared by Steward as Tim's authorized agent</span>
+            </div>
+          </div>
+          <p class="note" style="text-align:center">Window closes Jun 28 · Nothing is sent until you approve · Every step lands in your audit log</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUBSCRIPTIONS -->
+    <section class="dview" data-view="subs">
+      <div class="pagehead">
+        <h1>Subscriptions</h1>
+        <span class="sub">Source of truth: your transactions · enriched from email</span>
+      </div>
+      <div class="card"><div class="summary num">
+        <div><div class="v">$86</div><div class="l">per month</div></div>
+        <div><div class="v">$1,032</div><div class="l">per year</div></div>
+        <div><div class="v">7</div><div class="l">active</div></div>
+        <div><div class="v money">$252/yr</div><div class="l">flagged</div></div>
+      </div></div>
+      <div class="card" style="padding:6px 14px">
+        <table class="table">
+          <tr><th>Subscription</th><th>Insight</th><th>Source</th><th style="text-align:right">Monthly</th><th></th></tr>
+          <tr>
+            <td><div class="name">Hulu</div><div class="sub">Visa ···6411</div></td>
+            <td>Price rose $13 → $18 · Disney+ bundle includes it</td>
+            <td><span class="src v">billing + receipts</span></td>
+            <td style="text-align:right" class="num"><b>$18.00</b></td>
+            <td><span class="linkish" onclick="toast('Cancel flow — fully wired in the mobile prototype')">Review</span></td>
+          </tr>
+          <tr>
+            <td><div class="name">iCloud+</div><div class="sub">Apple ID</div></td>
+            <td>Duplicate — Apple One already includes 2TB iCloud</td>
+            <td><span class="src">receipts only — Apple blob</span></td>
+            <td style="text-align:right" class="num"><b>$2.99</b></td>
+            <td><span class="linkish" onclick="toast('Apple-billed — only you can cancel; I verify after')">Review</span></td>
+          </tr>
+          <tr>
+            <td><div class="name">Netflix</div><div class="sub">Visa ···6411</div></td>
+            <td>Used steadily</td>
+            <td><span class="src v">billing + receipts</span></td>
+            <td style="text-align:right" class="num">$15.49</td><td></td>
+          </tr>
+          <tr>
+            <td><div class="name">Spotify Duo</div><div class="sub">Amex ···0042</div></td>
+            <td>Used steadily</td>
+            <td><span class="src v">billing + receipts</span></td>
+            <td style="text-align:right" class="num">$14.99</td><td></td>
+          </tr>
+          <tr>
+            <td><div class="name">Disney+ bundle</div><div class="sub">Visa ···6411</div></td>
+            <td>Includes Hulu w/ ads</td>
+            <td><span class="src v">billing + receipts</span></td>
+            <td style="text-align:right" class="num">$10.99</td><td></td>
+          </tr>
+          <tr>
+            <td><div class="name">NYT All Access</div><div class="sub">Visa ···6411</div></td>
+            <td>Annual · renews Oct — I'll flag it 2 weeks before</td>
+            <td><span class="src">billing only — no receipts</span></td>
+            <td style="text-align:right" class="num">$17/4wk</td><td></td>
+          </tr>
+          <tr>
+            <td><div class="name">Apple One</div><div class="sub">Apple ID</div></td>
+            <td>Family plan</td>
+            <td><span class="src">receipts only — Apple blob</span></td>
+            <td style="text-align:right" class="num">$19.95</td><td></td>
+          </tr>
+        </table>
+      </div>
+      <p class="note">“billing + receipts” = confirmed in your transactions and itemized from email — I can verify cancellations stick. “receipts only” = inside an aggregated charge. “billing only” = never emails you; I watch the amount instead.</p>
+    </section>
+
+    <!-- ACTIVITY -->
+    <section class="dview" data-view="activity">
+      <div class="pagehead">
+        <h1>Activity</h1>
+        <span class="sub">Everything I do, on the record · <span class="linkish" onclick="nav('briefing')">weekly brief</span></span>
+      </div>
+      <div class="card"><div class="summary num">
+        <div><div class="v money">$259</div><div class="l">Recovered in June</div></div>
+        <div><div class="v" id="dActCount">8</div><div class="l">Actions taken</div></div>
+        <div><div class="v">41</div><div class="l">Charges checked</div></div>
+        <div><div class="v">1</div><div class="l">Watching</div></div>
+      </div></div>
+
+      <div id="dProposed">
+        <div class="daylabel">Needs your decision</div>
+        <div class="card" style="padding:4px 18px;border-left:3px solid var(--ink)">
+          <div class="event">
+            <span class="ico">⚑</span>
+            <div class="body">
+              <div class="t">Proposed: dispute One Medical bill</div>
+              <div class="s">Billed $300 vs. EOB $86 — draft ready, window closes Jun 28. Nothing is sent until you approve.</div>
+              <div class="meta"><a onclick="nav('case')">Review dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
+            </div>
+            <div class="amt money num">$214</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dDispute" style="display:none">
+        <div class="daylabel">Just now</div>
+        <div class="card" style="padding:4px 18px">
+          <div class="event">
+            <span class="ico">⇪</span>
+            <div class="body">
+              <div class="t">Sent medical bill dispute</div>
+              <div class="s">One Medical billed $300 vs. EOB $86 — you approved. Tracking the response, typically 7–10 days.</div>
+              <div class="meta"><a onclick="nav('case')">Case file</a><a onclick="toast('Letter saved to documents')">Letter sent</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="daylabel">Yesterday</div>
+      <div class="card" style="padding:4px 18px">
+        <div class="event">
+          <span class="ico">✓</span>
+          <div class="body">
+            <div class="t">Recovered overdraft fee</div>
+            <div class="s">Chase charged $45 on Jun 8. Waiver requested — refund posted and verified on your statement.</div>
+            <div class="meta"><a onclick="toast('12-year customer, first request — granted')">Why</a><a onclick="toast('Evidence viewer — not in this prototype')">Evidence</a></div>
+          </div>
+          <div class="amt money num">+$45</div>
+        </div>
+        <div class="event">
+          <span class="ico">✕</span>
+          <div class="body">
+            <div class="t">Cancelled Paramount+</div>
+            <div class="s">Unused 4 months. You approved Mon — confirmed, and verified no charge on your June statement.</div>
+            <div class="meta"><a onclick="toast('No correlated usage since February')">Why</a><a onclick="toast('Okay — resubscribing')">Undo</a></div>
+          </div>
+          <div class="amt money num">+$12/mo</div>
+        </div>
+      </div>
+
+      <div class="daylabel">Jun 5</div>
+      <div class="card" style="padding:4px 18px">
+        <div class="event">
+          <span class="ico">☰</span>
+          <div class="body">
+            <div class="t">Weekly sweep — all clear</div>
+            <div class="s">Checked 41 new charges against your patterns. Nothing unusual.</div>
+          </div>
+          <div class="amt"><span class="chip ok">Done</span></div>
+        </div>
+      </div>
+    </section>
+    <!-- WEEKLY BRIEFING -->
+    <section class="dview" data-view="briefing" style="max-width:640px">
+      <div class="pagehead">
+        <div>
+          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
+          <h1>Your week</h1>
+          <span class="sub">Jun 8–14 · from Steward · 2 min · also sent to your email</span>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--ink)">
+        <div class="eyebrow">Steward</div>
+        <p style="font-size:14px;line-height:1.6;color:var(--ink-2)" id="bfLead">A solid week — two wins verified, and one decision waiting on you.</p>
+      </div>
+
+      <div class="eyebrow" style="margin:18px 4px 8px">Needs you</div>
+      <div class="card" style="border-left:3px solid var(--ink)" id="bfProposed">
+        <div class="row" style="border:none;padding:2px 0">
+          <div class="body"><div class="t">Proposed: dispute One Medical bill</div><div class="s">Billed $300 vs. EOB $86 · window closes Jun 28</div></div>
+          <span class="right num" style="color:var(--money);font-weight:700">$214</span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn primary" onclick="nav('case')">Review dispute</button>
+          <button class="btn ghost" onclick="dismissD();toast('De-prioritized — it stays an open decision in Activity')">Not now</button>
+        </div>
+      </div>
+      <div class="card" id="bfNone" style="display:none">
+        <div class="row" style="border:none"><div class="body"><div class="t" style="color:var(--money)">✓ Nothing needs you — enjoy the week.</div></div></div>
+      </div>
+
+      <div class="eyebrow" style="margin:18px 4px 8px">Done this week</div>
+      <div class="card" style="padding:6px 20px">
+        <div class="row"><div class="body"><div class="t">Recovered overdraft fee</div><div class="s">Refund posted · verified on your statement</div></div><span class="right num" style="color:var(--money)">+$45</span></div>
+        <div class="row"><div class="body"><div class="t">Cancelled Paramount+</div><div class="s">Verified — no charge on your June statement</div></div><span class="right num" style="color:var(--money)">+$12/mo</span></div>
+        <div class="row"><div class="body"><div class="t">Checked 41 charges</div><div class="s">Weekly sweep — all matched your patterns</div></div><span class="chip ok">All clear</span></div>
+      </div>
+
+      <div id="bfWatchWrap" style="display:none">
+      <div class="eyebrow" style="margin:18px 4px 8px">Watching</div>
+      <div class="card" style="padding:6px 20px">
+        <div class="row" id="bfWatchDispute"><div class="body"><div class="t">One Medical dispute</div><div class="s">Sent — typical response 7–10 days</div></div><span class="chip pend">Watching</span></div>
+      </div>
+      </div>
+
+      <div class="eyebrow" style="margin:18px 4px 8px">Coming up</div>
+      <div class="card" style="padding:6px 20px">
+        <div class="row"><div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div><span class="right num">$2,110</span></div>
+        <div class="row"><div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div></div>
+        <div class="row"><div class="body"><div class="t">NYT annual plan renews Oct</div><div class="s">I'll flag it two weeks out</div></div></div>
+      </div>
+
+      <div class="card value-card">
+        <div class="eyebrow">Running total · 2026</div>
+        <div class="amt num">Recovered <em>$1,118</em> since January</div>
+        <a onclick="nav('activity')">Every action, on the record →</a>
+      </div>
+      <p class="note" style="text-align:center">Arrives Sunday evenings, here and by email. Want a different day, or more detail? Tell me in chat.</p>
+    </section>
+
+    <!-- YOU / HOW STEWARD WORKS -->
+    <section class="dview" data-view="you" style="max-width:640px">
+      <div class="pagehead">
+        <div>
+          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
+          <h1>You</h1>
+          <span class="sub">tim@tjsnyder.com · household of 4</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">How Steward works</div>
+        <div class="row" style="border:none">
+          <span style="color:var(--money);font-weight:700">✓</span>
+          <div class="body"><div class="t">I watch and prepare on my own</div>
+          <div class="s">Reading bills, reconciling EOBs, spotting subscriptions, pulling quotes, drafting letters — none of it needs your time.</div></div>
+        </div>
+        <div class="row">
+          <span style="color:var(--ink);font-weight:700">✋</span>
+          <div class="body"><div class="t">I always ask before acting for you</div>
+          <div class="s">Canceling, disputing, switching, filing, spending — nothing happens until you approve it, with the evidence in front of you.</div></div>
+        </div>
+        <div class="row">
+          <span style="color:var(--ink);font-weight:700">☰</span>
+          <div class="body"><div class="t">Everything is on the record</div>
+          <div class="s">Every action lands in your Activity log with the why and the proof.</div></div>
+        </div>
+      </div>
+      <div class="card" style="background:rgba(176,66,26,.05);border-color:rgba(176,66,26,.25)">
+        <div class="t" style="font-size:13.5px;font-weight:700;color:var(--red);margin-bottom:4px">Never, even with approval</div>
+        <p style="font-size:12.5px;color:var(--ink-2);line-height:1.5">Moving money outside your accounts, legal filings, and credential changes — I prepare these, you execute them.</p>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Standing instructions</div>
+        <div class="row" style="border:none"><div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div><span class="linkish" onclick="toast('Removed — I\'ll surface everything again')">Remove</span></div>
+        <div class="row"><div class="body"><div class="t">"Always keep HBO Max — the kids use it"</div><div class="s">set May 14, in chat</div></div><span class="linkish" onclick="toast('Removed')">Remove</span></div>
+        <p class="note" style="margin-top:8px">Tell me in chat how you want things handled — I'll remember it here.</p>
+      </div>
+      <div class="card" style="padding:6px 20px">
+        <div class="row" style="cursor:pointer" onclick="toast('Connected accounts — not in this prototype yet')"><div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · email watcher on</div></div><span class="linkish">›</span></div>
+        <div class="row" style="cursor:pointer" onclick="toast('Household — not in this prototype yet')"><div class="body"><div class="t">Household</div><div class="s">Tim, Sarah, 2 dependents</div></div><span class="linkish">›</span></div>
+        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out — we cancel subscriptions for a living')"><div class="body"><div class="t">Your plan</div><div class="s">Steward subscription · $20/mo</div></div><span class="linkish">›</span></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── CHAT RAIL ── -->
+  <aside class="chatrail">
+    <div class="head">
+      <div class="t">Steward</div>
+      <div class="s">Acting at your direction · audit logged</div>
+    </div>
+    <div class="thread" id="dThread">
+      <div class="msg user"><div class="bubble">How much have we spent on medical this year?</div></div>
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble"><b class="num">$4,120</b> so far — most of it in March. Tracking under last year.</div></div>
+      <div class="minicard" id="dChatCard">
+        <div class="eyebrow" style="margin-bottom:4px">Needs you</div>
+        One Medical billed <b class="num">$300</b> — EOB says <b class="num">$86</b>. Draft dispute ready: <b class="money num">$214 back</b>.
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="nav('case')">Review</button>
+          <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('It stays in Needs attention')">Not now</button>
+        </div>
+      </div>
+    </div>
+    <div class="chatdock">
+      <button class="attach" onclick="toast('Attach any bill or document — I\'ll read it')">＋</button>
+      <input id="dChatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')dSend()">
+      <button class="send" onclick="dSend()">➤</button>
+    </div>
+  </aside>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  const state = { sent: false, attention: true };
+
+  function nav(view) {
+    document.querySelectorAll('.dview').forEach(v => v.classList.toggle('active', v.dataset.view === view));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.nav === view));
+    document.querySelector('.main').scrollTop = 0;
+  }
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+  function render() {
+    document.getElementById('dAttention').style.display = (state.attention && !state.sent) ? '' : 'none';
+    document.getElementById('navDot').style.display = (state.attention && !state.sent) ? '' : 'none';
+    document.getElementById('dDispute').style.display = state.sent ? '' : 'none';
+    document.getElementById('dProposed').style.display = state.sent ? 'none' : '';
+    document.getElementById('dCaseChip').textContent = state.sent ? 'SENT' : 'DRAFT';
+    document.getElementById('dCaseActions').style.display = state.sent ? 'none' : '';
+    document.getElementById('dChatCard').style.display = state.sent ? 'none' : '';
+    document.getElementById('homeStatus').textContent = state.sent
+      ? 'Nothing needs you · your weekly brief ›' : '1 thing needs you · your weekly brief ›';
+    document.getElementById('dActCount').textContent = state.sent ? '9' : '8';
+    document.getElementById('bfProposed').style.display = state.sent ? 'none' : '';
+    document.getElementById('bfNone').style.display = state.sent ? '' : 'none';
+    document.getElementById('bfWatchWrap').style.display = state.sent ? '' : 'none';
+    document.getElementById('bfLead').textContent = state.sent
+      ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
+      : 'A solid week — two wins verified, and one decision waiting on you.';
+  }
+  function dismissD() { state.attention = false; render(); toast('Okay — it stays in Needs attention'); }
+  function sendD() {
+    state.sent = true; render();
+    toast('Dispute sent ✓ Tracking the response');
+    const th = document.getElementById('dThread');
+    const m = document.createElement('div');
+    m.className = 'msg steward';
+    m.innerHTML = '<div class="who">Steward</div><div class="bubble">Dispute sent to One Medical at 9:36 AM — tracking it. Typical response 7–10 days. ✓</div>';
+    th.appendChild(m); th.scrollTop = th.scrollHeight;
+    nav('activity');
+  }
+  function dSend() {
+    const box = document.getElementById('dChatBox');
+    const text = box.value.trim(); if (!text) return;
+    box.value = '';
+    const th = document.getElementById('dThread');
+    const m = document.createElement('div');
+    m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
+    m.querySelector('.bubble').textContent = text;
+    th.appendChild(m);
+    const r = document.createElement('div');
+    r.className = 'msg steward';
+    if (/send|approve|yes|do it|looks right/i.test(text) && !state.sent) {
+      th.scrollTop = th.scrollHeight;
+      setTimeout(sendD, 500);
+      return;
+    }
+    r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer from your financial graph — this desktop prototype wires the dispute flow.</div>';
+    setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
+    th.scrollTop = th.scrollHeight;
+  }
+  render();
+</script>
+</body>
+</html>
