@@ -206,9 +206,11 @@
            padding:28px 22px;background:linear-gradient(180deg,#143A3D 0%,#1C4A4E 100%);color:#fff}
   .welcome .wm{font-size:30px;font-weight:700;letter-spacing:-.02em}
   .welcome h1{font-size:25px;font-weight:700;line-height:1.28;margin:12px 0 16px}
-  .wfeat{display:flex;gap:10px;margin-top:11px;font-size:13.5px;line-height:1.5;color:rgba(255,255,255,.92)}
-  .wfeat .tick{color:#7CD9B8;font-weight:700;flex:none}
-  .welcome .btn.light{background:#fff;color:var(--ink);border:none;margin-top:24px;width:100%}
+  .door{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.28);border-radius:10px;
+        padding:14px 16px;cursor:pointer;margin-top:10px}
+  .door:active{background:rgba(255,255,255,.14)}
+  .door .t{font-weight:700;font-size:15px;color:#fff}
+  .door .s{font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.72);margin-top:3px}
   .price{font-size:30px;font-weight:700;margin:8px 0 10px}
   .price small{font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
 
@@ -1013,12 +1015,19 @@
       <div class="welcome">
         <div class="wm">Steward</div>
         <h1>A chief of staff for your financial life.</h1>
-        <div class="wfeat"><span class="tick">✓</span><span>Finds money you're losing — billing errors, price creep, duplicate coverage</span></div>
-        <div class="wfeat"><span class="tick">✓</span><span>Fixes it for you — and always asks before acting</span></div>
-        <div class="wfeat"><span class="tick">✓</span><span>Everything on the record, with evidence</span></div>
-        <button class="btn light" onclick="startCold()">Send me a bill — I'll check it</button>
-        <button class="btn ghost" style="width:100%;margin-top:10px;color:#fff;border-color:rgba(255,255,255,.35)" onclick="openOauth()">Or connect email — I'll find issues myself</button>
-        <p style="font-size:11.5px;margin-top:12px;text-align:center;color:rgba(255,255,255,.55)">Nothing to connect, nothing to set up — start with whatever's in front of you.</p>
+        <p style="font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:6px">What brings you in?</p>
+        <div class="door" onclick="startCold()">
+          <div class="t">A bill that looks wrong</div>
+          <div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div>
+        </div>
+        <div class="door" onclick="openOauth()">
+          <div class="t">Subscriptions piling up</div>
+          <div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div>
+        </div>
+        <div class="door" onclick="openPlaid()">
+          <div class="t">How am I doing, money-wise?</div>
+          <div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div>
+        </div>
       </div>
     </div>
   </section>
