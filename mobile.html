@@ -202,6 +202,15 @@
   .empty .btn{padding:9px 0}
 
   /* cold start */
+  .welcome{display:flex;flex-direction:column;justify-content:flex-end;flex:1;border-radius:16px;margin:4px 0 12px;
+           padding:28px 22px;background:linear-gradient(180deg,#143A3D 0%,#1C4A4E 100%);color:#fff}
+  .welcome .wm{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .welcome h1{font-size:25px;font-weight:700;line-height:1.28;margin:12px 0 16px}
+  .door{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.28);border-radius:10px;
+        padding:14px 16px;cursor:pointer;margin-top:10px}
+  .door:active{background:rgba(255,255,255,.14)}
+  .door .t{font-weight:700;font-size:15px;color:#fff}
+  .door .s{font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.72);margin-top:3px}
   .price{font-size:30px;font-weight:700;margin:8px 0 10px}
   .price small{font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
 
@@ -927,10 +936,7 @@
       </span>
     </div>
     <div class="scroll">
-      <div style="margin:6px 4px 16px">
-        <div style="font-size:23px;font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1.3">A chief of staff for your financial life.</div>
-        <p style="font-size:13px;color:var(--muted);margin-top:6px">What brings you in?</p>
-      </div>
+      <div class="statusline"><span class="ok"></span>First session — I'm ready when you are</div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">A bill that looks wrong</div>
@@ -969,6 +975,29 @@
 
     </div>
     <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
+  </section>
+
+  <!-- ── WELCOME (onboarding) ── -->
+  <section class="view" data-view="welcome">
+    <div class="scroll" style="display:flex">
+      <div class="welcome">
+        <div class="wm">Steward</div>
+        <h1>A chief of staff for your financial life.</h1>
+        <p style="font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:6px">What brings you in?</p>
+        <div class="door" onclick="go('chat',true)">
+          <div class="t">A bill that looks wrong</div>
+          <div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div>
+        </div>
+        <div class="door" onclick="openOauth()">
+          <div class="t">Subscriptions piling up</div>
+          <div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div>
+        </div>
+        <div class="door" onclick="openPlaid()">
+          <div class="t">How am I doing, money-wise?</div>
+          <div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ── FIRST SWEEP ── -->
@@ -1164,7 +1193,7 @@
       7 + (p === 'sent' ? 1 : 0) + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
   }
 
-  const COLD = ['sweep', 'digest'];
+  const COLD = ['welcome', 'sweep', 'digest'];
   function go(view, fromTab) {
     if (view === 'home' && state.cold) view = 'coldhome';
     if (view === current) return;
@@ -1381,8 +1410,9 @@
     el.classList.add('on');
   }
 
-  current = 'coldhome';
-  document.querySelector('[data-view="coldhome"]').classList.add('active');
+  current = 'welcome';
+  document.querySelector('[data-view="welcome"]').classList.add('active');
+  document.getElementById('tabbar').style.display = 'none';
   render();
 </script>
 </body>
