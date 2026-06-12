@@ -528,8 +528,11 @@
         <div class="msg steward"><div class="who">Steward</div>
           <div class="bubble">Let's sort it out. I can't see your email yet — upload what they sent you (their reply or the bill) and I'll read it.</div>
         </div>
-        <div class="btnrow" id="hc1btns" style="max-width:84%;margin-bottom:12px">
-          <button class="btn primary" onclick="coldUploadReply()">📎 Upload their reply</button>
+        <div id="hc1btns" style="max-width:84%;margin-bottom:12px">
+          <div class="btnrow">
+            <button class="btn primary" onclick="coldUploadReply()">📎 Upload their reply</button>
+          </div>
+          <div class="why" onclick="toast('Anything sent to bills@tim.yoursteward.com lands here automatically')">or forward it to bills@tim.yoursteward.com</div>
         </div>
       </div>
       <div class="hideme" id="hc2">
@@ -886,6 +889,17 @@
           <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed')">Remove</a>
         </div>
         <div class="note" style="text-align:left;margin-top:8px">Tell me in chat how you want things handled — I'll remember it here.</div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--ink)">
+        <div class="eyebrow">Your Steward address</div>
+        <div class="row" style="border:none;padding:6px 0">
+          <div class="body"><div class="t num" style="font-size:15px">bills@tim.yoursteward.com</div>
+          <div class="s">Forward any bill or notice — no app needed. Set it as your billing email at providers and I become the system of record.</div></div>
+        </div>
+        <div class="btnrow" style="margin-top:6px">
+          <button class="btn ghost" style="flex:none;padding:8px 16px" onclick="toast('Copied — paste it into any billing portal')">Copy address</button>
+        </div>
       </div>
 
       <div class="card">

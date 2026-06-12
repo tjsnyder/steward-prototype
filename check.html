@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steward — Is your medical bill wrong?</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--canvas:#F7F8FA;--card:#FFFFFF;--ink:#143A3D;--ink-2:#334E50;--money:#0A7C5A;
+        --text:#1C2526;--muted:#66757A;--hairline:#E2E7EA;--amber:#B07C10;--red:#B0421A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Geist',-apple-system,sans-serif;background:var(--canvas);color:var(--text);
+       display:flex;justify-content:center;min-height:100vh}
+  .num{font-variant-numeric:tabular-nums}
+  .page{width:100%;max-width:440px;padding:28px 20px 48px}
+  .wm{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:26px}
+  h1{font-size:27px;font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1.25}
+  .sub{font-size:14.5px;line-height:1.55;color:var(--ink-2);margin:10px 0 22px}
+  .card{background:var(--card);border:1px solid var(--hairline);border-radius:8px;padding:18px;margin-bottom:14px}
+  .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .btn{border-radius:6px;padding:13px 0;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;width:100%}
+  .btn.primary{background:var(--ink);color:#fff;border:1px solid var(--ink)}
+  .btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--hairline)}
+  .drop{border:1.5px dashed #C3CDD2;border-radius:8px;padding:26px 16px;text-align:center;cursor:pointer;background:transparent}
+  .drop .big{font-size:15px;font-weight:600;color:var(--ink)}
+  .drop .s{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5}
+  .prog{font-size:13.5px;line-height:2.2;color:var(--ink-2)}
+  .prog .tick{color:var(--money);font-weight:700;margin-right:8px}
+  .hide{display:none}
+  .bigmoney{font-size:34px;font-weight:700;color:var(--money);letter-spacing:-.02em}
+  .compare{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  .compare th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 6px;border-bottom:1px solid var(--hairline)}
+  .compare td{padding:8px 6px;border-bottom:1px solid var(--hairline)}
+  .compare tr:last-child td{border-bottom:none}
+  .bad{color:var(--red);font-weight:600}.good{color:var(--money);font-weight:600}
+  .letter{background:#FAFBFC;border:1px dashed #C8D2D6;border-radius:6px;padding:14px;font-size:12.5px;line-height:1.65;color:var(--ink-2);margin-top:10px}
+  #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--ink);color:#fff;
+         font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;transition:opacity .25s;white-space:nowrap}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wm">Steward</div>
+
+  <!-- step 1: landing -->
+  <div id="s1">
+    <h1>Is your medical bill wrong?</h1>
+    <p class="sub">About half of them are. Upload yours — I'll check it line by line against what you actually owe. Free, no account.</p>
+    <div class="drop" onclick="startCheck()">
+      <div class="big">📄 Upload your bill</div>
+      <div class="s">photo or PDF · add your EOB too if you have it</div>
+    </div>
+    <p class="note">Checked, then deleted — nothing is stored unless you decide to keep me around.<br>Or forward it anytime: <b>bills@yoursteward.com</b></p>
+  </div>
+
+  <!-- step 2: working -->
+  <div id="s2" class="hide">
+    <h1>Checking it…</h1>
+    <div class="card" style="margin-top:18px">
+      <div class="prog">
+        <div id="p1" class="hide"><span class="tick">✓</span>Read your bill — One Medical, visit of Jun 3</div>
+        <div id="p2" class="hide"><span class="tick">✓</span>2 line items · <b class="num">$300</b> billed to you</div>
+        <div id="p3" class="hide"><span class="tick">✓</span>Read your EOB — allowed amounts found</div>
+        <div id="p4" class="hide"><span class="tick">✓</span>Compared line by line</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- step 3: result -->
+  <div id="s3" class="hide">
+    <div class="eyebrow">Checked — here's what I found</div>
+    <div class="bigmoney num">$214 overcharged</div>
+    <p class="sub" style="margin-top:6px">Two line items are billed above your plan's contracted rate. Disputes like this succeed ~78% with Anthem.</p>
+    <div class="card">
+      <table class="compare num">
+        <tr><th>Line item</th><th>They billed</th><th>You owe</th></tr>
+        <tr><td>Office visit (99213)</td><td class="bad">$252</td><td>$74</td></tr>
+        <tr><td>Venipuncture (36415)</td><td class="bad">$48</td><td>$12</td></tr>
+        <tr><td><b>Total</b></td><td class="bad"><b>$300</b></td><td class="good"><b>$86</b></td></tr>
+      </table>
+    </div>
+    <button class="btn primary" onclick="location.href='mobile.html'">Have Steward fight it — first fix is free</button>
+    <button class="btn ghost" style="margin-top:10px" onclick="showLetter()">No thanks — just give me the dispute letter</button>
+    <div id="letterBox" class="hide">
+      <div class="letter">
+        To One Medical Billing —<br><br>
+        I'm disputing invoice #OM-44218 for the June 3 visit. My EOB shows allowed member responsibility of
+        <b>$86</b>, not the <b>$300</b> billed. Codes 99213 and 36415 were billed above the contracted rate.
+        Please reissue a corrected statement.
+      </div>
+      <button class="btn ghost" style="margin-top:10px" onclick="toast('Copied — paste it into their billing portal or email')">Copy letter</button>
+      <p class="note">It's yours, free. If they push back, I'm here — and I know what works on round two.</p>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+  function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');
+    clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)}
+  function startCheck(){
+    document.getElementById('s1').classList.add('hide');
+    document.getElementById('s2').classList.remove('hide');
+    ['p1','p2','p3','p4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.remove('hide'),500+i*800));
+    setTimeout(()=>{document.getElementById('s2').classList.add('hide');
+      document.getElementById('s3').classList.remove('hide');window.scrollTo(0,0)},4200);
+  }
+  function showLetter(){document.getElementById('letterBox').classList.remove('hide')}
+</script>
+</body>
+</html>
