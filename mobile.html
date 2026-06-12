@@ -202,15 +202,6 @@
   .empty .btn{padding:9px 0}
 
   /* cold start */
-  .welcome{display:flex;flex-direction:column;justify-content:flex-end;flex:1;border-radius:16px;margin:4px 0 12px;
-           padding:28px 22px;background:linear-gradient(180deg,#143A3D 0%,#1C4A4E 100%);color:#fff}
-  .welcome .wm{font-size:30px;font-weight:700;letter-spacing:-.02em}
-  .welcome h1{font-size:25px;font-weight:700;line-height:1.28;margin:12px 0 16px}
-  .door{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.28);border-radius:10px;
-        padding:14px 16px;cursor:pointer;margin-top:10px}
-  .door:active{background:rgba(255,255,255,.14)}
-  .door .t{font-weight:700;font-size:15px;color:#fff}
-  .door .s{font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.72);margin-top:3px}
   .price{font-size:30px;font-weight:700;margin:8px 0 10px}
   .price small{font-size:13px;color:var(--muted);font-weight:500;margin-left:6px}
 
@@ -259,7 +250,7 @@
         <div style="font-size:14.5px;font-weight:600;margin-bottom:4px">One Medical: "Your statement is ready"</div>
         <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">The email doesn't include the bill itself — it's in their patient portal. Want me to take a look?</p>
         <div class="btnrow" style="margin-top:12px">
-          <button class="btn primary" onclick="go('invest')">Take a look</button>
+          <button class="btn primary" onclick="startInvest()">Take a look</button>
           <button class="btn ghost" onclick="promptDismiss()">Not now</button>
         </div>
       </div>
@@ -284,7 +275,7 @@
         <div class="queueline" onclick="toast('Queue view — not in this prototype yet')">2 more need attention<span class="chev">›</span></div>
       </div>
 
-      <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('briefing')"><span class="ok"></span>Nothing needs you — your weekly brief is ready<span class="chev">›</span></div>
+      <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('activity')"><span class="ok"></span>Nothing needs you — your weekly brief is ready<span class="chev">›</span></div>
 
       <div class="card">
         <div class="eyebrow">Net Worth</div>
@@ -299,18 +290,6 @@
         <div class="hero-split">
           <div><div class="mini-label">Investments</div><div class="mini-val num">$146,900<span class="up">+2.4% MTD</span></div></div>
           <div><div class="mini-label">Cash</div><div class="mini-val num">$18,240</div></div>
-        </div>
-      </div>
-
-      <div class="sechead"><h3>Goals</h3></div>
-      <div class="card" style="padding:6px 16px">
-        <div class="row">
-          <div class="body"><div class="t">College fund</div><div class="goalbar"><i style="width:62%"></i></div></div>
-          <span class="chip ok">On track</span>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">Emergency fund</div><div class="goalbar"><i style="width:70%"></i></div></div>
-          <span class="right num" style="color:var(--muted);font-weight:500">$14k / $20k</span>
         </div>
       </div>
 
@@ -365,18 +344,71 @@
         <div class="bars"><i style="height:22%"></i><i style="height:18%"></i><i class="hot" style="height:92%"></i><i style="height:30%"></i><i style="height:24%"></i><i style="height:38%"></i></div>
         <div class="axis"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
       </div>
-      <div id="chatFindingBlock">
-      <div class="msg steward"><div class="who">Steward</div>
-        <div class="bubble">One thing while you're here — yesterday's One Medical bill doesn't match your Anthem EOB. I've prepared a dispute.</div>
+
+      <div class="hideme" id="invThread">
+            <div class="msg steward"><div class="who">Steward</div>
+        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
       </div>
-      <div class="inline-card action" id="chatActionCard">
-        <div class="eyebrow">Needs you</div>
-        <h5>One Medical billed $300 — EOB says $86</h5>
-        <p>Two line items don't match the claim. Draft dispute is ready for your review.</p>
-        <div class="recover num">$214 back<small>projected</small></div>
-        <div class="btnrow" style="margin-top:10px">
-          <button class="btn primary" onclick="go('case')">Review dispute</button>
-          <button class="btn ghost" onclick="toast('Okay — it stays in Needs attention')">Not now</button>
+      <div id="inv1" style="max-width:84%;margin-bottom:12px">
+        <div class="btnrow">
+          <button class="btn primary" onclick="openCred('om')">Connect One Medical</button>
+          <button class="btn ghost" onclick="back()">Not now</button>
+        </div>
+        <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
+      </div>
+
+      <div class="hideme" id="invUp">
+        <div class="msg user"><div class="bubble">📄 one-medical-statement.pdf</div></div>
+        <div class="inline-card">
+          <div class="eyebrow">Uploaded · read by Steward</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
+            <div><span class="tick">✓</span>Saved to your documents</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv2">
+        <div class="eyebrow">One Medical · patient portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
+          <div><span class="tick">✓</span>Saved to your documents</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv3">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Got the bill. To know what you <i>should</i> owe, I need the matching EOB from Anthem. Connect Anthem and I'll compare them line by line?</div>
+        </div>
+        <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
+          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv4">
+        <div class="eyebrow">Anthem · member portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>EOB #A-83721 found · same visit</div>
+          <div><span class="tick">✓</span>Compared line items</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv5">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
+        </div>
+        <div class="inline-card action">
+          <div class="eyebrow">Needs you</div>
+          <h5>One Medical billed $300 — EOB says $86</h5>
+          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
+          <div class="recover num">$214 back<small>projected</small></div>
+          <div class="btnrow" style="margin-top:10px">
+            <button class="btn primary" onclick="go('case')">Review dispute</button>
+            <button class="btn ghost" onclick="go('home',true)">Later</button>
+          </div>
         </div>
       </div>
       </div>
@@ -581,10 +613,15 @@
   <!-- ── ACTIVITY ── -->
   <section class="view" data-view="activity">
     <div class="navhead">
-      <div style="flex:1"><div class="title">Activity</div><div class="sub">Everything I do, on the record · <u style="cursor:pointer" onclick="go('briefing')">weekly brief</u></div></div>
+      <div style="flex:1"><div class="title">Activity</div><div class="sub">Everything I do, on the record</div></div>
       <span class="avatar">T</span>
     </div>
     <div class="scroll">
+      <div class="card value-card">
+        <div class="eyebrow">Your week · Jun 8–14 · arrives Sundays by push &amp; email</div>
+        <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
+      </div>
+
       <div class="card summary num">
         <div><div class="v money" id="activityTotal">$259</div><div class="l">Recovered in June</div></div>
         <div><div class="v" id="activityCount">7</div><div class="l">Actions taken</div></div>
@@ -754,84 +791,6 @@
     </div>
   </section>
 
-  <!-- ── INVESTIGATION (just-in-time connect) ── -->
-  <section class="view" data-view="invest">
-    <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
-      <div><div class="title">Steward</div><div class="sub">Looking into: One Medical statement</div></div>
-      <span class="avatar" style="margin-left:auto">T</span>
-    </div>
-    <div class="scroll" id="investScroll">
-      <div class="day">Today, 9:31 AM</div>
-      <div class="msg steward"><div class="who">Steward</div>
-        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
-      </div>
-      <div id="inv1" style="max-width:84%;margin-bottom:12px">
-        <div class="btnrow">
-          <button class="btn primary" onclick="openCred('om')">Connect One Medical</button>
-          <button class="btn ghost" onclick="back()">Not now</button>
-        </div>
-        <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
-      </div>
-
-      <div class="hideme" id="invUp">
-        <div class="msg user"><div class="bubble">📄 one-medical-statement.pdf</div></div>
-        <div class="inline-card">
-          <div class="eyebrow">Uploaded · read by Steward</div>
-          <div class="prog">
-            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
-            <div><span class="tick">✓</span>Saved to your documents</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="inline-card hideme" id="inv2">
-        <div class="eyebrow">One Medical · patient portal</div>
-        <div class="prog">
-          <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
-          <div><span class="tick">✓</span>Saved to your documents</div>
-        </div>
-      </div>
-
-      <div class="hideme" id="inv3">
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Got the bill. To know what you <i>should</i> owe, I need the matching EOB from Anthem. Connect Anthem and I'll compare them line by line?</div>
-        </div>
-        <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
-          <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
-          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
-        </div>
-      </div>
-
-      <div class="inline-card hideme" id="inv4">
-        <div class="eyebrow">Anthem · member portal</div>
-        <div class="prog">
-          <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>EOB #A-83721 found · same visit</div>
-          <div><span class="tick">✓</span>Compared line items</div>
-        </div>
-      </div>
-
-      <div class="hideme" id="inv5">
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
-        </div>
-        <div class="inline-card action">
-          <div class="eyebrow">Needs you</div>
-          <h5>One Medical billed $300 — EOB says $86</h5>
-          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
-          <div class="recover num">$214 back<small>projected</small></div>
-          <div class="btnrow" style="margin-top:10px">
-            <button class="btn primary" onclick="go('case')">Review dispute</button>
-            <button class="btn ghost" onclick="go('home',true)">Later</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="dock"><div class="chatpill" onclick="go('chat')">Message Steward…</div></div>
-  </section>
-
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
   <section class="view" data-view="subs">
     <div class="navhead">
@@ -968,11 +927,14 @@
       </span>
     </div>
     <div class="scroll">
-      <div class="statusline"><span class="ok"></span>First session — I'm ready when you are</div>
+      <div style="margin:6px 4px 16px">
+        <div style="font-size:23px;font-weight:700;letter-spacing:-.01em;color:var(--ink);line-height:1.3">A chief of staff for your financial life.</div>
+        <p style="font-size:13px;color:var(--muted);margin-top:6px">What brings you in?</p>
+      </div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
-        <div class="eyebrow">Start anywhere</div>
-        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">A bill that looks wrong, a subscription you forgot, a question about your money — tell me and I'll take it from there.</p>
+        <div class="eyebrow">A bill that looks wrong</div>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">Send it to me — I'll check it against what you actually owe and fight it if it's off.</p>
         <button class="btn primary" style="width:100%" onclick="go('chat',true)">Send me a bill — I'll check it</button>
       </div>
 
@@ -1007,29 +969,6 @@
 
     </div>
     <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
-  </section>
-
-  <!-- ── WELCOME (cold start) ── -->
-  <section class="view" data-view="welcome">
-    <div class="scroll" style="display:flex">
-      <div class="welcome">
-        <div class="wm">Steward</div>
-        <h1>A chief of staff for your financial life.</h1>
-        <p style="font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:6px">What brings you in?</p>
-        <div class="door" onclick="startCold()">
-          <div class="t">A bill that looks wrong</div>
-          <div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div>
-        </div>
-        <div class="door" onclick="openOauth()">
-          <div class="t">Subscriptions piling up</div>
-          <div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div>
-        </div>
-        <div class="door" onclick="openPlaid()">
-          <div class="t">How am I doing, money-wise?</div>
-          <div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ── FIRST SWEEP ── -->
@@ -1080,7 +1019,7 @@
           <div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Apple One already includes 2TB iCloud</div></div>
           <span class="right num" style="color:var(--money)">$36/yr</span><span class="chevron">›</span>
         </div>
-        <div class="row" style="cursor:pointer" onclick="go('invest')">
+        <div class="row" style="cursor:pointer" onclick="startInvest()">
           <div class="body"><div class="t">One Medical bill — worth checking</div><div class="s">"Statement ready" notice · bill is behind their portal</div></div>
           <span class="chip pend">Look closer</span><span class="chevron">›</span>
         </div>
@@ -1100,92 +1039,6 @@
     </div>
   </section>
 
-  <!-- ── WEEKLY BRIEFING ── -->
-  <section class="view" data-view="briefing">
-    <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
-      <div style="flex:1"><div class="title">Your week</div><div class="sub">Jun 8–14 · from Steward · 2 min</div></div>
-    </div>
-    <div class="scroll">
-      <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
-        <div class="bubble" id="bfLead">A solid week — two wins verified, and one decision waiting on you.</div>
-      </div>
-
-      <div class="sechead"><h3>Needs you</h3></div>
-      <div class="card" style="border-left:3px solid var(--ink)" id="bfPrompt">
-        <div class="row" style="border:none;padding:4px 0">
-          <div class="body"><div class="t">One Medical says a statement is ready</div><div class="s">The bill is behind their portal — I haven't seen it yet.</div></div>
-        </div>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn primary" onclick="go('invest')">Take a look</button>
-          <button class="btn ghost" onclick="promptDismiss()">Not now</button>
-        </div>
-      </div>
-      <div class="card" style="border-left:3px solid var(--ink);display:none" id="bfProposed">
-        <div class="row" style="border:none;padding:4px 0">
-          <div class="body"><div class="t">Proposed: dispute One Medical bill</div><div class="s">Billed $300 vs. EOB $86 · window closes Jun 28</div></div>
-          <span class="right num" style="color:var(--money);font-weight:700">$214</span>
-        </div>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn primary" onclick="go('case')">Review dispute</button>
-          <button class="btn ghost" onclick="dismissFromBriefing()">Not now</button>
-        </div>
-      </div>
-      <div class="card" style="display:none" id="bfNone">
-        <div class="prog"><span class="tick">✓</span>Nothing needs you — enjoy the week.</div>
-      </div>
-
-      <div class="sechead"><h3>Done this week</h3></div>
-      <div class="card" style="padding:6px 16px">
-        <div class="row">
-          <div class="body"><div class="t">Recovered overdraft fee</div><div class="s">Refund posted · verified on your statement</div></div>
-          <span class="right num" style="color:var(--money)">+$45</span>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">Cancelled Paramount+</div><div class="s">Verified — no charge on your June statement</div></div>
-          <span class="right num" style="color:var(--money)">+$12/mo</span>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">Checked 41 charges</div><div class="s">Weekly sweep — all matched your patterns</div></div>
-          <span class="chip ok">All clear</span>
-        </div>
-      </div>
-
-      <div id="bfWatchWrap" style="display:none">
-      <div class="sechead"><h3>Watching</h3></div>
-      <div class="card" style="padding:6px 16px">
-        <div class="row" id="bfWatchDispute">
-          <div class="body"><div class="t">One Medical dispute</div><div class="s">Sent — typical response 7–10 days</div></div>
-          <span class="chip pend">Watching</span>
-        </div>
-      </div>
-      </div>
-
-      <div class="sechead"><h3>Coming up</h3></div>
-      <div class="card" style="padding:6px 16px">
-        <div class="row">
-          <div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div>
-          <span class="right num">$2,110</span>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">NYT annual plan renews Oct</div><div class="s">I'll flag it two weeks out</div></div>
-        </div>
-      </div>
-
-      <div class="card value-card">
-        <div class="eyebrow">Running total · 2026</div>
-        <div class="amt num">Recovered <em>$1,118</em> since January</div>
-        <a onclick="go('activity')">Every action, on the record →</a>
-      </div>
-
-      <div class="note">This arrives Sunday evenings — and as an email, if you like. Want a different day, or more detail? Just tell me.</div>
-    </div>
-    <div class="dock"><div class="chatpill" onclick="go('chat')">Reply to this briefing…</div></div>
-  </section>
-
   <!-- ── TAB BAR (shared) ── -->
   <div class="tabbar" id="tabbar">
     <button class="tab active" data-target="home" onclick="go('home',true)">
@@ -1193,8 +1046,6 @@
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Home</button>
     <button class="tab" data-target="activity" onclick="go('activity',true)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Activity</button>
-    <button class="tab" data-target="chat" onclick="go('chat',true)">
-      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-9 8.36 8.5 8.5 0 01-3.4-.66L3 21l1.8-5.6A8.38 8.38 0 1121 11.5z"/></svg>Ask</button>
     <button class="tab" data-target="autonomy" onclick="go('autonomy',true)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></svg>You</button>
   </div>
@@ -1243,7 +1094,6 @@
         <div><span class="tick">✓</span>Always asks before acting — nothing automatic</div>
         <div><span class="tick">✓</span>Cancel in one tap. No retention games.</div>
       </div>
-      <div class="vaultnote"><span>℞</span><span>Medical bills only? Pay <b>25% of what I recover</b> instead — nothing up front, credited if you ever subscribe.</span></div>
       <div class="btnrow">
         <button class="btn primary" onclick="paySubscribe()">Start — $20/mo</button>
         <button class="btn ghost" onclick="payFree()">Stay free</button>
@@ -1272,7 +1122,7 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: false, email: false, investigated: false };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false };
   const stack = [];
   let current = 'home';
   let credTarget = null;
@@ -1286,8 +1136,6 @@
     show('allClearLine', p === 'sent' || p === 'dismissed');
     show('bellDot', p === 'prompt' || p === 'found');
     show('tabDot', p === 'prompt' || p === 'found');
-    show('chatFindingBlock', p === 'found' || p === 'sent');
-    show('chatActionCard', p === 'found');
     show('chatSentBlock', p === 'sent');
     show('disputeEvent', p === 'sent');
     document.getElementById('caseChip').textContent = p === 'sent' ? 'SENT' : 'DRAFT';
@@ -1304,12 +1152,9 @@
     show('subsAppleWatch', state.apple === 'watching');
     show('handoffEvent', state.handoff === 'sent');
     show('proposedEvent', state.investigated && p !== 'sent');
-    // briefing projections of the same case
-    show('bfPrompt', p === 'prompt');
-    show('bfProposed', state.investigated && p !== 'sent');
-    show('bfNone', !state.investigated && p !== 'prompt');
-    show('bfWatchWrap', p === 'sent');
-    document.getElementById('bfLead').textContent =
+    show('invThread', state.investStarted);
+    document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
+    document.getElementById('wkLead').textContent =
       p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
       : (state.investigated ? 'A solid week — two wins verified, and one decision waiting on you.'
       : 'A quiet week — two wins verified, and one thing worth a look.');
@@ -1319,7 +1164,7 @@
       7 + (p === 'sent' ? 1 : 0) + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
   }
 
-  const COLD = ['welcome', 'sweep', 'digest'];
+  const COLD = ['sweep', 'digest'];
   function go(view, fromTab) {
     if (view === 'home' && state.cold) view = 'coldhome';
     if (view === current) return;
@@ -1335,10 +1180,10 @@
   }
 
   // cold start
-  function startCold() {
-    state.cold = true;
-    document.querySelectorAll('.warm').forEach(e => e.classList.add('hideme'));
+  function startInvest() {
+    state.investStarted = true;
     go('chat', true);
+    render();
   }
   function coldReveal(id) {
     document.getElementById(id).classList.remove('hideme');
@@ -1436,7 +1281,7 @@
   }
   function credCancel() { document.getElementById('credSheet').classList.remove('open'); }
   function uploadBill() {
-    const sc = document.getElementById('investScroll');
+    const sc = document.getElementById('chatScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
     document.getElementById('inv1').classList.add('hideme');
     toast('Reading your upload…');
@@ -1445,7 +1290,7 @@
   }
   function credConnect() {
     credCancel();
-    const sc = document.getElementById('investScroll');
+    const sc = document.getElementById('chatScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
     if (credTarget === 'om') {
       document.getElementById('inv1').classList.add('hideme');
@@ -1536,9 +1381,8 @@
     el.classList.add('on');
   }
 
-  current = 'welcome';
-  document.querySelector('[data-view="welcome"]').classList.add('active');
-  document.getElementById('tabbar').style.display = 'none';
+  current = 'coldhome';
+  document.querySelector('[data-view="coldhome"]').classList.add('active');
   render();
 </script>
 </body>

@@ -205,7 +205,7 @@
     <section class="dview active" data-view="home">
       <div class="pagehead">
         <h1>Good morning, Tim</h1>
-        <span class="sub" id="homeStatus" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="nav('briefing')">1 thing needs you · your weekly brief ›</span>
+        <span class="sub" id="homeStatus" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="nav('activity')">1 thing needs you · your weekly brief ›</span>
       </div>
 
       <div class="card attention" id="dAttention">
@@ -251,18 +251,6 @@
           </div>
           <div class="row" style="border:none;padding-top:4px">
             <div class="body"><div class="t">8 actions taken</div><div class="s">41 charges checked · all on the record</div></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="eyebrow">Goals</div>
-          <div class="row" style="border:none">
-            <div class="body"><div class="t">College fund</div><div class="goalbar"><i style="width:62%"></i></div></div>
-            <span class="chip ok">On track</span>
-          </div>
-          <div class="row">
-            <div class="body"><div class="t">Emergency fund</div><div class="goalbar"><i style="width:70%"></i></div></div>
-            <span class="right num" style="color:var(--muted)">$14k/$20k</span>
           </div>
         </div>
 
@@ -431,7 +419,11 @@
     <section class="dview" data-view="activity">
       <div class="pagehead">
         <h1>Activity</h1>
-        <span class="sub">Everything I do, on the record · <span class="linkish" onclick="nav('briefing')">weekly brief</span></span>
+        <span class="sub">Everything I do, on the record</span>
+      </div>
+      <div class="card value-card">
+        <div class="eyebrow">Your week · Jun 8–14 · arrives Sundays by push &amp; email</div>
+        <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
       </div>
       <div class="card"><div class="summary num">
         <div><div class="v money">$259</div><div class="l">Recovered in June</div></div>
@@ -504,64 +496,6 @@
         </div>
       </div>
     </section>
-    <!-- WEEKLY BRIEFING -->
-    <section class="dview" data-view="briefing" style="max-width:640px">
-      <div class="pagehead">
-        <div>
-          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
-          <h1>Your week</h1>
-          <span class="sub">Jun 8–14 · from Steward · 2 min · also sent to your email</span>
-        </div>
-      </div>
-      <div class="card" style="border-left:3px solid var(--ink)">
-        <div class="eyebrow">Steward</div>
-        <p style="font-size:14px;line-height:1.6;color:var(--ink-2)" id="bfLead">A solid week — two wins verified, and one decision waiting on you.</p>
-      </div>
-
-      <div class="eyebrow" style="margin:18px 4px 8px">Needs you</div>
-      <div class="card" style="border-left:3px solid var(--ink)" id="bfProposed">
-        <div class="row" style="border:none;padding:2px 0">
-          <div class="body"><div class="t">Proposed: dispute One Medical bill</div><div class="s">Billed $300 vs. EOB $86 · window closes Jun 28</div></div>
-          <span class="right num" style="color:var(--money);font-weight:700">$214</span>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:10px">
-          <button class="btn primary" onclick="nav('case')">Review dispute</button>
-          <button class="btn ghost" onclick="dismissD();toast('De-prioritized — it stays an open decision in Activity')">Not now</button>
-        </div>
-      </div>
-      <div class="card" id="bfNone" style="display:none">
-        <div class="row" style="border:none"><div class="body"><div class="t" style="color:var(--money)">✓ Nothing needs you — enjoy the week.</div></div></div>
-      </div>
-
-      <div class="eyebrow" style="margin:18px 4px 8px">Done this week</div>
-      <div class="card" style="padding:6px 20px">
-        <div class="row"><div class="body"><div class="t">Recovered overdraft fee</div><div class="s">Refund posted · verified on your statement</div></div><span class="right num" style="color:var(--money)">+$45</span></div>
-        <div class="row"><div class="body"><div class="t">Cancelled Paramount+</div><div class="s">Verified — no charge on your June statement</div></div><span class="right num" style="color:var(--money)">+$12/mo</span></div>
-        <div class="row"><div class="body"><div class="t">Checked 41 charges</div><div class="s">Weekly sweep — all matched your patterns</div></div><span class="chip ok">All clear</span></div>
-      </div>
-
-      <div id="bfWatchWrap" style="display:none">
-      <div class="eyebrow" style="margin:18px 4px 8px">Watching</div>
-      <div class="card" style="padding:6px 20px">
-        <div class="row" id="bfWatchDispute"><div class="body"><div class="t">One Medical dispute</div><div class="s">Sent — typical response 7–10 days</div></div><span class="chip pend">Watching</span></div>
-      </div>
-      </div>
-
-      <div class="eyebrow" style="margin:18px 4px 8px">Coming up</div>
-      <div class="card" style="padding:6px 20px">
-        <div class="row"><div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div><span class="right num">$2,110</span></div>
-        <div class="row"><div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div></div>
-        <div class="row"><div class="body"><div class="t">NYT annual plan renews Oct</div><div class="s">I'll flag it two weeks out</div></div></div>
-      </div>
-
-      <div class="card value-card">
-        <div class="eyebrow">Running total · 2026</div>
-        <div class="amt num">Recovered <em>$1,118</em> since January</div>
-        <a onclick="nav('activity')">Every action, on the record →</a>
-      </div>
-      <p class="note" style="text-align:center">Arrives Sunday evenings, here and by email. Want a different day, or more detail? Tell me in chat.</p>
-    </section>
-
     <!-- YOU / HOW STEWARD WORKS -->
     <section class="dview" data-view="you" style="max-width:640px">
       <div class="pagehead">
@@ -659,10 +593,7 @@
     document.getElementById('homeStatus').textContent = state.sent
       ? 'Nothing needs you · your weekly brief ›' : '1 thing needs you · your weekly brief ›';
     document.getElementById('dActCount').textContent = state.sent ? '9' : '8';
-    document.getElementById('bfProposed').style.display = state.sent ? 'none' : '';
-    document.getElementById('bfNone').style.display = state.sent ? '' : 'none';
-    document.getElementById('bfWatchWrap').style.display = state.sent ? '' : 'none';
-    document.getElementById('bfLead').textContent = state.sent
+    document.getElementById('wkLead').textContent = state.sent
       ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
       : 'A solid week — two wins verified, and one decision waiting on you.';
   }
