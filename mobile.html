@@ -1152,7 +1152,7 @@
     show('subsAppleWatch', state.apple === 'watching');
     show('handoffEvent', state.handoff === 'sent');
     show('proposedEvent', state.investigated && p !== 'sent');
-    show('invThread', state.investStarted);
+    document.getElementById('invThread').classList.toggle('hideme', !state.investStarted);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
       p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
