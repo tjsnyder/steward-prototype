@@ -220,7 +220,7 @@
           <div class="figbox"><div class="l">Recovery</div><div class="v money num">$214</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn primary" onclick="nav('case')">Review dispute</button>
+          <button class="btn primary" onclick="sendD()">File the dispute</button>
           <button class="btn ghost" onclick="dismissD()">Dismiss</button>
         </div>
       </div>
@@ -276,77 +276,6 @@
             <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
             <span class="chip draft">Coming soon</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CASE FILE -->
-    <section class="dview" data-view="case">
-      <div class="pagehead">
-        <div>
-          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
-          <h1>Medical bill dispute <span class="chip draft" id="dCaseChip" style="vertical-align:3px;margin-left:8px">DRAFT</span></h1>
-          <span class="sub">One Medical · visit of Jun 3 · invoice #OM-44218</span>
-        </div>
-        <div style="display:flex;gap:10px" id="dCaseActions">
-          <button class="btn primary" onclick="sendD()">Send dispute</button>
-          <button class="btn ghost" onclick="toast('Dismissed — case stays in your records')">Dismiss case</button>
-        </div>
-      </div>
-
-      <div class="casegrid">
-        <div>
-          <div class="eyebrow" style="margin-bottom:10px">The documents — side by side</div>
-          <div class="docs">
-            <div class="doc">
-              <div class="dochead"><span>One Medical · statement</span><span>Jun 9</span></div>
-              <div class="line"><span>Patient: T. Snyder</span><span class="c">Visit 06/03</span></div>
-              <div class="line hl num"><span>Office visit — 99213</span><b>$252.00</b></div>
-              <div class="line hl num"><span>Venipuncture — 36415</span><b>$48.00</b></div>
-              <div class="line num"><span>Lab handling</span><span>$0.00</span></div>
-              <div class="line tot num"><span>Patient responsibility</span><b style="color:var(--red)">$300.00</b></div>
-            </div>
-            <div class="doc">
-              <div class="dochead"><span>Anthem · EOB #A-83721</span><span>Jun 8</span></div>
-              <div class="line"><span>Claim 06/03 · One Medical</span><span class="c">In-network</span></div>
-              <div class="line hl-g num"><span>99213 — allowed</span><b>$74.00</b></div>
-              <div class="line hl-g num"><span>36415 — allowed</span><b>$12.00</b></div>
-              <div class="line num"><span>Plan paid</span><span>$0.00 (deductible)</span></div>
-              <div class="line tot num"><span>You owe</span><b style="color:var(--money)">$86.00</b></div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:16px">
-            <div class="eyebrow">What doesn't match</div>
-            <table class="compare num">
-              <tr><th>Line item</th><th>They billed</th><th>EOB allows</th><th>Excess</th></tr>
-              <tr><td>Office visit (99213)</td><td class="bad">$252</td><td>$74</td><td class="bad">+$178</td></tr>
-              <tr><td>Venipuncture (36415)</td><td class="bad">$48</td><td>$12</td><td class="bad">+$36</td></tr>
-              <tr><td><b>Your responsibility</b></td><td class="bad"><b>$300</b></td><td class="good"><b>$86</b></td><td class="bad"><b>+$214</b></td></tr>
-            </table>
-          </div>
-        </div>
-
-        <div>
-          <div class="card">
-            <div class="eyebrow">The plan</div>
-            <div class="steps">
-              <div class="step">Submit the dispute through One Medical's billing portal, attaching the EOB.</div>
-              <div class="step">Track their response — follow up by phone script if silent for 10 days.</div>
-              <div class="step">Verify the corrected bill shows $86, close the case, report back.</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="eyebrow">Dispute letter <span class="letter edit" style="background:none;border:none;padding:0" onclick="toast('Letter editing — desktop editor not in this prototype')">Edit</span></div>
-            <div class="letter">
-              To One Medical Billing —<br><br>
-              I'm disputing invoice #OM-44218 for the June 3 visit. My Anthem EOB (#A-83721) shows allowed member
-              responsibility of <b>$86</b>, not the <b>$300</b> billed. Codes 99213 and 36415 were billed above the
-              contracted rate. Please reissue a corrected statement…<br>
-              <span style="color:var(--muted)">— prepared by Steward as Tim's authorized agent</span>
-            </div>
-          </div>
-          <p class="note" style="text-align:center">~78% of similar disputes succeed with Anthem · Window closes Jun 28 · Nothing is sent until you approve</p>
         </div>
       </div>
     </section>
@@ -440,7 +369,7 @@
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
               <div class="s">Billed $300 vs. EOB $86 — draft ready, window closes Jun 28. Nothing is sent until you approve.</div>
-              <div class="meta"><a onclick="nav('case')">Review dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
+              <div class="meta"><a onclick="sendD()">File the dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -455,7 +384,7 @@
             <div class="body">
               <div class="t">Sent medical bill dispute</div>
               <div class="s">One Medical billed $300 vs. EOB $86 — you approved. Tracking the response, typically 7–10 days.</div>
-              <div class="meta"><a onclick="nav('case')">Case file</a><a onclick="toast('Letter saved to documents')">Letter sent</a></div>
+              <div class="meta"><a onclick="toast('The full thread lives in chat — complete on mobile in v1')">Thread</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -554,7 +483,7 @@
         <div class="eyebrow" style="margin-bottom:4px">Needs you</div>
         One Medical billed <b class="num">$300</b> — EOB says <b class="num">$86</b>. Draft dispute ready: <b class="money num">$214 back</b>.
         <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="nav('case')">Review</button>
+          <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File it</button>
           <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('It stays in Needs attention')">Not now</button>
         </div>
       </div>
@@ -587,8 +516,6 @@
     document.getElementById('navDot').style.display = (state.attention && !state.sent) ? '' : 'none';
     document.getElementById('dDispute').style.display = state.sent ? '' : 'none';
     document.getElementById('dProposed').style.display = state.sent ? 'none' : '';
-    document.getElementById('dCaseChip').textContent = state.sent ? 'SENT' : 'DRAFT';
-    document.getElementById('dCaseActions').style.display = state.sent ? 'none' : '';
     document.getElementById('dChatCard').style.display = state.sent ? 'none' : '';
     document.getElementById('homeStatus').textContent = state.sent
       ? 'Nothing needs you · your weekly brief ›' : '1 thing needs you · your weekly brief ›';

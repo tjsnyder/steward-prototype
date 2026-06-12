@@ -277,7 +277,7 @@
           </div>
           <div class="deadline">Window closes Jun 28 — drafted and ready. ~78% of similar disputes succeed.</div>
           <div class="btnrow">
-            <button class="btn primary" onclick="go('case')">Review dispute</button>
+            <button class="btn primary" onclick="startInvest()">Open the thread</button>
             <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
           </div>
           <span class="why" onclick="toast('Flagged because the billed CPT rates exceed your plan\'s contracted rates')">Why I flagged this</span>
@@ -290,7 +290,7 @@
         <h4>One Medical rejected the dispute</h4>
         <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise — so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Appeals like this succeed ~64%.</p>
         <div class="btnrow" style="margin-top:12px">
-          <button class="btn primary" onclick="go('case')">Review round 2</button>
+          <button class="btn primary" onclick="startInvest()">Open the thread</button>
           <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
         </div>
       </div>
@@ -462,9 +462,72 @@
           <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
           <div class="recover num">$214 back<small>projected</small></div>
           <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem — based on outcomes from cases like yours.</p>
-          <div class="btnrow" style="margin-top:10px">
-            <button class="btn primary" onclick="go('case')">Review dispute</button>
+          <div class="btnrow" style="margin-top:10px" id="inv5btns">
+            <button class="btn primary" onclick="fileDispute()">File the dispute</button>
             <button class="btn ghost" onclick="go('home',true)">Later</button>
+          </div>
+          <span class="why" onclick="toast('It cites your EOB: allowed $86 vs billed $300, codes 99213 &amp; 36415')">what I'll send</span>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv6">
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · billing portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in</div>
+            <div><span class="tick">✓</span>Dispute filed — confirmation <b>#D-7741</b></div>
+            <div><span class="tick">✓</span>EOB attached as evidence</div>
+          </div>
+        </div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this thread.</div>
+        </div>
+        <div class="why" onclick="threadStep('inv7')">demo: a few days pass ›</div>
+      </div>
+      <div class="hideme" id="inv7">
+        <div class="day">Jun 17</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Checking your dispute status — One Medical wants a fresh code first.</div>
+        </div>
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · verification</div>
+          <div id="mfa2Form">
+            <div style="display:flex;gap:8px">
+              <input id="mfa2Code" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;letter-spacing:.3em;font-family:inherit;background:var(--canvas);outline:none">
+              <button class="btn primary" style="padding:0 18px" onclick="mfa2Submit()">Continue</button>
+            </div>
+          </div>
+          <div class="hideme" id="mfa2Done">
+            <div class="prog"><div><span class="tick">✓</span>Verified — status: <b>under review</b>. I'll check again Friday.</div></div>
+          </div>
+        </div>
+        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">demo: their answer arrives ›</div>
+      </div>
+      <div class="hideme" id="inv8">
+        <div class="day">Jun 22</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">They answered — <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b> — they enforce the contracted rate. Appeals like this succeed ~64%.</div>
+        </div>
+        <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
+          <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
+        </div>
+      </div>
+      <div class="hideme" id="inv8b">
+        <div class="inline-card">
+          <div class="eyebrow">Anthem · member appeal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Appeal filed — both documents attached</div>
+            <div><span class="tick">✓</span>Anthem must respond within 30 days — I'm on the clock</div>
+          </div>
+        </div>
+        <div class="why" onclick="threadStep('inv9'); resolveCase()">demo: Anthem rules ›</div>
+      </div>
+      <div class="hideme" id="inv9">
+        <div class="day">Jul 8</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b> — I checked the corrected statement myself. That's <b class="num">$214</b> back.
+            <div class="receipt"><span class="tick">✓</span>Verified · thread closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
       </div>
@@ -603,14 +666,6 @@
         </div>
       </div>
 
-      <div id="chatSentBlock" style="display:none">
-        <div class="msg user"><div class="bubble">Looks right — send it</div></div>
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Done. Dispute submitted through One Medical's billing portal at 9:36 AM.
-            <div class="receipt"><span class="tick">✓</span>Tracking the response — typically 7–10 days. It's in your <u style="cursor:pointer" onclick="go('activity')">audit log</u>.</div>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="dock">
       <div class="chips" id="chatChips">
@@ -620,61 +675,6 @@
         <button class="attachbtn" onclick="toast('Attach any bill, EOB, or document — I\'ll read it and take it from there')">＋</button>
         <input id="chatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')sendChat()">
         <button onclick="sendChat()">➤</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── CASE FILE ── -->
-  <section class="view" data-view="case">
-    <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
-      <div style="flex:1"><div class="title">Medical bill dispute</div><div class="sub">One Medical · visit of Jun 3</div></div>
-      <span class="chip draft" id="caseChip">DRAFT</span>
-    </div>
-    <div class="scroll">
-      <div class="card hideme" id="caseRound2" style="border-color:var(--ink);border-left:4px solid var(--ink)">
-        <div class="eyebrow">Round 2 — they said no</div>
-        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">One Medical's reply (saved to your documents): "charges are consistent with our rates." Your EOB says otherwise, so the next move is a <b>member appeal with Anthem</b> — they enforce the contracted rate. Appeals like this succeed ~64% · deadline Jul 30.</p>
-        <div class="btnrow" style="margin-top:12px">
-          <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
-          <button class="btn ghost" onclick="toast('Okay — round 2 stays drafted until Jul 30')">Not now</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="eyebrow">What doesn't match</div>
-        <table class="compare num">
-          <tr><th>Line item</th><th>They billed</th><th>EOB allows</th></tr>
-          <tr><td>Office visit (99213)</td><td class="bad">$252</td><td>$74</td></tr>
-          <tr><td>Venipuncture (36415)</td><td class="bad">$48</td><td>$12</td></tr>
-          <tr><td><b>Your responsibility</b></td><td class="bad"><b>$300</b></td><td class="good"><b>$86</b></td></tr>
-        </table>
-        <div class="note" style="text-align:left;margin-top:8px">Sources: One Medical bill (Jun 9 email) · Anthem EOB #A-83721 — <u style="cursor:pointer" onclick="toast('Document viewer — not in this prototype yet')">view both</u></div>
-      </div>
-      <div class="card">
-        <div class="eyebrow">The plan</div>
-        <div class="steps">
-          <div class="step">Submit the dispute below through One Medical's billing portal, attaching your EOB.</div>
-          <div class="step">Track their response. If no answer in 10 days, follow up by phone script.</div>
-          <div class="step">Verify the corrected bill shows $86 — then close this case and report back.</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="eyebrow">Dispute letter <span class="edit" onclick="toast('Letter editing — not in this prototype yet')">Edit</span></div>
-        <div class="letter">
-          To One Medical Billing —<br><br>
-          I'm disputing invoice #OM-44218 for the June 3 visit. My Anthem EOB (#A-83721) shows
-          allowed member responsibility of <b>$86</b>, not the <b>$300</b> billed. Codes 99213 and 36415
-          were billed above the contracted rate. Please reissue a corrected statement…<br>
-          <span style="color:var(--muted)">— prepared by Steward as Tim's authorized agent</span>
-        </div>
-      </div>
-      <div class="card" style="border-color:var(--ink)" id="caseActions">
-        <div class="btnrow">
-          <button class="btn primary" onclick="sendDispute()">Send dispute</button>
-          <button class="btn ghost" onclick="dismissAttention();back()">Dismiss case</button>
-        </div>
-        <div class="note">~78% of similar disputes succeed with Anthem · Window closes Jun 28 · Nothing is sent until you approve</div>
       </div>
     </div>
   </section>
@@ -709,7 +709,7 @@
             <div class="body">
               <div class="t">Sent medical bill dispute</div>
               <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
-              <div class="meta"><a onclick="toast('Billed CPT rates exceed your plan\'s contracted rates')">Why</a><a onclick="go('case')">Evidence</a><a onclick="demoReject()" style="color:var(--muted)">Demo: their reply arrives</a></div>
+              <div class="meta"><a onclick="startInvest()">Thread</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -724,7 +724,7 @@
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
               <div class="s">Billed $300 vs. EOB $86 — draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
-              <div class="meta"><a onclick="go('case')">Review dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
+              <div class="meta"><a onclick="startInvest()">Open the thread</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -754,7 +754,7 @@
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
               <div class="s">Their reply is saved. Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
-              <div class="meta"><a onclick="go('case')">Review round 2</a><a onclick="toast('Their reply — saved to documents')">Their reply</a></div>
+              <div class="meta"><a onclick="startInvest()">Open the thread</a><a onclick="toast('Their reply — saved to documents')">Their reply</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -769,9 +769,24 @@
             <div class="body">
               <div class="t">Filed Anthem member appeal</div>
               <div class="s">You approved round 2. Anthem must respond within 30 days — I'm watching, and I'll escalate to your state's review board if they miss it.</div>
-              <div class="meta"><a onclick="go('case')">Case file</a></div>
+              <div class="meta"><a onclick="startInvest()">Thread</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="resolvedEvent" style="display:none">
+        <div class="daylabel">Jul 8</div>
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">✓</span>
+            <div class="body">
+              <div class="t">One Medical dispute — closed, won</div>
+              <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is one thread.</div>
+              <div class="meta"><a onclick="startInvest()">Thread</a></div>
+            </div>
+            <div class="amt money num">+$214</div>
           </div>
         </div>
       </div>
@@ -1290,18 +1305,14 @@
     const cc = document.getElementById('caseCards');
     if (cc.parentElement !== slot) slot.appendChild(cc);
     show('attentionBlock', p === 'found');
-    show('allClearLine', p === 'sent' || p === 'dismissed' || p === 'appealed');
+    show('allClearLine', ['sent', 'dismissed', 'appealed', 'resolved'].includes(p));
     show('rejectedCard', p === 'rejected');
     show('bellDot', p === 'prompt' || p === 'found' || p === 'rejected');
     show('tabDot', p === 'prompt' || p === 'found' || p === 'rejected');
-    show('chatSentBlock', p === 'sent');
     show('disputeEvent', p === 'sent');
     show('rejectedEvent', p === 'rejected');
     show('appealEvent', p === 'appealed');
-    document.getElementById('caseChip').textContent =
-      p === 'sent' ? 'SENT' : p === 'rejected' ? 'ROUND 2' : p === 'appealed' ? 'APPEALED' : 'DRAFT';
-    document.getElementById('caseRound2').classList.toggle('hideme', p !== 'rejected');
-    show('caseActions', !['sent', 'rejected', 'appealed'].includes(p));
+    show('resolvedEvent', p === 'resolved');
 
     const cancelled = state.sub === 'cancelled';
     show('homeHuluRow', !cancelled);
@@ -1317,7 +1328,8 @@
     document.getElementById('invThread').classList.toggle('hideme', !state.investStarted);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
-      p === 'appealed' ? "Round 2 is in — appeal filed with Anthem, and I'm watching the clock for you."
+      p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Thread closed.'
+      : p === 'appealed' ? "Round 2 is in — appeal filed with Anthem, and I'm watching the clock for you."
       : p === 'rejected' ? 'One Medical said no — round two is drafted and waiting on you.'
       : p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
       : (state.investigated ? 'A solid week — two wins verified, and one decision waiting on you.'
@@ -1325,8 +1337,10 @@
     show('chSubsNoEmail', !state.email);
     show('chSubsEmail', state.email);
     document.getElementById('activityCount').textContent =
-      7 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (p === 'appealed' ? 2 : 0)
+      7 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
         + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
+    document.getElementById('activityTotal').textContent = p === 'resolved' ? '$473' : '$259';
+    document.getElementById('recoveredAmt').textContent = p === 'resolved' ? '$473' : '$259';
   }
 
   const COLD = ['welcome', 'sweep', 'digest'];
@@ -1424,18 +1438,37 @@
     toast('De-prioritized — it stays an open decision in Activity');
   }
   function toggleAttention() { location.reload(); }  // bell = demo restart
-  function demoReject() {
-    state.phase = 'rejected'; render();
-    toast('One Medical replied — rejected. Round 2 is ready.');
+  function threadStep(id) {
+    document.getElementById(id).classList.remove('hideme');
+    const sc = document.getElementById('chatScroll'); sc.scrollTop = sc.scrollHeight;
+  }
+  function fileDispute() {
+    document.getElementById('inv5btns').classList.add('hideme');
+    state.phase = 'sent'; render();
+    toast('Filed ✓ I\'ll report back in this thread');
+    setTimeout(() => threadStep('inv6'), 400);
+  }
+  function mfa2Submit() {
+    const c = document.getElementById('mfa2Code').value.trim();
+    if (c.length < 4) { toast('Enter the code One Medical texted you'); return; }
+    document.getElementById('mfa2Form').classList.add('hideme');
+    document.getElementById('mfa2Done').classList.remove('hideme');
+    document.getElementById('d2link').classList.remove('hideme');
+    toast('Verified — checking status');
+  }
+  function resolveCase() {
+    state.phase = 'resolved'; render();
+    toast('Closed — $214 back, verified');
   }
   function dismissRejected() {
     state.phase = 'dismissed'; render();
     toast('Okay — round 2 stays available until Jul 30');
   }
   function fileAppeal() {
+    document.getElementById('inv8btns').classList.add('hideme');
     state.phase = 'appealed'; render();
-    toast('Appeal filed with Anthem ✓ Watching the 30-day clock');
-    go('activity', true);
+    toast('Appeal filed ✓ I\'m on the 30-day clock');
+    setTimeout(() => threadStep('inv8b'), 400);
   }
   function mfaSubmit() {
     const code = document.getElementById('mfaCode').value.trim();
@@ -1447,11 +1480,6 @@
     toast('Verified — continuing');
     setTimeout(() => reveal('inv4'), 500);
     setTimeout(() => { reveal('inv5'); state.phase = 'found'; state.investigated = true; render(); }, 1400);
-  }
-  function sendDispute() {
-    state.phase = 'sent';
-    toast('Dispute sent ✓ Tracking the response');
-    go('activity', true);
   }
 
   // just-in-time credential flow
@@ -1555,7 +1583,7 @@
       return;
     }
     if (/send|approve|yes|do it|looks right/i.test(text) && state.phase === 'found') {
-      setTimeout(sendDispute, 500);
+      setTimeout(fileDispute, 500);
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
