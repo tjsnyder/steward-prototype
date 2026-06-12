@@ -372,8 +372,8 @@
   <section class="view" data-view="chat">
     <div class="navhead">
       <button class="back" onclick="back()">‹</button>
-      <div><div class="title">Steward</div><div class="sub">Acting at your direction · audit logged</div></div>
-      <span class="avatar" style="margin-left:auto">T</span>
+      <div><div class="title">Ask Steward</div><div class="sub">Anything, anytime · audit logged</div></div>
+      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Threads</span>
     </div>
     <div class="scroll" id="chatScroll">
       <div class="day">Today, 9:32 AM</div>
@@ -385,152 +385,6 @@
         <div class="eyebrow">Medical spend · 2026</div>
         <div class="bars"><i style="height:22%"></i><i style="height:18%"></i><i class="hot" style="height:92%"></i><i style="height:30%"></i><i style="height:24%"></i><i style="height:38%"></i></div>
         <div class="axis"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
-      </div>
-
-      <div class="hideme" id="invThread">
-            <div class="msg steward"><div class="who">Steward</div>
-        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
-      </div>
-      <div id="inv1" style="max-width:84%;margin-bottom:12px">
-        <div class="btnrow">
-          <button class="btn primary" onclick="openCred('om')">Connect One Medical</button>
-          <button class="btn ghost" onclick="back()">Not now</button>
-        </div>
-        <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
-      </div>
-
-      <div class="hideme" id="invUp">
-        <div class="msg user"><div class="bubble">📄 one-medical-statement.pdf</div></div>
-        <div class="inline-card">
-          <div class="eyebrow">Uploaded · read by Steward</div>
-          <div class="prog">
-            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
-            <div><span class="tick">✓</span>Saved to your documents</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="inline-card hideme" id="inv2">
-        <div class="eyebrow">One Medical · patient portal</div>
-        <div class="prog">
-          <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
-          <div><span class="tick">✓</span>Saved to your documents</div>
-        </div>
-      </div>
-
-      <div class="hideme" id="inv3">
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Got the bill. To know what you <i>should</i> owe, I need the matching EOB from Anthem. Connect Anthem and I'll compare them line by line?</div>
-        </div>
-        <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
-          <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
-          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
-        </div>
-      </div>
-
-      <div class="inline-card hideme" id="invMfa">
-        <div class="eyebrow">Anthem · verification</div>
-        <div id="invMfaForm">
-          <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Anthem texted a code to ···4821. Enter it and I'll pick up right where I paused.</p>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <input id="mfaCode" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;letter-spacing:.3em;font-family:inherit;background:var(--canvas);outline:none">
-            <button class="btn primary" style="padding:0 18px" onclick="mfaSubmit()">Continue</button>
-          </div>
-        </div>
-        <div class="hideme" id="invMfaDone">
-          <div class="prog"><div><span class="tick">✓</span>Code verified — session resumed</div></div>
-        </div>
-      </div>
-
-      <div class="inline-card hideme" id="inv4">
-        <div class="eyebrow">Anthem · member portal</div>
-        <div class="prog">
-          <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>EOB #A-83721 found · same visit</div>
-          <div><span class="tick">✓</span>Compared line items</div>
-        </div>
-      </div>
-
-      <div class="hideme" id="inv5">
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
-        </div>
-        <div class="inline-card action">
-          <div class="eyebrow">Needs you</div>
-          <h5>One Medical billed $300 — EOB says $86</h5>
-          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
-          <div class="recover num">$214 back<small>projected</small></div>
-          <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem — based on outcomes from cases like yours.</p>
-          <div class="btnrow" style="margin-top:10px" id="inv5btns">
-            <button class="btn primary" onclick="fileDispute()">File the dispute</button>
-            <button class="btn ghost" onclick="go('home',true)">Later</button>
-          </div>
-          <span class="why" onclick="toast('It cites your EOB: allowed $86 vs billed $300, codes 99213 &amp; 36415')">what I'll send</span>
-        </div>
-      </div>
-
-      <div class="hideme" id="inv6">
-        <div class="inline-card">
-          <div class="eyebrow">One Medical · billing portal</div>
-          <div class="prog">
-            <div><span class="tick">✓</span>Signed in</div>
-            <div><span class="tick">✓</span>Dispute filed — confirmation <b>#D-7741</b></div>
-            <div><span class="tick">✓</span>EOB attached as evidence</div>
-          </div>
-        </div>
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this thread.</div>
-        </div>
-        <div class="why" onclick="threadStep('inv7')">demo: a few days pass ›</div>
-      </div>
-      <div class="hideme" id="inv7">
-        <div class="day">Jun 17</div>
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Checking your dispute status — One Medical wants a fresh code first.</div>
-        </div>
-        <div class="inline-card">
-          <div class="eyebrow">One Medical · verification</div>
-          <div id="mfa2Form">
-            <div style="display:flex;gap:8px">
-              <input id="mfa2Code" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;letter-spacing:.3em;font-family:inherit;background:var(--canvas);outline:none">
-              <button class="btn primary" style="padding:0 18px" onclick="mfa2Submit()">Continue</button>
-            </div>
-          </div>
-          <div class="hideme" id="mfa2Done">
-            <div class="prog"><div><span class="tick">✓</span>Verified — status: <b>under review</b>. I'll check again Friday.</div></div>
-          </div>
-        </div>
-        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">demo: their answer arrives ›</div>
-      </div>
-      <div class="hideme" id="inv8">
-        <div class="day">Jun 22</div>
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">They answered — <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b> — they enforce the contracted rate. Appeals like this succeed ~64%.</div>
-        </div>
-        <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
-          <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
-          <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
-        </div>
-      </div>
-      <div class="hideme" id="inv8b">
-        <div class="inline-card">
-          <div class="eyebrow">Anthem · member appeal</div>
-          <div class="prog">
-            <div><span class="tick">✓</span>Appeal filed — both documents attached</div>
-            <div><span class="tick">✓</span>Anthem must respond within 30 days — I'm on the clock</div>
-          </div>
-        </div>
-        <div class="why" onclick="threadStep('inv9'); resolveCase()">demo: Anthem rules ›</div>
-      </div>
-      <div class="hideme" id="inv9">
-        <div class="day">Jul 8</div>
-        <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b> — I checked the corrected statement myself. That's <b class="num">$214</b> back.
-            <div class="receipt"><span class="tick">✓</span>Verified · thread closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
-          </div>
-        </div>
-      </div>
       </div>
 
       <div class="hideme" id="ho1">
@@ -938,6 +792,195 @@
     </div>
   </section>
 
+  <!-- ── CASE THREAD: ONE MEDICAL ── -->
+  <section class="view" data-view="casethread">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div><div class="title">One Medical dispute</div><div class="sub" id="ctSub">New bill noticed</div></div>
+      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Threads</span>
+    </div>
+    <div class="scroll" id="caseScroll">
+      <div class="day">Started Jun 12</div>
+      <div id="invThread">
+            <div class="msg steward"><div class="who">Steward</div>
+        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
+      </div>
+      <div id="inv1" style="max-width:84%;margin-bottom:12px">
+        <div class="btnrow">
+          <button class="btn primary" onclick="openCred('om')">Connect One Medical</button>
+          <button class="btn ghost" onclick="back()">Not now</button>
+        </div>
+        <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
+      </div>
+
+      <div class="hideme" id="invUp">
+        <div class="msg user"><div class="bubble">📄 one-medical-statement.pdf</div></div>
+        <div class="inline-card">
+          <div class="eyebrow">Uploaded · read by Steward</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
+            <div><span class="tick">✓</span>Saved to your documents</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv2">
+        <div class="eyebrow">One Medical · patient portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
+          <div><span class="tick">✓</span>Saved to your documents</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv3">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Got the bill. To know what you <i>should</i> owe, I need the matching EOB from Anthem. Connect Anthem and I'll compare them line by line?</div>
+        </div>
+        <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
+          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="invMfa">
+        <div class="eyebrow">Anthem · verification</div>
+        <div id="invMfaForm">
+          <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Anthem texted a code to ···4821. Enter it and I'll pick up right where I paused.</p>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <input id="mfaCode" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;letter-spacing:.3em;font-family:inherit;background:var(--canvas);outline:none">
+            <button class="btn primary" style="padding:0 18px" onclick="mfaSubmit()">Continue</button>
+          </div>
+        </div>
+        <div class="hideme" id="invMfaDone">
+          <div class="prog"><div><span class="tick">✓</span>Code verified — session resumed</div></div>
+        </div>
+      </div>
+
+      <div class="inline-card hideme" id="inv4">
+        <div class="eyebrow">Anthem · member portal</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Signed in</div>
+          <div><span class="tick">✓</span>EOB #A-83721 found · same visit</div>
+          <div><span class="tick">✓</span>Compared line items</div>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv5">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
+        </div>
+        <div class="inline-card action">
+          <div class="eyebrow">Needs you</div>
+          <h5>One Medical billed $300 — EOB says $86</h5>
+          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
+          <div class="recover num">$214 back<small>projected</small></div>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem — based on outcomes from cases like yours.</p>
+          <div class="btnrow" style="margin-top:10px" id="inv5btns">
+            <button class="btn primary" onclick="fileDispute()">File the dispute</button>
+            <button class="btn ghost" onclick="go('home',true)">Later</button>
+          </div>
+          <span class="why" onclick="toast('It cites your EOB: allowed $86 vs billed $300, codes 99213 &amp; 36415')">what I'll send</span>
+        </div>
+      </div>
+
+      <div class="hideme" id="inv6">
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · billing portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in</div>
+            <div><span class="tick">✓</span>Dispute filed — confirmation <b>#D-7741</b></div>
+            <div><span class="tick">✓</span>EOB attached as evidence</div>
+          </div>
+        </div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this thread.</div>
+        </div>
+        <div class="why" onclick="threadStep('inv7')">demo: a few days pass ›</div>
+      </div>
+      <div class="hideme" id="inv7">
+        <div class="day">Jun 17</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Checking your dispute status — One Medical wants a fresh code first.</div>
+        </div>
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · verification</div>
+          <div id="mfa2Form">
+            <div style="display:flex;gap:8px">
+              <input id="mfa2Code" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;letter-spacing:.3em;font-family:inherit;background:var(--canvas);outline:none">
+              <button class="btn primary" style="padding:0 18px" onclick="mfa2Submit()">Continue</button>
+            </div>
+          </div>
+          <div class="hideme" id="mfa2Done">
+            <div class="prog"><div><span class="tick">✓</span>Verified — status: <b>under review</b>. I'll check again Friday.</div></div>
+          </div>
+        </div>
+        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">demo: their answer arrives ›</div>
+      </div>
+      <div class="hideme" id="inv8">
+        <div class="day">Jun 22</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">They answered — <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b> — they enforce the contracted rate. Appeals like this succeed ~64%.</div>
+        </div>
+        <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
+          <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
+          <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
+        </div>
+      </div>
+      <div class="hideme" id="inv8b">
+        <div class="inline-card">
+          <div class="eyebrow">Anthem · member appeal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Appeal filed — both documents attached</div>
+            <div><span class="tick">✓</span>Anthem must respond within 30 days — I'm on the clock</div>
+          </div>
+        </div>
+        <div class="why" onclick="threadStep('inv9'); resolveCase()">demo: Anthem rules ›</div>
+      </div>
+      <div class="hideme" id="inv9">
+        <div class="day">Jul 8</div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b> — I checked the corrected statement myself. That's <b class="num">$214</b> back.
+            <div class="receipt"><span class="tick">✓</span>Verified · thread closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="dock">
+      <div class="chatinput">
+        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays in this thread')">＋</button>
+        <input id="caseBox" placeholder="Message this thread…" onkeydown="if(event.key==='Enter')caseSend()">
+        <button onclick="caseSend()">➤</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THREADS ── -->
+  <section class="view" data-view="threads">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Threads</div><div class="sub">Every conversation, one history each</div></div>
+    </div>
+    <div class="scroll">
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="cursor:pointer" onclick="go('chat')">
+          <div class="body"><div class="t">Ask Steward</div><div class="s">Anything, anytime — budgets, bills, "can we afford it?"</div></div>
+          <span class="chevron">›</span>
+        </div>
+        <div class="row" id="thrCaseRow" style="cursor:pointer;display:none" onclick="go('casethread')">
+          <div class="body"><div class="t">One Medical dispute</div><div class="s" id="thrCaseSub">New bill noticed</div></div>
+          <span class="chip pend" id="thrCaseChip">Open</span><span class="chevron">›</span>
+        </div>
+        <div class="row" style="cursor:pointer" onclick="toast('Sarah\'s thread — household members keep their own')">
+          <div class="body"><div class="t">Sarah — dentist dispute</div><div class="s">Hers · filed Wednesday</div></div>
+          <span class="chip pend">Watching</span><span class="chevron">›</span>
+        </div>
+      </div>
+      <div class="note">Closed threads stay here — the full history of every fight.</div>
+    </div>
+  </section>
+
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
   <section class="view" data-view="subs">
     <div class="navhead">
@@ -1325,7 +1368,6 @@
     show('subsAppleWatch', state.apple === 'watching');
     show('handoffEvent', state.handoff === 'sent');
     show('proposedEvent', state.investigated && (p === 'found' || p === 'dismissed'));
-    document.getElementById('invThread').classList.toggle('hideme', !state.investStarted);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Thread closed.'
@@ -1334,6 +1376,15 @@
       : p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
       : (state.investigated ? 'A solid week — two wins verified, and one decision waiting on you.'
       : 'A quiet week — two wins verified, and one thing worth a look.');
+    const cm = ({prompt:['Open','pend','New bill noticed'], found:['Needs you','pend','Dispute drafted — your call'],
+      sent:['Watching','pend','Filed · response typically 7–10 days'], rejected:['Needs you','pend','Rejected — round 2 ready'],
+      appealed:['Watching','pend','Appeal with Anthem · 30-day clock'], dismissed:['Paused','draft','Paused — your call'],
+      resolved:['Closed','ok','Won — $214 verified back']})[p] || ['Open','pend','New bill noticed'];
+    show('thrCaseRow', state.investStarted);
+    document.getElementById('thrCaseChip').textContent = cm[0];
+    document.getElementById('thrCaseChip').className = 'chip ' + cm[1];
+    document.getElementById('thrCaseSub').textContent = cm[2];
+    document.getElementById('ctSub').textContent = cm[2];
     show('chSubsNoEmail', !state.email);
     show('chSubsEmail', state.email);
     document.getElementById('activityCount').textContent =
@@ -1361,7 +1412,7 @@
   // cold start
   function startInvest() {
     state.investStarted = true;
-    go('chat', true);
+    go('casethread');
     render();
   }
   function coldReveal(id) {
@@ -1440,7 +1491,26 @@
   function toggleAttention() { location.reload(); }  // bell = demo restart
   function threadStep(id) {
     document.getElementById(id).classList.remove('hideme');
-    const sc = document.getElementById('chatScroll'); sc.scrollTop = sc.scrollHeight;
+    const sc = document.getElementById('caseScroll'); sc.scrollTop = sc.scrollHeight;
+  }
+  function caseSend() {
+    const box = document.getElementById('caseBox');
+    const text = box.value.trim(); if (!text) return;
+    box.value = '';
+    const sc = document.getElementById('caseScroll');
+    const m = document.createElement('div');
+    m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
+    m.querySelector('.bubble').textContent = text;
+    sc.appendChild(m);
+    if (/file|send|approve|yes|do it|go ahead/i.test(text) && state.phase === 'found') {
+      setTimeout(fileDispute, 400);
+    } else {
+      const r = document.createElement('div');
+      r.className = 'msg steward';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives in this thread. For anything else — budgets, spending, a new bill — use the Ask Steward thread.</div>';
+      setTimeout(() => { sc.appendChild(r); sc.scrollTop = sc.scrollHeight; }, 450);
+    }
+    sc.scrollTop = sc.scrollHeight;
   }
   function fileDispute() {
     document.getElementById('inv5btns').classList.add('hideme');
@@ -1475,7 +1545,7 @@
     if (code.length < 4) { toast('Enter the 6-digit code Anthem texted you'); return; }
     document.getElementById('invMfaForm').classList.add('hideme');
     document.getElementById('invMfaDone').classList.remove('hideme');
-    const sc = document.getElementById('chatScroll');
+    const sc = document.getElementById('caseScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
     toast('Verified — continuing');
     setTimeout(() => reveal('inv4'), 500);
@@ -1498,7 +1568,7 @@
   }
   function credCancel() { document.getElementById('credSheet').classList.remove('open'); }
   function uploadBill() {
-    const sc = document.getElementById('chatScroll');
+    const sc = document.getElementById('caseScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
     document.getElementById('inv1').classList.add('hideme');
     toast('Reading your upload…');
@@ -1507,7 +1577,7 @@
   }
   function credConnect() {
     credCancel();
-    const sc = document.getElementById('chatScroll');
+    const sc = document.getElementById('caseScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
     if (credTarget === 'om') {
       document.getElementById('inv1').classList.add('hideme');
@@ -1587,7 +1657,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer that from your financial graph — this prototype handles the dispute and billing-issue flows.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer that from your financial graph. Your One Medical dispute has its own thread — everything about it stays there.</div>';
       setTimeout(() => { scroll.insertBefore(r, document.getElementById('ho1')); scroll.scrollTop = scroll.scrollHeight; }, 450);
     }
     scroll.scrollTop = scroll.scrollHeight;
