@@ -47,12 +47,16 @@
   <!-- step 1: landing -->
   <div id="s1">
     <h1>Is your medical bill wrong?</h1>
-    <p class="sub">About half of them are. Upload yours — I'll check it line by line against what you actually owe. Free, no account.</p>
-    <div class="drop" onclick="startCheck()">
-      <div class="big">📄 Upload your bill</div>
+    <p class="sub">About half of them are. Upload yours — I'll check it line by line against what you actually owe. Free. No account, no password — just your email.</p>
+    <div class="drop" onclick="pickFile()">
+      <div class="big" id="dropLabel">📄 Upload your bill</div>
       <div class="s">photo or PDF · add your EOB too if you have it</div>
     </div>
-    <p class="note">Checked, then deleted — nothing is stored unless you decide to keep me around.<br>Or forward it anytime: <b>bills@yoursteward.com</b></p>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <input id="ckEmail" type="email" placeholder="you@email.com" style="flex:1;min-width:0;border:1px solid var(--hairline);border-radius:6px;padding:12px;font-size:14px;font-family:inherit;background:var(--card);outline:none">
+      <button class="btn primary" style="width:auto;padding:0 18px" onclick="startCheck()">Check it</button>
+    </div>
+    <p class="note">Bills carry health information, so I don't run anonymous checks — your email is the consent record, and where the result goes. Checked, then deleted; the deletion confirmation lands in your inbox.<br>Or forward it anytime: <b>bills@yoursteward.com</b></p>
   </div>
 
   <!-- step 2: working -->
@@ -99,7 +103,13 @@
 <script>
   function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');
     clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)}
+  function pickFile(){
+    document.getElementById('dropLabel').textContent = '✓ one-medical-bill.pdf';
+    toast('Got it — add your email and I\'ll check it');
+  }
   function startCheck(){
+    const em = document.getElementById('ckEmail').value.trim();
+    if(!em.includes('@')){ toast('Your email — it\'s the consent record for a health document'); return; }
     document.getElementById('s1').classList.add('hide');
     document.getElementById('s2').classList.remove('hide');
     ['p1','p2','p3','p4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.remove('hide'),500+i*800));
