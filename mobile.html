@@ -277,7 +277,7 @@
           </div>
           <div class="deadline">Window closes Jun 28 — drafted and ready. ~78% of similar disputes succeed.</div>
           <div class="btnrow">
-            <button class="btn primary" onclick="startInvest()">Open the thread</button>
+            <button class="btn primary" onclick="startInvest()">Open the activity</button>
             <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
           </div>
           <span class="why" onclick="toast('Flagged because the billed CPT rates exceed your plan\'s contracted rates')">Why I flagged this</span>
@@ -290,7 +290,7 @@
         <h4>One Medical rejected the dispute</h4>
         <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise — so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Appeals like this succeed ~64%.</p>
         <div class="btnrow" style="margin-top:12px">
-          <button class="btn primary" onclick="startInvest()">Open the thread</button>
+          <button class="btn primary" onclick="startInvest()">Open the activity</button>
           <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
         </div>
       </div>
@@ -373,7 +373,7 @@
     <div class="navhead">
       <button class="back" onclick="back()">‹</button>
       <div><div class="title">Ask Steward</div><div class="sub">Anything, anytime · audit logged</div></div>
-      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Threads</span>
+      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Chats</span>
     </div>
     <div class="scroll" id="chatScroll">
       <div class="day">Today, 9:32 AM</div>
@@ -563,7 +563,7 @@
             <div class="body">
               <div class="t">Sent medical bill dispute</div>
               <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
-              <div class="meta"><a onclick="startInvest()">Thread</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
+              <div class="meta"><a onclick="startInvest()">View</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -578,7 +578,7 @@
             <div class="body">
               <div class="t">Looking into a One Medical bill</div>
               <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
-              <div class="meta"><a onclick="go('casethread')">Thread</a></div>
+              <div class="meta"><a onclick="go('casethread')">View</a></div>
             </div>
             <div class="amt"><span class="chip pend">Open</span></div>
           </div>
@@ -593,7 +593,7 @@
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
               <div class="s">Billed $300 vs. EOB $86 — draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
-              <div class="meta"><a onclick="startInvest()">Open the thread</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
+              <div class="meta"><a onclick="startInvest()">Open it</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -608,7 +608,7 @@
             <div class="body">
               <div class="t">Took over your One Medical billing issue</div>
               <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
-              <div class="meta"><a onclick="go('chat')">Thread</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
+              <div class="meta"><a onclick="go('chat')">View</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -623,7 +623,7 @@
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
               <div class="s">Their reply is saved. Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
-              <div class="meta"><a onclick="startInvest()">Open the thread</a><a onclick="toast('Their reply — saved to documents')">Their reply</a></div>
+              <div class="meta"><a onclick="startInvest()">Open it</a><a onclick="toast('Their reply — saved to documents')">Their reply</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -638,7 +638,7 @@
             <div class="body">
               <div class="t">Filed Anthem member appeal</div>
               <div class="s">You approved round 2. Anthem must respond within 30 days — I'm watching, and I'll escalate to your state's review board if they miss it.</div>
-              <div class="meta"><a onclick="startInvest()">Thread</a></div>
+              <div class="meta"><a onclick="startInvest()">View</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -652,8 +652,8 @@
             <span class="ico">✓</span>
             <div class="body">
               <div class="t">One Medical dispute — closed, won</div>
-              <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is one thread.</div>
-              <div class="meta"><a onclick="startInvest()">Thread</a></div>
+              <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is right there.</div>
+              <div class="meta"><a onclick="startInvest()">View</a></div>
             </div>
             <div class="amt money num">+$214</div>
           </div>
@@ -812,7 +812,7 @@
     <div class="navhead">
       <button class="back" onclick="back()">‹</button>
       <div><div class="title">One Medical dispute</div><div class="sub" id="ctSub">New bill noticed</div></div>
-      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Threads</span>
+      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('activity',true)">Activity</span>
     </div>
     <div class="scroll" id="caseScroll">
       <div class="day">Started Jun 12</div>
@@ -916,7 +916,7 @@
           </div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this thread.</div>
+          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this activity.</div>
         </div>
         <div class="why" onclick="threadStep('inv7')">demo: a few days pass ›</div>
       </div>
@@ -963,7 +963,7 @@
         <div class="day">Jul 8</div>
         <div class="msg steward"><div class="who">Steward</div>
           <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b> — I checked the corrected statement myself. That's <b class="num">$214</b> back.
-            <div class="receipt"><span class="tick">✓</span>Verified · thread closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+            <div class="receipt"><span class="tick">✓</span>Verified · activity closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
       </div>
@@ -971,8 +971,8 @@
     </div>
     <div class="dock">
       <div class="chatinput">
-        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays in this thread')">＋</button>
-        <input id="caseBox" placeholder="Message this thread…" onkeydown="if(event.key==='Enter')caseSend()">
+        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays with this activity')">＋</button>
+        <input id="caseBox" placeholder="Message this activity…" onkeydown="if(event.key==='Enter')caseSend()">
         <button onclick="caseSend()">➤</button>
       </div>
     </div>
@@ -982,24 +982,24 @@
   <section class="view" data-view="threads">
     <div class="navhead">
       <button class="back" onclick="back()">‹</button>
-      <div style="flex:1"><div class="title">Threads</div><div class="sub">Every conversation, one history each</div></div>
+      <div style="flex:1"><div class="title">Chat history</div><div class="sub">Newest first</div></div>
     </div>
     <div class="scroll">
       <div class="card" style="padding:6px 16px">
         <div class="row" style="cursor:pointer" onclick="go('chat')">
-          <div class="body"><div class="t">Ask Steward</div><div class="s">Anything, anytime — budgets, bills, "can we afford it?"</div></div>
+          <div class="body"><div class="t">Medical spend this year</div><div class="s">Today, 9:32 AM</div></div>
           <span class="chevron">›</span>
         </div>
-        <div class="row" id="thrCaseRow" style="cursor:pointer;display:none" onclick="go('casethread')">
-          <div class="body"><div class="t">One Medical dispute</div><div class="s" id="thrCaseSub">New bill noticed</div></div>
-          <span class="chip pend" id="thrCaseChip">Open</span><span class="chevron">›</span>
+        <div class="row" style="cursor:pointer" onclick="toast('Past chat — not in this prototype yet')">
+          <div class="body"><div class="t">Can we afford the kitchen remodel?</div><div class="s">Tuesday</div></div>
+          <span class="chevron">›</span>
         </div>
-        <div class="row" style="cursor:pointer" onclick="toast('Sarah\'s thread — household members keep their own')">
-          <div class="body"><div class="t">Sarah — dentist dispute</div><div class="s">Hers · filed Wednesday</div></div>
-          <span class="chip pend">Watching</span><span class="chevron">›</span>
+        <div class="row" style="cursor:pointer" onclick="toast('Past chat — not in this prototype yet')">
+          <div class="body"><div class="t">How do HSAs actually work?</div><div class="s">Jun 5</div></div>
+          <span class="chevron">›</span>
         </div>
       </div>
-      <div class="note">Closed threads stay here — the full history of every fight.</div>
+      <div class="note">Conversations live here. Tracked work — anything I've committed to do — lives in Activity.</div>
     </div>
   </section>
 
@@ -1392,7 +1392,7 @@
     show('proposedEvent', state.investigated && (p === 'found' || p === 'dismissed'));
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
-      p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Thread closed.'
+      p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Activity closed.'
       : p === 'appealed' ? "Round 2 is in — appeal filed with Anthem, and I'm watching the clock for you."
       : p === 'rejected' ? 'One Medical said no — round two is drafted and waiting on you.'
       : p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
@@ -1402,15 +1402,11 @@
       sent:['Watching','pend','Filed · response typically 7–10 days'], rejected:['Needs you','pend','Rejected — round 2 ready'],
       appealed:['Watching','pend','Appeal with Anthem · 30-day clock'], dismissed:['Paused','draft','Paused — your call'],
       resolved:['Closed','ok','Won — $214 verified back']})[p] || ['Open','pend','New bill noticed'];
-    show('thrCaseRow', state.investStarted);
     show('investigatingEvent', state.investStarted && p === 'prompt');
     document.getElementById('invEvtSub').textContent = state.origin === 'ask'
       ? 'Opened from Ask Steward — bill read, your EOB is next.'
       : 'From the email notice — pulling the bill from their portal.';
-    document.getElementById('thrCaseChip').textContent = cm[0];
-    document.getElementById('thrCaseChip').className = 'chip ' + cm[1];
-    document.getElementById('thrCaseSub').textContent = cm[2];
-    document.getElementById('ctSub').textContent = cm[2];
+    document.getElementById('ctSub').textContent = cm[0] + ' · ' + cm[2];
     show('chSubsNoEmail', !state.email);
     show('chSubsEmail', state.email);
     document.getElementById('activityCount').textContent =
@@ -1450,9 +1446,9 @@
     const add = html => { const d = document.createElement('div'); d.innerHTML = html;
       while (d.firstChild) sc.insertBefore(d.firstChild, anchor); sc.scrollTop = sc.scrollHeight; };
     add('<div class="msg user"><div class="bubble">📄 one-medical-bill.pdf</div></div>');
-    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened a thread for it — and it\'s in your Activity.</div></div>'), 600);
+    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened an activity for it.</div></div>'), 600);
     setTimeout(() => {
-      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New thread · also in Activity</div><h5>One Medical dispute</h5><p>The whole history stays in one place — tap to continue there.</p></div>');
+      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New activity</div><h5>One Medical dispute</h5><p>I\'ll track the whole job here — every step, until it\'s closed. Tap to follow it.</p></div>');
       document.getElementById('invEmailOpen').classList.add('hideme');
       document.getElementById('invAskOpen').classList.remove('hideme');
       document.getElementById('inv3').classList.remove('hideme');
@@ -1551,7 +1547,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives in this thread. For anything else — budgets, spending, a new bill — use the Ask Steward thread.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives here, in its activity. For anything else — budgets, spending, a new bill — ask me in chat.</div>';
       setTimeout(() => { sc.appendChild(r); sc.scrollTop = sc.scrollHeight; }, 450);
     }
     sc.scrollTop = sc.scrollHeight;
@@ -1559,7 +1555,7 @@
   function fileDispute() {
     document.getElementById('inv5btns').classList.add('hideme');
     state.phase = 'sent'; render();
-    toast('Filed ✓ I\'ll report back in this thread');
+    toast('Filed ✓ I\'ll report back here');
     setTimeout(() => threadStep('inv6'), 400);
   }
   function mfa2Submit() {
