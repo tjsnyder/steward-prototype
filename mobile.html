@@ -526,7 +526,7 @@
         <span onclick="sendPreset('I have a billing issue with One Medical — they say they billed the wrong insurance')">I have a billing issue…</span>
       </div>
       <div class="chatinput">
-        <button class="attachbtn" onclick="toast('Attach any bill, EOB, or document — I\'ll read it and take it from there')">＋</button>
+        <button class="attachbtn" onclick="askUpload()">＋</button>
         <input id="chatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')sendChat()">
         <button onclick="sendChat()">➤</button>
       </div>
@@ -566,6 +566,21 @@
               <div class="meta"><a onclick="startInvest()">Thread</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="investigatingEvent" style="display:none">
+        <div class="daylabel">Open</div>
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⌕</span>
+            <div class="body">
+              <div class="t">Looking into a One Medical bill</div>
+              <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
+              <div class="meta"><a onclick="go('casethread')">Thread</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Open</span></div>
           </div>
         </div>
       </div>
@@ -802,7 +817,8 @@
     <div class="scroll" id="caseScroll">
       <div class="day">Started Jun 12</div>
       <div id="invThread">
-            <div class="msg steward"><div class="who">Steward</div>
+      <div id="invEmailOpen">
+        <div class="msg steward"><div class="who">Steward</div>
         <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
       </div>
       <div id="inv1" style="max-width:84%;margin-bottom:12px">
@@ -811,6 +827,12 @@
           <button class="btn ghost" onclick="back()">Not now</button>
         </div>
         <div class="why" onclick="uploadBill()">or attach the bill here yourself</div>
+      </div>
+      </div>
+      <div class="hideme" id="invAskOpen">
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Picking up from <b>Ask Steward</b> — I read <b>one-medical-bill.pdf</b>: <b class="num">$300</b> for the Jun 3 visit, two line items.</div>
+        </div>
       </div>
 
       <div class="hideme" id="invUp">
@@ -1334,7 +1356,7 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false, origin: 'email' };
   const stack = [];
   let current = 'home';
   let credTarget = null;
@@ -1343,7 +1365,7 @@
 
   function render() {
     const p = state.phase;
-    show('promptCard', p === 'prompt' && !state.cold);
+    show('promptCard', p === 'prompt' && !state.cold && state.origin === 'email' && !state.investStarted);
     const slot = document.getElementById(state.cold ? 'caseSlotCold' : 'caseSlotWarm');
     const cc = document.getElementById('caseCards');
     if (cc.parentElement !== slot) slot.appendChild(cc);
@@ -1381,6 +1403,10 @@
       appealed:['Watching','pend','Appeal with Anthem · 30-day clock'], dismissed:['Paused','draft','Paused — your call'],
       resolved:['Closed','ok','Won — $214 verified back']})[p] || ['Open','pend','New bill noticed'];
     show('thrCaseRow', state.investStarted);
+    show('investigatingEvent', state.investStarted && p === 'prompt');
+    document.getElementById('invEvtSub').textContent = state.origin === 'ask'
+      ? 'Opened from Ask Steward — bill read, your EOB is next.'
+      : 'From the email notice — pulling the bill from their portal.';
     document.getElementById('thrCaseChip').textContent = cm[0];
     document.getElementById('thrCaseChip').className = 'chip ' + cm[1];
     document.getElementById('thrCaseSub').textContent = cm[2];
@@ -1414,6 +1440,24 @@
     state.investStarted = true;
     go('casethread');
     render();
+  }
+  function askUpload() {
+    if (state.investStarted) { toast('Already tracking that bill — it has a thread'); return; }
+    state.origin = 'ask';
+    state.investStarted = true;
+    const sc = document.getElementById('chatScroll');
+    const anchor = document.getElementById('ho1');
+    const add = html => { const d = document.createElement('div'); d.innerHTML = html;
+      while (d.firstChild) sc.insertBefore(d.firstChild, anchor); sc.scrollTop = sc.scrollHeight; };
+    add('<div class="msg user"><div class="bubble">📄 one-medical-bill.pdf</div></div>');
+    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened a thread for it — and it\'s in your Activity.</div></div>'), 600);
+    setTimeout(() => {
+      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New thread · also in Activity</div><h5>One Medical dispute</h5><p>The whole history stays in one place — tap to continue there.</p></div>');
+      document.getElementById('invEmailOpen').classList.add('hideme');
+      document.getElementById('invAskOpen').classList.remove('hideme');
+      document.getElementById('inv3').classList.remove('hideme');
+      render();
+    }, 1400);
   }
   function coldReveal(id) {
     document.getElementById(id).classList.remove('hideme');
