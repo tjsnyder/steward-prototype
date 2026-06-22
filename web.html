@@ -146,6 +146,20 @@
   .chatdock .send{width:34px;height:34px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:13px;cursor:pointer;flex:none}
   .newchat{font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 
+  /* onboarding overlay */
+  #onboard{position:fixed;inset:0;background:var(--canvas);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+  #onboard.hide{display:none}
+  .obcard{width:100%;max-width:460px}
+  .ob-hero{background:linear-gradient(180deg,#143A3D 0%,#1C4A4E 100%);color:#fff;border-radius:16px;padding:30px 26px}
+  .ob-hero .wm{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .ob-hero h1{font-size:26px;font-weight:700;line-height:1.25;margin:12px 0 6px}
+  .ob-hero .q{font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:6px}
+  .door{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.28);border-radius:10px;padding:14px 16px;cursor:pointer;margin-top:10px}
+  .door:hover{background:rgba(255,255,255,.14)}
+  .door .t{font-weight:700;font-size:15px;color:#fff}
+  .door .s{font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.72);margin-top:3px}
+  .prog{font-size:13.5px;line-height:2.1;color:var(--ink-2)}
+  .prog .tick{color:var(--money);font-weight:700;margin-right:8px}
   #toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
          font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
          transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
@@ -276,14 +290,14 @@
             <td>Price rose $13 → $18 · Disney+ bundle includes it</td>
             <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num"><b>$18.00</b></td>
-            <td><span class="linkish" onclick="openSession('hulu')">Review</span></td>
+            <td><span id="subHuluRev"><span class="linkish" onclick="openSession('hulu')">Review</span></span></td>
           </tr>
           <tr>
             <td><div class="name">iCloud+</div><div class="sub">Apple ID</div></td>
             <td>Duplicate — Apple One already includes 2TB iCloud</td>
             <td><span class="src">receipts only — Apple blob</span></td>
             <td style="text-align:right" class="num"><b>$2.99</b></td>
-            <td><span class="linkish" onclick="toast('Apple-billed — only you can cancel; I verify after')">Review</span></td>
+            <td><span class="linkish" onclick="openSession('icloud')">Review</span></td>
           </tr>
           <tr>
             <td><div class="name">Netflix</div><div class="sub">Visa ···6411</div></td>
@@ -526,10 +540,12 @@
   </aside>
 </div>
 
+<div id="onboard"><div class="obcard" id="obBody"></div></div>
+
 <div id="toast"></div>
 
 <script>
-  const state = { phase: 'found', attention: true };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null };
   let active = 'ask';
 
   function nav(view) {
@@ -584,7 +600,22 @@
     kitchen:{ title: 'Kitchen remodel',        sub: () => 'Chat · Tuesday',                              build: () => recap(["You asked whether you could afford the kitchen remodel.","Short version: yes — about $40k works, with your emergency fund untouched and on the timeline you mentioned. Want me to model a couple of financing options?"]) },
     hsa:    { title: 'How HSAs work',          sub: () => 'Chat · Jun 5',                                build: () => recap(["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical — and the balance is yours to keep, no use-it-or-lose-it. You're not maxing yours; want me to flag it at open enrollment?"]) },
     correction:{ title:'Correction — flag withdrawn', sub: () => 'Self-caught · nothing sent', build: () => recap(["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws — the charge is correct. I withdrew the flag before anything went out. I'd rather catch my own mistakes than send you a wrong dispute."]) },
-    hulu:   { title: 'Hulu',                   sub: () => 'Subscription · flagged',                      build: () => recap(["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","Cancelling saves $216/yr — say the word and I'll handle it: sign in, cancel, and verify it stops billing."]) },
+    hulu:   { title: 'Hulu', sub: () => state.sub === 'cancelled' ? 'Cancelled · +$18/mo' : 'Subscription · flagged', build: () => `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.</div></div>
+      <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">${state.sub === 'cancelled' ? 'Cancelled' : 'Worth a look'}</div>
+        <b class="money num">$216/yr</b> back if you cancel.
+        ${state.sub === 'cancelled'
+          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Cancelled — confirmation #4F7-220. Active until Jul 7; I'll verify no charge after Jul 8.</div><div style="margin-top:8px"><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="webResubHulu()">Undo — resubscribe</button></div>`
+          : `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webCancelHulu()">Cancel Hulu for me</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Kept — saved as a standing instruction')">Keep it</button></div>`}
+      </div>` },
+    icloud: { title: 'iCloud+ duplicate', sub: () => 'Apple-billed · you cancel, I verify', build: () => recap(["Your Apple One family plan already includes 2TB iCloud, so the separate iCloud+ ($2.99/mo) is a duplicate — $36/yr for nothing.","Apple only lets you cancel Apple-billed subscriptions yourself: Settings → your name → Subscriptions → iCloud+ → Cancel. Tell me when it's done and I'll confirm it on your next Apple charge."]) },
+    handoff:{ title: 'One Medical — wrong insurance', sub: () => state.handoff === 'sent' ? 'Watching · resubmitting' : 'Needs you', build: () => `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Caught up from your email thread: One Medical billed your old <b>Cigna</b> plan (inactive since 2023). They need your current <b>Anthem</b> details to resubmit.</div></div>
+      <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">Anthem · from your vault</div>Member ID <b>ANT-447-1220</b> · Group <b>#GA-8812</b> · active since Jan 1, 2024.
+        ${state.handoff === 'sent'
+          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Sent the corrected insurance to One Medical's billing portal. Tracking the resubmission (~2–3 weeks) and I'll verify the corrected claim on your EOB.</div>`
+          : `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webHandoffSend()">Send corrected insurance</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Drafted — I\'ll hold until you say go')">Edit first</button></div>`}
+      </div>` },
   };
 
   function openSession(id) {
@@ -620,7 +651,10 @@
       : p === 'rejected' ? 'One Medical said no — round two is drafted and waiting on you.'
       : p === 'sent' ? 'A productive week — dispute filed and being tracked, and two wins verified on your statements.'
       : 'A solid week — two wins verified, and one decision waiting on you.';
-    if (active === 'ask' || active === 'om') openSession(active);
+    document.getElementById('subHuluRev').innerHTML = state.sub === 'cancelled'
+      ? '<span class="chip ok">Cancelled</span>'
+      : '<span class="linkish" onclick="openSession(\'hulu\')">Review</span>';
+    if (active === 'ask' || active === 'om' || active === 'hulu' || active === 'handoff') openSession(active);
   }
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
@@ -637,6 +671,9 @@
     state.phase = ph; render(); openSession('om');
     toast(ph === 'rejected' ? 'One Medical replied — rejected. Round 2 ready.' : ph === 'appealed' ? 'Appeal filed ✓ Watching the 30-day clock' : ph === 'resolved' ? 'Won — $214 back, verified' : '');
   }
+  function webCancelHulu(){ state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
+  function webResubHulu(){ state.sub = 'open'; render(); openSession('hulu'); toast('Resubscribed — Hulu is active again'); }
+  function webHandoffSend(){ state.handoff = 'sent'; render(); openSession('handoff'); toast('Sent ✓ Tracking the resubmission'); }
   function dSend() {
     const box = document.getElementById('dChatBox');
     const text = box.value.trim(); if (!text) return;
@@ -646,6 +683,10 @@
     m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
     m.querySelector('.bubble').textContent = text;
     th.appendChild(m);
+    if (/billing issue|wrong insurance|insurance/i.test(text) && !state.handoff) {
+      setTimeout(() => openSession('handoff'), 400);
+      return;
+    }
     if (/send|approve|yes|do it|file it|looks right/i.test(text) && (active === 'om' || active === 'ask') && state.phase === 'found') {
       th.scrollTop = th.scrollHeight;
       setTimeout(sendD, 500);
@@ -657,6 +698,52 @@
     setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
     th.scrollTop = th.scrollHeight;
   }
+  // ── onboarding funnel ──
+  const OB = {
+    welcome: () => `<div class="ob-hero">
+        <div class="wm">Steward</div>
+        <h1>A chief of staff for your financial life.</h1>
+        <div class="q">What brings you in?</div>
+        <div class="door" onclick="obBill()"><div class="t">A bill that looks wrong</div><div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div></div>
+        <div class="door" onclick="obStep('oauth')"><div class="t">Subscriptions piling up</div><div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div></div>
+        <div class="door" onclick="obStep('plaid')"><div class="t">How am I doing, money-wise?</div><div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div></div>
+      </div>`,
+    oauth: () => `<div class="card"><div class="eyebrow">Connect Google — tim@tjsnyder.com</div>
+        <div style="font-size:13px;color:var(--ink-2);margin-bottom:10px">Steward is requesting <b>read-only</b> access to your mail.</div>
+        <div class="prog"><div><span class="tick">✓</span>Read bills, statements &amp; financial notices</div><div><span class="tick" style="color:var(--red)">✕</span>Send, delete, or move anything</div><div><span class="tick" style="color:var(--red)">✕</span>Train on your data — ever</div></div>
+        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" onclick="obSweep()">Allow read-only access</button><button class="btn ghost" onclick="obStep('welcome')">Back</button></div></div>`,
+    sweep: () => `<div class="card"><div class="eyebrow">First sweep · reading 90 days of financial mail</div>
+        <div class="prog" id="obSweepProg"><div><span class="tick">✓</span>Connected tim@tjsnyder.com · read-only</div></div></div>`,
+    digest: () => `<div class="card value-card"><div class="eyebrow">Looks recoverable</div><div class="amt num">~<em>$340</em> in the first pass</div></div>
+      <div class="card" style="padding:6px 18px">
+        <div class="row" style="border:none"><div class="body"><div class="t">Hulu — price creep + bundle overlap</div><div class="s">Rose to $18 · Disney+ bundle includes it</div></div><span class="right num" style="color:var(--money)">$216/yr</span></div>
+        <div class="row"><div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Apple One already includes 2TB</div></div><span class="right num" style="color:var(--money)">$36/yr</span></div>
+        <div class="row"><div class="body"><div class="t">One Medical bill — worth checking</div><div class="s">"Statement ready" notice</div></div><span class="chip pend">Look closer</span></div>
+      </div>
+      <div style="display:flex;gap:10px"><button class="btn primary" onclick="obStep('pay')">Handle these for me</button><button class="btn ghost" onclick="graduate()">Just watch (free)</button></div>`,
+    pay: () => `<div class="card"><div class="eyebrow">Let Steward act</div>
+        <div style="font-size:30px;font-weight:700;margin:6px 0 10px" class="num">$20<span style="font-size:13px;color:var(--muted);font-weight:500"> /mo · or $192/yr</span></div>
+        <div class="prog"><div><span class="tick">✓</span>Every playbook, unlimited actions</div><div><span class="tick">✓</span>Always asks before acting</div><div><span class="tick">✓</span>Cancel in one tap. No retention games.</div></div>
+        <div style="font-size:11.5px;color:var(--muted);margin:12px 0;line-height:1.5">★ First-year promise: if I don't find you more than I cost, year two is free.</div>
+        <div style="display:flex;gap:10px"><button class="btn primary" onclick="graduate()">Start — $20/mo</button><button class="btn ghost" onclick="graduate()">Stay free</button></div></div>`,
+    plaid: () => `<div class="card"><div class="eyebrow">Connect accounts — via Plaid</div>
+        <div style="font-size:13px;color:var(--ink-2);margin-bottom:10px">Read-only access to balances and transactions.</div>
+        <div class="prog"><div><span class="tick">✓</span>See balances, transactions &amp; recurring charges</div><div><span class="tick" style="color:var(--red)">✕</span>Move money — not possible with this access</div><div><span class="tick" style="color:var(--red)">✕</span>See your bank password — Plaid tokenizes it</div></div>
+        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" onclick="graduate()">Continue with Plaid</button><button class="btn ghost" onclick="obStep('welcome')">Back</button></div></div>`,
+  };
+  function obStep(s){ document.getElementById('obBody').innerHTML = OB[s](); }
+  function graduate(){ document.getElementById('onboard').classList.add('hide'); nav('home'); }
+  function obBill(){ graduate(); nav('activity'); openSession('om'); }
+  function obSweep(){
+    obStep('sweep');
+    const add = html => document.getElementById('obSweepProg').insertAdjacentHTML('beforeend', html);
+    setTimeout(()=>add('<div><span class="tick">✓</span>1,212 emails scanned · 31 billers identified</div>'),700);
+    setTimeout(()=>add('<div><span class="tick">✓</span>7 subscriptions found from receipts</div>'),1500);
+    setTimeout(()=>add('<div><span class="tick">✓</span>2 medical bills · 1 insurance renewal noticed</div>'),2300);
+    setTimeout(()=>obStep('digest'),3300);
+  }
+
+  obStep('welcome');
   openSession('ask');
   render();
 </script>
