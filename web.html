@@ -265,7 +265,6 @@
     <section class="dview" data-view="subs">
       <div class="pagehead">
         <h1>Subscriptions</h1>
-        <span class="sub">Source of truth: your transactions · enriched from email</span>
       </div>
       <div class="card"><div class="summary num">
         <div><div class="v">$86</div><div class="l">per month</div></div>
@@ -329,10 +328,9 @@
     <section class="dview" data-view="activity">
       <div class="pagehead">
         <h1>Activity</h1>
-        <span class="sub">Every conversation and job · newest first</span>
       </div>
       <div class="card value-card">
-        <div class="eyebrow">Your week · Jun 8–14 · arrives Sundays by push &amp; email</div>
+        <div class="eyebrow">Your week · Jun 8–14</div>
         <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
       </div>
       <div class="card"><div class="summary num">
@@ -501,7 +499,7 @@
   <aside class="chatrail">
     <div class="head">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div><div class="t" id="railTitle">Ask Steward</div><div class="s" id="railSub">Anything, anytime · audit logged</div></div>
+        <div><div class="t" id="railTitle">Ask Steward</div><div class="s" id="railSub"></div></div>
         <span class="newchat" onclick="openSession('ask')" title="New chat">＋ New</span>
       </div>
     </div>
@@ -563,7 +561,7 @@
       </div>`;
   }
   const SMETA = {
-    ask:    { title: 'Ask Steward',            sub: () => 'Anything, anytime · audit logged',            build: askBuild },
+    ask:    { title: 'Ask Steward',            sub: () => '',                                           build: askBuild },
     om:     { title: 'One Medical dispute',    sub: () => state.sent ? 'Watching · filed' : 'Needs you · draft ready', build: omBuild },
     sarah:  { title: 'Sarah — dentist dispute',sub: () => 'Watching · she approved',                     build: () => recap(["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]) },
     overdraft:{ title:'Recovered overdraft fee', sub: () => 'Closed · +$45',                              build: () => recap(["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]) },
