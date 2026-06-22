@@ -382,7 +382,7 @@
           <span class="ico">⏸</span>
           <div class="body">
             <div class="t">One Medical dispute — paused</div>
-            <div class="s">You set this aside. The draft and the Jun 28 window are still here when you want them.</div>
+            <div class="s">You set this aside. It's still here whenever you want to pick it back up.</div>
           </div>
           <div class="amt money num">$214</div>
         </div>
@@ -577,7 +577,7 @@
   }
   function omBuild() {
     const p = state.phase;
-    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won'}[p] || 'Needs you';
+    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won', dismissed:'Paused · your call'}[p] || 'Needs you';
     let body = '';
     if (p === 'found') body = `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
     else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821. Enter it and I'll finish filing.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div>`;
@@ -585,6 +585,7 @@
     else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no — "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal (~64% succeed).</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
     else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem — 30-day clock. I'll escalate to state review if they miss it.</div><div class="advance" onclick="webPhase('resolved')">▸ Anthem rules</div>`;
     else if (p === 'resolved') body = `<div style="margin-top:8px;font-size:12px;color:var(--money)">✓ Anthem ruled in your favor. One Medical reissued the bill at $86 — I verified the corrected statement. $214 back.</div>`;
+    else if (p === 'dismissed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">Paused — you set this aside. It's still here whenever you want it.</div><div style="margin-top:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('found')">Resume</button></div>`;
     return `
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">I pulled your One Medical statement and the Anthem EOB and compared them line by line.</div></div>
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">Two line items are billed above your plan's contracted rate. You owe <b class="num">$86</b>, not <b class="num">$300</b>.</div></div>
@@ -592,7 +593,7 @@
   }
   const SMETA = {
     ask:    { title: 'Ask Steward',            sub: () => '',                                           build: askBuild },
-    om:     { title: 'One Medical dispute',    sub: () => ({found:'Needs you · draft ready',verifying:'Verifying…',sent:'Watching · filed',rejected:'Needs you · round 2',appealed:'Watching · appeal',resolved:'Closed · won'}[state.phase] || ''), build: omBuild },
+    om:     { title: 'One Medical dispute',    sub: () => ({found:'Needs you · draft ready',verifying:'Verifying…',sent:'Watching · filed',rejected:'Needs you · round 2',appealed:'Watching · appeal',resolved:'Closed · won',dismissed:'Paused · your call'}[state.phase] || ''), build: omBuild },
     sarah:  { title: 'Sarah — dentist dispute',sub: () => 'Watching · she approved',                     build: () => recap(["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]) },
     overdraft:{ title:'Recovered overdraft fee', sub: () => 'Closed · +$45',                              build: () => recap(["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]) },
     paramount:{ title:'Cancelled Paramount+',   sub: () => 'Closed · +$12/mo',                           build: () => recap(["Paramount+ went unused for 4 months.","You approved the cancellation Monday — confirmed, and I verified no charge on your June statement. That's $12/mo back."]) },
@@ -637,13 +638,17 @@
     document.getElementById('dRejected').style.display = p === 'rejected' ? '' : 'none';
     document.getElementById('dPausedHdr').style.display = p === 'dismissed' ? '' : 'none';
     document.getElementById('dPaused').style.display = p === 'dismissed' ? '' : 'none';
-    document.getElementById('dDispute').style.display = p === 'sent' ? '' : 'none';
+    document.getElementById('dDispute').style.display = ['verifying','sent'].includes(p) ? '' : 'none';
+    if (['verifying','sent'].includes(p)) {
+      document.querySelector('#dDispute .t').textContent = p === 'verifying' ? 'Filing dispute with One Medical' : 'Sent medical bill dispute';
+      document.querySelector('#dDispute .s').textContent = p === 'verifying' ? 'Verifying your identity to file — finishing now.' : 'One Medical billed $300 vs. EOB $86 — you approved. Tracking the response, typically 7–10 days.';
+    }
     document.getElementById('dAppeal').style.display = p === 'appealed' ? '' : 'none';
     document.getElementById('dDoneHdr').style.display = p === 'resolved' ? '' : 'none';
     document.getElementById('dResolvedCard').style.display = p === 'resolved' ? '' : 'none';
     document.getElementById('homeStatus').textContent = needs ? '1 thing needs you · your weekly brief ›' : 'Nothing needs you · your weekly brief ›';
     document.getElementById('dActCount').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
-    document.getElementById('dWatchCount').textContent = 1 + (['sent','appealed'].includes(p) ? 1 : 0);
+    document.getElementById('dWatchCount').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
     document.getElementById('dRecovered').textContent = p === 'resolved' ? '$473' : '$259';
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back, plus two wins on your statements.'
@@ -669,7 +674,8 @@
   }
   function webPhase(ph) {
     state.phase = ph; render(); openSession('om');
-    toast(ph === 'rejected' ? 'One Medical replied — rejected. Round 2 ready.' : ph === 'appealed' ? 'Appeal filed ✓ Watching the 30-day clock' : ph === 'resolved' ? 'Won — $214 back, verified' : '');
+    const msg = {rejected:'One Medical replied — rejected. Round 2 ready.', appealed:'Appeal filed ✓ Watching the 30-day clock', resolved:'Won — $214 back, verified', found:'Resumed — back on your call'}[ph];
+    if (msg) toast(msg);
   }
   function webCancelHulu(){ state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
   function webResubHulu(){ state.sub = 'open'; render(); openSession('hulu'); toast('Resubscribed — Hulu is active again'); }
