@@ -200,7 +200,6 @@
     <section class="dview active" data-view="home">
       <div class="pagehead">
         <h1>Good morning, Tim</h1>
-        <span class="sub" id="homeStatus" style="cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="nav('activity')">1 thing needs you · your weekly brief ›</span>
       </div>
 
       <div class="card attention" id="dAttention">
@@ -651,7 +650,6 @@
     document.getElementById('dAppeal').style.display = p === 'appealed' ? '' : 'none';
     document.getElementById('dDoneHdr').style.display = p === 'resolved' ? '' : 'none';
     document.getElementById('dResolvedCard').style.display = p === 'resolved' ? '' : 'none';
-    document.getElementById('homeStatus').textContent = needs ? '1 thing needs you · your weekly brief ›' : 'Nothing needs you · your weekly brief ›';
     document.getElementById('dActCount').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
     document.getElementById('dWatchCount').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
     document.getElementById('dRecovered').textContent = p === 'resolved' ? '$473' : '$259';
