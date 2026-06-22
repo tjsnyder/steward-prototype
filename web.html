@@ -100,6 +100,7 @@
   .src{font-size:10px;font-weight:600;color:var(--ink-2);background:var(--canvas);border:1px solid var(--hairline);border-radius:4px;padding:2px 7px;white-space:nowrap}
   .src.v{color:var(--money);background:rgba(10,124,90,.06);border-color:rgba(10,124,90,.25)}
   .linkish{font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .advance{margin-top:8px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 
   .summary{display:flex;text-align:center;padding:6px 0}
   .summary>div{flex:1}
@@ -328,7 +329,7 @@
         <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
       </div>
       <div class="card"><div class="summary num">
-        <div><div class="v money">$259</div><div class="l">Recovered in June</div></div>
+        <div><div class="v money" id="dRecovered">$259</div><div class="l">Recovered in June</div></div>
         <div><div class="v" id="dActCount">8</div><div class="l">Actions taken</div></div>
         <div><div class="v">41</div><div class="l">Charges checked</div></div>
         <div><div class="v" id="dWatchCount">1</div><div class="l">Watching</div></div>
@@ -350,8 +351,29 @@
           <div class="amt money num">$214</div>
         </div>
       </div>
+      <div class="card" id="dRejected" style="display:none;padding:4px 18px;border-left:3px solid var(--ink)">
+        <div class="event clk" onclick="openSession('om')">
+          <span class="ico">✕</span>
+          <div class="body">
+            <div class="t">One Medical rejected the dispute</div>
+            <div class="s">Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
+          </div>
+          <div class="amt money num">$214</div>
+        </div>
+      </div>
 
-      <!-- always-on: the static Sarah card below keeps this header from ever being orphaned -->
+      <div class="daylabel" id="dPausedHdr" style="display:none">Paused · your call</div>
+      <div class="card" id="dPaused" style="display:none;padding:4px 18px;opacity:.72">
+        <div class="event clk" onclick="openSession('om')">
+          <span class="ico">⏸</span>
+          <div class="body">
+            <div class="t">One Medical dispute — paused</div>
+            <div class="s">You set this aside. The draft and the Jun 28 window are still here when you want them.</div>
+          </div>
+          <div class="amt money num">$214</div>
+        </div>
+      </div>
+
       <div class="daylabel">On it · watching</div>
       <div class="card" style="padding:4px 18px">
         <div class="event clk" id="dDispute" style="display:none" onclick="openSession('om')">
@@ -362,6 +384,14 @@
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
+        <div class="event clk" id="dAppeal" style="display:none" onclick="openSession('om')">
+          <span class="ico">⇪</span>
+          <div class="body">
+            <div class="t">Filed Anthem member appeal</div>
+            <div class="s">You approved round 2. Anthem must respond within 30 days — I'm watching the clock.</div>
+          </div>
+          <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
         <div class="event clk" onclick="openSession('sarah')">
           <span class="ico">S</span>
           <div class="body">
@@ -369,6 +399,18 @@
             <div class="s">Out-of-network rates billed in error. She approved from her phone — sent and watching.</div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
+      </div>
+
+      <div class="daylabel" id="dDoneHdr" style="display:none">Recently closed</div>
+      <div class="card" id="dResolvedCard" style="display:none;padding:4px 18px">
+        <div class="event clk" onclick="openSession('om')">
+          <span class="ico">✓</span>
+          <div class="body">
+            <div class="t">One Medical dispute — closed, won</div>
+            <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is right there.</div>
+          </div>
+          <div class="amt money num">+$214</div>
         </div>
       </div>
 
@@ -487,7 +529,7 @@
 <div id="toast"></div>
 
 <script>
-  const state = { sent: false, attention: true };
+  const state = { phase: 'found', attention: true };
   let active = 'ask';
 
   function nav(view) {
@@ -509,7 +551,7 @@
     return `
       <div class="msg user"><div class="bubble">How much have we spent on medical this year?</div></div>
       <div class="msg steward"><div class="who">Steward</div><div class="bubble"><b class="num">$4,120</b> so far — most of it in March. Tracking under last year.</div></div>
-      ${state.sent ? '' : `<div class="minicard">
+      ${state.phase !== 'found' ? '' : `<div class="minicard">
         <div class="eyebrow" style="margin-bottom:4px">Needs you</div>
         One Medical billed <b class="num">$300</b> — EOB says <b class="num">$86</b>. Draft dispute ready: <b class="money num">$214 back</b>.
         <div style="margin-top:10px;display:flex;gap:8px">
@@ -518,23 +560,23 @@
         </div></div>`}`;
   }
   function omBuild() {
+    const p = state.phase;
+    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won'}[p] || 'Needs you';
+    let body = '';
+    if (p === 'found') body = `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
+    else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821. Enter it and I'll finish filing.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div>`;
+    else if (p === 'sent') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed at 9:36 AM · confirmation #D-7741. Tracking the response (7–10 days).</div><div class="advance" onclick="webPhase('rejected')">▸ their answer arrives</div>`;
+    else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no — "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal (~64% succeed).</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
+    else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem — 30-day clock. I'll escalate to state review if they miss it.</div><div class="advance" onclick="webPhase('resolved')">▸ Anthem rules</div>`;
+    else if (p === 'resolved') body = `<div style="margin-top:8px;font-size:12px;color:var(--money)">✓ Anthem ruled in your favor. One Medical reissued the bill at $86 — I verified the corrected statement. $214 back.</div>`;
     return `
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">I pulled your One Medical statement and the Anthem EOB and compared them line by line.</div></div>
-      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Two line items are billed above your plan's contracted rate — office visit and venipuncture. You owe <b class="num">$86</b>, not <b class="num">$300</b>.</div></div>
-      <div class="minicard">
-        <div class="eyebrow" style="margin-bottom:4px">${state.sent ? 'Filed · watching' : 'Needs you'}</div>
-        <b class="money num">$214 back</b> · ~78% of disputes like this succeed with Anthem.
-        ${state.sent
-          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed through their billing portal at 9:36 AM · confirmation #D-7741. I'm tracking the response (7–10 days) and I'll report back here.</div>`
-          : `<div style="margin-top:10px;display:flex;gap:8px">
-              <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button>
-              <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Stays an open decision in Activity')">Not now</button>
-            </div>`}
-      </div>`;
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Two line items are billed above your plan's contracted rate. You owe <b class="num">$86</b>, not <b class="num">$300</b>.</div></div>
+      <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">${head}</div><b class="money num">$214 back</b> · ~78% of disputes like this succeed with Anthem.${body}</div>`;
   }
   const SMETA = {
     ask:    { title: 'Ask Steward',            sub: () => '',                                           build: askBuild },
-    om:     { title: 'One Medical dispute',    sub: () => state.sent ? 'Watching · filed' : 'Needs you · draft ready', build: omBuild },
+    om:     { title: 'One Medical dispute',    sub: () => ({found:'Needs you · draft ready',verifying:'Verifying…',sent:'Watching · filed',rejected:'Needs you · round 2',appealed:'Watching · appeal',resolved:'Closed · won'}[state.phase] || ''), build: omBuild },
     sarah:  { title: 'Sarah — dentist dispute',sub: () => 'Watching · she approved',                     build: () => recap(["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]) },
     overdraft:{ title:'Recovered overdraft fee', sub: () => 'Closed · +$45',                              build: () => recap(["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]) },
     paramount:{ title:'Cancelled Paramount+',   sub: () => 'Closed · +$12/mo',                           build: () => recap(["Paramount+ went unused for 4 months.","You approved the cancellation Monday — confirmed, and I verified no charge on your June statement. That's $12/mo back."]) },
@@ -555,32 +597,45 @@
   }
 
   function render() {
-    document.getElementById('dAttention').style.display = (state.attention && !state.sent) ? '' : 'none';
-    document.getElementById('navDot').style.display = (state.attention && !state.sent) ? '' : 'none';
-    // pinned needs-you zone: proposed shows until filed
-    document.getElementById('dNeedsHdr').style.display = state.sent ? 'none' : '';
-    document.getElementById('dProposed').style.display = state.sent ? 'none' : '';
-    // pinned watching zone: sent dispute joins Sarah
-    document.getElementById('dDispute').style.display = state.sent ? '' : 'none';
-    document.getElementById('homeStatus').textContent = state.sent
-      ? 'Nothing needs you · your weekly brief ›' : '1 thing needs you · your weekly brief ›';
-    document.getElementById('dActCount').textContent = state.sent ? '9' : '8';
-    document.getElementById('dWatchCount').textContent = state.sent ? '2' : '1';
-    document.getElementById('wkLead').textContent = state.sent
-      ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
+    const p = state.phase;
+    const needs = (p === 'found' || p === 'rejected');
+    document.getElementById('dAttention').style.display = (state.attention && p === 'found') ? '' : 'none';
+    document.getElementById('navDot').style.display = (state.attention && needs) ? '' : 'none';
+    document.getElementById('dNeedsHdr').style.display = needs ? '' : 'none';
+    document.getElementById('dProposed').style.display = p === 'found' ? '' : 'none';
+    document.getElementById('dRejected').style.display = p === 'rejected' ? '' : 'none';
+    document.getElementById('dPausedHdr').style.display = p === 'dismissed' ? '' : 'none';
+    document.getElementById('dPaused').style.display = p === 'dismissed' ? '' : 'none';
+    document.getElementById('dDispute').style.display = p === 'sent' ? '' : 'none';
+    document.getElementById('dAppeal').style.display = p === 'appealed' ? '' : 'none';
+    document.getElementById('dDoneHdr').style.display = p === 'resolved' ? '' : 'none';
+    document.getElementById('dResolvedCard').style.display = p === 'resolved' ? '' : 'none';
+    document.getElementById('homeStatus').textContent = needs ? '1 thing needs you · your weekly brief ›' : 'Nothing needs you · your weekly brief ›';
+    document.getElementById('dActCount').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
+    document.getElementById('dWatchCount').textContent = 1 + (['sent','appealed'].includes(p) ? 1 : 0);
+    document.getElementById('dRecovered').textContent = p === 'resolved' ? '$473' : '$259';
+    document.getElementById('wkLead').textContent =
+      p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back, plus two wins on your statements.'
+      : p === 'appealed' ? "Round 2 is in — appeal filed with Anthem, and I'm watching the clock for you."
+      : p === 'rejected' ? 'One Medical said no — round two is drafted and waiting on you.'
+      : p === 'sent' ? 'A productive week — dispute filed and being tracked, and two wins verified on your statements.'
       : 'A solid week — two wins verified, and one decision waiting on you.';
-    // refresh the rail if the open session reflects state
     if (active === 'ask' || active === 'om') openSession(active);
   }
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
     el.classList.add('on');
   }
-  function dismissD() { state.attention = false; render(); toast('Okay — it stays in Needs attention'); }
-  function sendD() {
-    state.sent = true;
-    toast('Dispute filed ✓ Tracking the response');
-    render(); // refreshes the rail for the open om/ask session
+  function dismissD() { state.phase = 'dismissed'; render(); toast('Paused — it stays an open decision in Activity'); }
+  function sendD() { state.phase = 'verifying'; render(); openSession('om'); toast('One Medical needs a verification code'); }
+  function webMfaSubmit() {
+    const c = (document.getElementById('webMfa') || {}).value || '';
+    if (c.trim().length < 4) { toast('Enter the code One Medical texted you'); return; }
+    state.phase = 'sent'; render(); openSession('om'); toast('Verified — dispute filed ✓');
+  }
+  function webPhase(ph) {
+    state.phase = ph; render(); openSession('om');
+    toast(ph === 'rejected' ? 'One Medical replied — rejected. Round 2 ready.' : ph === 'appealed' ? 'Appeal filed ✓ Watching the 30-day clock' : ph === 'resolved' ? 'Won — $214 back, verified' : '');
   }
   function dSend() {
     const box = document.getElementById('dChatBox');
@@ -591,7 +646,7 @@
     m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
     m.querySelector('.bubble').textContent = text;
     th.appendChild(m);
-    if (/send|approve|yes|do it|file it|looks right/i.test(text) && (active === 'om' || active === 'ask') && !state.sent) {
+    if (/send|approve|yes|do it|file it|looks right/i.test(text) && (active === 'om' || active === 'ask') && state.phase === 'found') {
       th.scrollTop = th.scrollHeight;
       setTimeout(sendD, 500);
       return;

@@ -518,6 +518,11 @@
       <span class="avatar">T</span>
     </div>
     <div class="scroll">
+      <div class="card empty" id="actEmpty" style="display:none">
+        <div class="eyebrow">Activity</div>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">Nothing yet. Once you bring me something — a bill, a question — every job and conversation lands here, on the record.</p>
+      </div>
+      <div id="actFeed">
       <div class="card value-card">
         <div class="eyebrow">Your week · Jun 8–14</div>
         <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
@@ -556,6 +561,20 @@
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
               <div class="s">Their reply is saved. Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
+            </div>
+            <div class="amt money num">$214</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="daylabel" id="pinPausedHdr" style="display:none">Paused · your call</div>
+      <div id="dismissedEvent" style="display:none">
+        <div class="card" style="padding:2px 16px;opacity:.72">
+          <div class="event clk" onclick="startInvest()">
+            <span class="ico">⏸</span>
+            <div class="body">
+              <div class="t">One Medical dispute — paused</div>
+              <div class="s">You set this aside. The draft and the Jun 28 window are still here when you want them.</div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -646,7 +665,7 @@
 
       <div id="huluEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event clk" onclick="openSess('hulu')">
+          <div class="event clk" onclick="go('subdetail')">
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">Cancelled Hulu</div>
@@ -720,6 +739,7 @@
             <div class="s">Tax-free going in, grows untaxed, tax-free out for medical — and it's yours to keep.</div>
           </div>
         </div>
+      </div>
       </div>
     </div>
     <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
@@ -887,7 +907,7 @@
           </div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this activity.</div>
+          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this session.</div>
         </div>
         <div class="why" onclick="threadStep('inv7')">A few days pass ›</div>
       </div>
@@ -942,8 +962,8 @@
     </div>
     <div class="dock">
       <div class="chatinput">
-        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays with this activity')">＋</button>
-        <input id="caseBox" placeholder="Message this activity…" onkeydown="if(event.key==='Enter')caseSend()">
+        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays with this session')">＋</button>
+        <input id="caseBox" placeholder="Message this session…" onkeydown="if(event.key==='Enter')caseSend()">
         <button onclick="caseSend()">➤</button>
       </div>
     </div>
@@ -1043,6 +1063,7 @@
         <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
           <div class="bubble">Done — that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
         </div>
+        <div class="btnrow" style="margin-top:2px"><button class="btn ghost" onclick="resubHulu()">Undo — resubscribe</button></div>
       </div>
     </div>
   </section>
@@ -1343,9 +1364,13 @@
     show('subsApplePrice', state.apple !== 'watching');
     show('subsAppleWatch', state.apple === 'watching');
     show('handoffEvent', state.handoff === 'sent');
-    show('proposedEvent', state.investigated && (p === 'found' || p === 'dismissed'));
-    show('pinNeedsHdr', (state.investigated && (p === 'found' || p === 'dismissed')) || p === 'rejected');
+    show('proposedEvent', state.investigated && p === 'found');
+    show('pinNeedsHdr', (state.investigated && p === 'found') || p === 'rejected');
+    show('dismissedEvent', state.investigated && p === 'dismissed');
+    show('pinPausedHdr', state.investigated && p === 'dismissed');
     show('doneRecentHdr', p === 'resolved' || cancelled);
+    show('actEmpty', state.cold);
+    show('actFeed', !state.cold);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Activity closed.'
@@ -1420,9 +1445,9 @@
     const add = html => { const d = document.createElement('div'); d.innerHTML = html;
       while (d.firstChild) sc.insertBefore(d.firstChild, anchor); sc.scrollTop = sc.scrollHeight; };
     add('<div class="msg user"><div class="bubble">📄 one-medical-bill.pdf</div></div>');
-    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened an activity for it.</div></div>'), 600);
+    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened a session for it.</div></div>'), 600);
     setTimeout(() => {
-      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New activity</div><h5>One Medical dispute</h5><p>I\'ll track the whole job here — every step, until it\'s closed. Tap to follow it.</p></div>');
+      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New session</div><h5>One Medical dispute</h5><p>I\'ll track the whole job here — every step, until it\'s closed. Tap to follow it.</p></div>');
       document.getElementById('invEmailOpen').classList.add('hideme');
       document.getElementById('invAskOpen').classList.remove('hideme');
       document.getElementById('inv3').classList.remove('hideme');
@@ -1458,6 +1483,7 @@
   }
   function oauthAllow() {
     state.email = true;
+    state.cold = false;  // any connection graduates the home off the cold state
     closeOauth(); go('sweep');
     const reveal = id => {
       document.getElementById(id).classList.remove('hideme');
@@ -1517,7 +1543,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives here, in its activity. For anything else — budgets, spending, a new bill — ask me in chat.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives here, in its session. For anything else — budgets, spending, a new bill — ask me in chat.</div>';
       setTimeout(() => { sc.appendChild(r); sc.scrollTop = sc.scrollHeight; }, 450);
     }
     sc.scrollTop = sc.scrollHeight;
@@ -1615,6 +1641,15 @@
       toast('Connected · in your vault');
       setTimeout(() => { coldReveal('hc6'); state.handoff = 'sent'; render(); }, 500);
     }
+  }
+  function resubHulu(){
+    state.sub = 'open';
+    document.getElementById('subBtns').classList.remove('hideme');
+    document.getElementById('subProg').classList.add('hideme');
+    document.getElementById('subDone').classList.add('hideme');
+    document.getElementById('huluChip').textContent = 'FLAGGED';
+    render();
+    toast('Resubscribed — Hulu is active again');
   }
   function keepHulu() {
     toast('Noted — saved as a standing instruction: keep Hulu');
