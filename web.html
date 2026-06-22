@@ -92,34 +92,6 @@
   .value-card .amt em{font-style:normal;color:#7CD9B8}
   .value-card a{color:#A9E7CF;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer}
 
-  /* case file: documents side by side */
-  .casegrid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
-  .docs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .doc{background:#fff;border:1px solid var(--hairline);border-radius:6px;padding:16px 18px;font-size:12px;line-height:1.7;
-       box-shadow:0 2px 10px rgba(20,58,61,.05)}
-  .doc .dochead{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-                border-bottom:1px solid var(--hairline);padding-bottom:8px;margin-bottom:10px;display:flex;justify-content:space-between}
-  .doc .line{display:flex;justify-content:space-between;gap:8px;padding:3px 4px;border-radius:3px}
-  .doc .line .c{color:var(--muted);font-size:11px}
-  .doc .hl{background:rgba(176,66,26,.10);outline:1px solid rgba(176,66,26,.35)}
-  .doc .hl-g{background:rgba(10,124,90,.10);outline:1px solid rgba(10,124,90,.35)}
-  .doc .tot{border-top:1px solid var(--hairline);margin-top:8px;padding-top:8px;font-weight:700}
-  .compare{width:100%;border-collapse:collapse;font-size:12.5px}
-  .compare th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1px solid var(--hairline)}
-  .compare td{padding:8px;border-bottom:1px solid var(--hairline)}
-  .compare tr:last-child td{border-bottom:none}
-  .compare .bad{color:var(--red);font-weight:600}
-  .compare .good{color:var(--money);font-weight:600}
-  .steps{counter-reset:s}
-  .step{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--hairline);font-size:13px;line-height:1.5}
-  .step:last-child{border-bottom:none}
-  .step::before{counter-increment:s;content:counter(s);width:21px;height:21px;border-radius:50%;
-                background:rgba(20,58,61,.07);color:var(--ink);font-size:11px;font-weight:700;
-                display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
-  .letter{background:#FAFBFC;border:1px dashed #C8D2D6;border-radius:6px;padding:14px;font-size:12.5px;line-height:1.65;color:var(--ink-2)}
-  .letter .edit{float:right;font-size:11px;color:var(--ink);font-weight:600;text-decoration:underline;cursor:pointer}
-  .note{font-size:11.5px;color:var(--muted)}
-
   /* tables */
   .table{width:100%;border-collapse:collapse;font-size:13px}
   .table th{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
@@ -138,25 +110,33 @@
   .summary .v{font-size:20px;font-weight:700}
   .summary .v.money{color:var(--money)}
   .summary .l{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+  /* unified activity feed */
+  .filters{display:flex;gap:8px;margin:2px 0 14px}
+  .filters span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--card);cursor:pointer}
+  .filters span.on{background:var(--ink);border-color:var(--ink);color:#fff}
   .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}
   .event{display:flex;gap:14px;padding:13px 4px}
   .event+.event{border-top:1px solid var(--hairline)}
+  .event.clk{cursor:pointer;border-radius:6px;margin:0 -8px;padding:13px 12px}
+  .event.clk:hover{background:var(--canvas)}
+  .event.clk+.event.clk{border-top:1px solid var(--hairline)}
   .event .ico{width:30px;height:30px;border-radius:50%;background:rgba(20,58,61,.06);display:flex;align-items:center;justify-content:center;font-size:13px;flex:none}
   .event .body{flex:1}
   .event .t{font-size:13.5px;font-weight:600}
   .event .s{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
   .event .meta{display:flex;gap:12px;margin-top:6px;font-size:11.5px}
   .event .meta a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
-  .event .amt{font-size:13.5px;font-weight:700;flex:none}
+  .event .amt{font-size:13.5px;font-weight:700;flex:none;align-self:center}
   .event .amt.money{color:var(--money)}
 
-  /* chat rail */
-  .chatrail{width:330px;flex:none;border-left:1px solid var(--hairline);background:var(--card);display:flex;flex-direction:column}
+  /* chat rail = active-session pane */
+  .chatrail{width:340px;flex:none;border-left:1px solid var(--hairline);background:var(--card);display:flex;flex-direction:column}
   .chatrail .head{padding:16px 18px;border-bottom:1px solid var(--hairline)}
   .chatrail .head .t{font-size:14.5px;font-weight:700;color:var(--ink)}
   .chatrail .head .s{font-size:11px;color:var(--muted);margin-top:2px}
   .thread{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px}
-  .msg{max-width:88%}
+  .msg{max-width:90%}
   .msg .bubble{border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.5}
   .msg.user{margin-left:auto}
   .msg.user .bubble{background:var(--ink);color:#fff;border-bottom-right-radius:3px}
@@ -168,6 +148,7 @@
   .chatdock .attach{width:34px;height:34px;border-radius:50%;border:1px solid var(--hairline);background:var(--card);color:var(--ink-2);font-size:16px;cursor:pointer;flex:none}
   .chatdock input{flex:1;border:1px solid var(--hairline);border-radius:18px;padding:9px 14px;font-size:12.5px;font-family:inherit;background:var(--canvas);outline:none}
   .chatdock .send{width:34px;height:34px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:13px;cursor:pointer;flex:none}
+  .newchat{font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 
   #toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
          font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
@@ -220,7 +201,7 @@
           <div class="figbox"><div class="l">Recovery</div><div class="v money num">$214</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn primary" onclick="sendD()">File the dispute</button>
+          <button class="btn primary" onclick="nav('activity');openSession('om')">Open it</button>
           <button class="btn ghost" onclick="dismissD()">Dismiss</button>
         </div>
       </div>
@@ -300,7 +281,7 @@
             <td>Price rose $13 → $18 · Disney+ bundle includes it</td>
             <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num"><b>$18.00</b></td>
-            <td><span class="linkish" onclick="toast('Cancel flow — fully wired in the mobile prototype')">Review</span></td>
+            <td><span class="linkish" onclick="openSession('hulu')">Review</span></td>
           </tr>
           <tr>
             <td><div class="name">iCloud+</div><div class="sub">Apple ID</div></td>
@@ -344,11 +325,11 @@
       <p class="note">“billing + receipts” = confirmed in your transactions and itemized from email — I can verify cancellations stick. “receipts only” = inside an aggregated charge. “billing only” = never emails you; I watch the amount instead.</p>
     </section>
 
-    <!-- ACTIVITY -->
+    <!-- ACTIVITY — unified session index -->
     <section class="dview" data-view="activity">
       <div class="pagehead">
         <h1>Activity</h1>
-        <span class="sub">Everything I do, on the record</span>
+        <span class="sub">Every conversation and job · newest first</span>
       </div>
       <div class="card value-card">
         <div class="eyebrow">Your week · Jun 8–14 · arrives Sundays by push &amp; email</div>
@@ -358,64 +339,89 @@
         <div><div class="v money">$259</div><div class="l">Recovered in June</div></div>
         <div><div class="v" id="dActCount">8</div><div class="l">Actions taken</div></div>
         <div><div class="v">41</div><div class="l">Charges checked</div></div>
-        <div><div class="v">1</div><div class="l">Watching</div></div>
+        <div><div class="v">2</div><div class="l">Watching</div></div>
       </div></div>
+      <div class="filters">
+        <span class="on" onclick="filterDemo(this)">All</span><span onclick="filterDemo(this)">Needs you</span>
+        <span onclick="filterDemo(this)">Watching</span><span onclick="filterDemo(this)">Done</span>
+      </div>
 
-      <div id="dProposed">
-        <div class="daylabel">Needs your decision</div>
-        <div class="card" style="padding:4px 18px;border-left:3px solid var(--ink)">
-          <div class="event">
-            <span class="ico">⚑</span>
-            <div class="body">
-              <div class="t">Proposed: dispute One Medical bill</div>
-              <div class="s">Billed $300 vs. EOB $86 — draft ready, window closes Jun 28. Nothing is sent until you approve.</div>
-              <div class="meta"><a onclick="sendD()">File the dispute</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
-            </div>
-            <div class="amt money num">$214</div>
+      <!-- PINNED: needs you + active/watching, regardless of date -->
+      <div class="daylabel" id="dNeedsHdr">Needs you</div>
+      <div class="card" id="dProposed" style="padding:4px 18px;border-left:3px solid var(--ink)">
+        <div class="event clk" onclick="openSession('om')">
+          <span class="ico">⚑</span>
+          <div class="body">
+            <div class="t">Proposed: dispute One Medical bill</div>
+            <div class="s">Billed $300 vs. EOB $86 — draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
           </div>
+          <div class="amt money num">$214</div>
         </div>
       </div>
 
-      <div id="dDispute" style="display:none">
-        <div class="daylabel">Just now</div>
-        <div class="card" style="padding:4px 18px">
-          <div class="event">
-            <span class="ico">⇪</span>
-            <div class="body">
-              <div class="t">Sent medical bill dispute</div>
-              <div class="s">One Medical billed $300 vs. EOB $86 — you approved. Tracking the response, typically 7–10 days.</div>
-              <div class="meta"><a onclick="toast('The full thread lives in chat — complete on mobile in v1')">Thread</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
-            </div>
-            <div class="amt"><span class="chip pend">Watching</span></div>
+      <!-- always-on: the static Sarah card below keeps this header from ever being orphaned -->
+      <div class="daylabel">On it · watching</div>
+      <div class="card" style="padding:4px 18px">
+        <div class="event clk" id="dDispute" style="display:none" onclick="openSession('om')">
+          <span class="ico">⇪</span>
+          <div class="body">
+            <div class="t">Sent medical bill dispute</div>
+            <div class="s">One Medical billed $300 vs. EOB $86 — you approved. Tracking the response, typically 7–10 days.</div>
+          </div>
+          <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
+        <div class="event clk" onclick="openSession('sarah')">
+          <span class="ico">S</span>
+          <div class="body">
+            <div class="t">Sarah — dentist dispute</div>
+            <div class="s">Out-of-network rates billed in error. She approved from her phone — sent and watching.</div>
+          </div>
+          <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
+      </div>
+
+      <!-- TIME-ORDERED: done sessions + chats, newest first -->
+      <div class="daylabel">Today</div>
+      <div class="card" style="padding:4px 18px">
+        <div class="event clk" onclick="openSession('ask')">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">Medical spend this year</div>
+            <div class="s">You asked how much you've spent on medical — $4,120, mostly March.</div>
           </div>
         </div>
       </div>
 
       <div class="daylabel">Yesterday</div>
       <div class="card" style="padding:4px 18px">
-        <div class="event">
+        <div class="event clk" onclick="openSession('overdraft')">
           <span class="ico">✓</span>
           <div class="body">
             <div class="t">Recovered overdraft fee</div>
             <div class="s">Chase charged $45 on Jun 8. Waiver requested — refund posted and verified on your statement.</div>
-            <div class="meta"><a onclick="toast('12-year customer, first request — granted')">Why</a><a onclick="toast('Evidence viewer — not in this prototype')">Evidence</a></div>
           </div>
           <div class="amt money num">+$45</div>
         </div>
-        <div class="event">
+        <div class="event clk" onclick="openSession('paramount')">
           <span class="ico">✕</span>
           <div class="body">
             <div class="t">Cancelled Paramount+</div>
             <div class="s">Unused 4 months. You approved Mon — confirmed, and verified no charge on your June statement.</div>
-            <div class="meta"><a onclick="toast('No correlated usage since February')">Why</a><a onclick="toast('Okay — resubscribing')">Undo</a></div>
           </div>
           <div class="amt money num">+$12/mo</div>
+        </div>
+        <div class="event clk" onclick="openSession('kitchen')">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">Can we afford the kitchen remodel?</div>
+            <div class="s">We talked it through — yes, around $40k, with your emergency fund untouched.</div>
+          </div>
         </div>
       </div>
 
       <div class="daylabel">Jun 5</div>
       <div class="card" style="padding:4px 18px">
-        <div class="event">
+        <div class="event clk" onclick="openSession('sweep')">
           <span class="ico">☰</span>
           <div class="body">
             <div class="t">Weekly sweep — all clear</div>
@@ -423,8 +429,16 @@
           </div>
           <div class="amt"><span class="chip ok">Done</span></div>
         </div>
+        <div class="event clk" onclick="openSession('hsa')">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">How do HSAs actually work?</div>
+            <div class="s">Tax-free in, grows untaxed, tax-free out for medical — and it's yours to keep.</div>
+          </div>
+        </div>
       </div>
     </section>
+
     <!-- YOU / HOW STEWARD WORKS -->
     <section class="dview" data-view="you" style="max-width:640px">
       <div class="pagehead">
@@ -457,6 +471,12 @@
         <p style="font-size:12.5px;color:var(--ink-2);line-height:1.5">Moving money outside your accounts, legal filings, and credential changes — I prepare these, you execute them.</p>
       </div>
       <div class="card">
+        <div class="eyebrow">Household</div>
+        <div class="row" style="border:none"><div class="body"><div class="t">Tim</div><div class="s">Owner — approves everything</div></div></div>
+        <div class="row"><div class="body"><div class="t">Sarah</div><div class="s">Partner — sees everything, approves her own items</div></div><span class="chip ok">Active</span></div>
+        <div class="row"><div class="body"><div class="t">Mia &amp; Jonah</div><div class="s">Dependents — their bills route to you both</div></div></div>
+      </div>
+      <div class="card">
         <div class="eyebrow">Standing instructions</div>
         <div class="row" style="border:none"><div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div><span class="linkish" onclick="toast('Removed — I\'ll surface everything again')">Remove</span></div>
         <div class="row"><div class="body"><div class="t">"Always keep HBO Max — the kids use it"</div><div class="s">set May 14, in chat</div></div><span class="linkish" onclick="toast('Removed')">Remove</span></div>
@@ -464,33 +484,23 @@
       </div>
       <div class="card" style="padding:6px 20px">
         <div class="row" style="cursor:pointer" onclick="toast('Connected accounts — not in this prototype yet')"><div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · email watcher on</div></div><span class="linkish">›</span></div>
-        <div class="row" style="cursor:pointer" onclick="toast('Household — not in this prototype yet')"><div class="body"><div class="t">Household</div><div class="s">Tim, Sarah, 2 dependents</div></div><span class="linkish">›</span></div>
-        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out — we cancel subscriptions for a living')"><div class="body"><div class="t">Your plan</div><div class="s">Steward subscription · $20/mo</div></div><span class="linkish">›</span></div>
+        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out — we cancel subscriptions for a living')"><div class="body"><div class="t">Your plan</div><div class="s">$20/mo — it\'s returned 4.7× that this year</div></div><span class="linkish">›</span></div>
       </div>
     </section>
   </main>
 
-  <!-- ── CHAT RAIL ── -->
+  <!-- ── ACTIVE-SESSION PANE (rail) ── -->
   <aside class="chatrail">
     <div class="head">
-      <div class="t">Steward</div>
-      <div class="s">Acting at your direction · audit logged</div>
-    </div>
-    <div class="thread" id="dThread">
-      <div class="msg user"><div class="bubble">How much have we spent on medical this year?</div></div>
-      <div class="msg steward"><div class="who">Steward</div><div class="bubble"><b class="num">$4,120</b> so far — most of it in March. Tracking under last year.</div></div>
-      <div class="minicard" id="dChatCard">
-        <div class="eyebrow" style="margin-bottom:4px">Needs you</div>
-        One Medical billed <b class="num">$300</b> — EOB says <b class="num">$86</b>. Draft dispute ready: <b class="money num">$214 back</b>.
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File it</button>
-          <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('It stays in Needs attention')">Not now</button>
-        </div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><div class="t" id="railTitle">Ask Steward</div><div class="s" id="railSub">Anything, anytime · audit logged</div></div>
+        <span class="newchat" onclick="openSession('ask')" title="New chat">＋ New</span>
       </div>
     </div>
+    <div class="thread" id="dThread"></div>
     <div class="chatdock">
       <button class="attach" onclick="toast('Attach any bill or document — I\'ll read it')">＋</button>
-      <input id="dChatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')dSend()">
+      <input id="dChatBox" placeholder="Message this session…" onkeydown="if(event.key==='Enter')dSend()">
       <button class="send" onclick="dSend()">➤</button>
     </div>
   </aside>
@@ -500,6 +510,7 @@
 
 <script>
   const state = { sent: false, attention: true };
+  let active = 'ask';
 
   function nav(view) {
     document.querySelectorAll('.dview').forEach(v => v.classList.toggle('active', v.dataset.view === view));
@@ -511,29 +522,82 @@
     el.textContent = msg; el.classList.add('show');
     clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
   }
+
+  // ── sessions: every conversation and job, rendered in the rail ──
+  const recap = lines => lines.map(l =>
+    `<div class="msg steward"><div class="who">Steward</div><div class="bubble">${l}</div></div>`).join('');
+
+  function askBuild() {
+    return `
+      <div class="msg user"><div class="bubble">How much have we spent on medical this year?</div></div>
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble"><b class="num">$4,120</b> so far — most of it in March. Tracking under last year.</div></div>
+      ${state.sent ? '' : `<div class="minicard">
+        <div class="eyebrow" style="margin-bottom:4px">Needs you</div>
+        One Medical billed <b class="num">$300</b> — EOB says <b class="num">$86</b>. Draft dispute ready: <b class="money num">$214 back</b>.
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="openSession('om')">Open it</button>
+          <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('It stays in Needs attention')">Not now</button>
+        </div></div>`}`;
+  }
+  function omBuild() {
+    return `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">I pulled your One Medical statement and the Anthem EOB and compared them line by line.</div></div>
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Two line items are billed above your plan's contracted rate — office visit and venipuncture. You owe <b class="num">$86</b>, not <b class="num">$300</b>.</div></div>
+      <div class="minicard">
+        <div class="eyebrow" style="margin-bottom:4px">${state.sent ? 'Filed · watching' : 'Needs you'}</div>
+        <b class="money num">$214 back</b> · ~78% of disputes like this succeed with Anthem.
+        ${state.sent
+          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed through their billing portal at 9:36 AM · confirmation #D-7741. I'm tracking the response (7–10 days) and I'll report back here.</div>`
+          : `<div style="margin-top:10px;display:flex;gap:8px">
+              <button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button>
+              <button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Stays an open decision in Activity')">Not now</button>
+            </div>`}
+      </div>`;
+  }
+  const SMETA = {
+    ask:    { title: 'Ask Steward',            sub: () => 'Anything, anytime · audit logged',            build: askBuild },
+    om:     { title: 'One Medical dispute',    sub: () => state.sent ? 'Watching · filed' : 'Needs you · draft ready', build: omBuild },
+    sarah:  { title: 'Sarah — dentist dispute',sub: () => 'Watching · she approved',                     build: () => recap(["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]) },
+    overdraft:{ title:'Recovered overdraft fee', sub: () => 'Closed · +$45',                              build: () => recap(["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]) },
+    paramount:{ title:'Cancelled Paramount+',   sub: () => 'Closed · +$12/mo',                           build: () => recap(["Paramount+ went unused for 4 months.","You approved the cancellation Monday — confirmed, and I verified no charge on your June statement. That's $12/mo back."]) },
+    sweep:  { title: 'Weekly sweep',           sub: () => 'Done · all clear',                            build: () => recap(["Weekly sweep — I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]) },
+    kitchen:{ title: 'Kitchen remodel',        sub: () => 'Chat · Tuesday',                              build: () => recap(["You asked whether you could afford the kitchen remodel.","Short version: yes — about $40k works, with your emergency fund untouched and on the timeline you mentioned. Want me to model a couple of financing options?"]) },
+    hsa:    { title: 'How HSAs work',          sub: () => 'Chat · Jun 5',                                build: () => recap(["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical — and the balance is yours to keep, no use-it-or-lose-it. You're not maxing yours; want me to flag it at open enrollment?"]) },
+    hulu:   { title: 'Hulu',                   sub: () => 'Subscription · flagged',                      build: () => recap(["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","Cancelling saves $216/yr. The full cancel flow is wired in the mobile prototype — say the word and I'll handle it."]) },
+  };
+
+  function openSession(id) {
+    active = id;
+    const m = SMETA[id];
+    document.getElementById('railTitle').textContent = m.title;
+    document.getElementById('railSub').textContent = m.sub();
+    document.getElementById('dThread').innerHTML = m.build();
+    const t = document.getElementById('dThread'); t.scrollTop = t.scrollHeight;
+  }
+
   function render() {
     document.getElementById('dAttention').style.display = (state.attention && !state.sent) ? '' : 'none';
     document.getElementById('navDot').style.display = (state.attention && !state.sent) ? '' : 'none';
-    document.getElementById('dDispute').style.display = state.sent ? '' : 'none';
+    // pinned needs-you zone: proposed shows until filed
+    document.getElementById('dNeedsHdr').style.display = state.sent ? 'none' : '';
     document.getElementById('dProposed').style.display = state.sent ? 'none' : '';
-    document.getElementById('dChatCard').style.display = state.sent ? 'none' : '';
+    // pinned watching zone: sent dispute joins Sarah
+    document.getElementById('dDispute').style.display = state.sent ? '' : 'none';
     document.getElementById('homeStatus').textContent = state.sent
       ? 'Nothing needs you · your weekly brief ›' : '1 thing needs you · your weekly brief ›';
     document.getElementById('dActCount').textContent = state.sent ? '9' : '8';
     document.getElementById('wkLead').textContent = state.sent
       ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
       : 'A solid week — two wins verified, and one decision waiting on you.';
+    // refresh the rail if the open session reflects state
+    if (active === 'ask' || active === 'om') openSession(active);
   }
   function dismissD() { state.attention = false; render(); toast('Okay — it stays in Needs attention'); }
   function sendD() {
-    state.sent = true; render();
-    toast('Dispute sent ✓ Tracking the response');
-    const th = document.getElementById('dThread');
-    const m = document.createElement('div');
-    m.className = 'msg steward';
-    m.innerHTML = '<div class="who">Steward</div><div class="bubble">Dispute sent to One Medical at 9:36 AM — tracking it. Typical response 7–10 days. ✓</div>';
-    th.appendChild(m); th.scrollTop = th.scrollHeight;
-    nav('activity');
+    state.sent = true;
+    toast('Dispute filed ✓ Tracking the response');
+    openSession('om');
+    render();
   }
   function dSend() {
     const box = document.getElementById('dChatBox');
@@ -544,17 +608,18 @@
     m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
     m.querySelector('.bubble').textContent = text;
     th.appendChild(m);
-    const r = document.createElement('div');
-    r.className = 'msg steward';
-    if (/send|approve|yes|do it|looks right/i.test(text) && !state.sent) {
+    if (/send|approve|yes|do it|file it|looks right/i.test(text) && (active === 'om' || active === 'ask') && !state.sent) {
       th.scrollTop = th.scrollHeight;
       setTimeout(sendD, 500);
       return;
     }
-    r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer from your financial graph — this desktop prototype wires the dispute flow.</div>';
+    const r = document.createElement('div');
+    r.className = 'msg steward';
+    r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer from your financial graph and, if it needs action, open a session for it. This desktop prototype wires the dispute flow.</div>';
     setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
     th.scrollTop = th.scrollHeight;
   }
+  openSession('ask');
   render();
 </script>
 </body>
