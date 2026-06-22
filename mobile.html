@@ -172,6 +172,8 @@
   .event .s{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
   .event .meta{display:flex;gap:10px;margin-top:7px;font-size:11.5px}
   .event .meta a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+  .event.clk{cursor:pointer}
+  .event.clk:hover{background:var(--canvas);border-radius:6px}
   .event .amt{font-size:13.5px;font-weight:700;text-align:right;flex:none}
   .event .amt.money{color:var(--money)}
 
@@ -560,12 +562,11 @@
 
       <div id="proposedEvent" style="display:none">
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">⚑</span>
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
               <div class="s">Billed $300 vs. EOB $86 — draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
-              <div class="meta"><a onclick="startInvest()">Open it</a><a onclick="toast('Okay — it stays here until the window closes')">Not now</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -574,12 +575,11 @@
 
       <div id="rejectedEvent" style="display:none">
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
               <div class="s">Their reply is saved. Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
-              <div class="meta"><a onclick="startInvest()">Open it</a><a onclick="toast('Their reply — saved to documents')">Their reply</a></div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -591,12 +591,11 @@
 
       <div id="investigatingEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">⌕</span>
             <div class="body">
               <div class="t">Looking into a One Medical bill</div>
               <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
-              <div class="meta"><a onclick="go('casethread')">View</a></div>
             </div>
             <div class="amt"><span class="chip pend">Open</span></div>
           </div>
@@ -605,12 +604,11 @@
 
       <div id="disputeEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Sent medical bill dispute</div>
               <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
-              <div class="meta"><a onclick="startInvest()">View</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -619,12 +617,11 @@
 
       <div id="appealEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Filed Anthem member appeal</div>
               <div class="s">You approved round 2. Anthem must respond within 30 days — I'm watching, and I'll escalate to your state's review board if they miss it.</div>
-              <div class="meta"><a onclick="startInvest()">View</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -633,12 +630,11 @@
 
       <div id="handoffEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="go('chat')">
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Took over your One Medical billing issue</div>
               <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
-              <div class="meta"><a onclick="go('chat')">View</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -646,12 +642,11 @@
       </div>
 
       <div class="card" style="padding:2px 16px">
-        <div class="event">
+        <div class="event clk" onclick="openSess('sarah')">
           <span class="ico">S</span>
           <div class="body">
             <div class="t">Sarah — dentist dispute</div>
             <div class="s">Out-of-network rates billed in error. She approved from her phone — sent and watching.</div>
-            <div class="meta"><a onclick="toast('Household members approve their own items')">Why her</a></div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
@@ -662,12 +657,11 @@
 
       <div id="resolvedEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="startInvest()">
             <span class="ico">✓</span>
             <div class="body">
               <div class="t">One Medical dispute — closed, won</div>
               <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is right there.</div>
-              <div class="meta"><a onclick="startInvest()">View</a></div>
             </div>
             <div class="amt money num">+$214</div>
           </div>
@@ -676,12 +670,11 @@
 
       <div id="huluEvent" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event">
+          <div class="event clk" onclick="openSess('hulu')">
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">Cancelled Hulu</div>
               <div class="s">Price crept to $18 and your Disney+ bundle already includes it. Confirmation #4F7-220 — active until Jul 7; I'll verify no charge after Jul 8.</div>
-              <div class="meta"><a onclick="go('subdetail')">Why</a><a onclick="toast('Confirmation #4F7-220 saved to documents')">Confirmation</a></div>
             </div>
             <div class="amt money num">+$18/mo</div>
           </div>
@@ -690,72 +683,65 @@
 
       <div class="daylabel">Today</div>
       <div class="card" style="padding:2px 16px">
-        <div class="event">
+        <div class="event clk" onclick="go('chat')">
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">Medical spend this year</div>
             <div class="s">You asked how much you've spent on medical — $4,120, mostly March.</div>
-            <div class="meta"><a onclick="go('chat')">Open chat</a></div>
           </div>
         </div>
       </div>
 
       <div class="daylabel">Yesterday</div>
       <div class="card" style="padding:2px 16px">
-        <div class="event">
+        <div class="event clk" onclick="openSess('overdraft')">
           <span class="ico">✓</span>
           <div class="body">
             <div class="t">Recovered overdraft fee</div>
             <div class="s">Chase charged $45 on Jun 8. I requested a waiver — refund posted yesterday and I verified it on your statement.</div>
-            <div class="meta"><a onclick="toast('Waiver granted on first request — you\'re a 12-year customer')">Why</a><a onclick="toast('Evidence viewer — not in this prototype yet')">Evidence</a></div>
           </div>
           <div class="amt money num">+$45</div>
         </div>
-        <div class="event">
+        <div class="event clk" onclick="openSess('paramount')">
           <span class="ico">✕</span>
           <div class="body">
             <div class="t">Cancelled Paramount+</div>
             <div class="s">Unused 4 months. You approved Mon — cancellation confirmed, and I verified no charge on your June statement.</div>
-            <div class="meta"><a onclick="toast('No charges correlated with usage since February')">Why</a><a onclick="toast('Okay — I\'ll resubscribe you to Paramount+')">Undo — resubscribe</a></div>
           </div>
           <div class="amt money num">+$12/mo</div>
         </div>
-        <div class="event">
+        <div class="event clk" onclick="openSess('kitchen')">
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">Can we afford the kitchen remodel?</div>
             <div class="s">We talked it through — yes, around $40k, with your emergency fund untouched.</div>
-            <div class="meta"><a onclick="toast('Past chat — not in this prototype yet')">Open chat</a></div>
           </div>
         </div>
       </div>
 
       <div class="daylabel">Jun 5</div>
       <div class="card" style="padding:2px 16px">
-        <div class="event">
+        <div class="event clk" onclick="openSess('sweep')">
           <span class="ico">☰</span>
           <div class="body">
             <div class="t">Weekly sweep — all clear</div>
             <div class="s">Checked 41 new charges against your patterns and merchants. Nothing unusual.</div>
-            <div class="meta"><a onclick="toast('Sweep detail — not in this prototype yet')">Details</a></div>
           </div>
           <div class="amt"><span class="chip ok">Done</span></div>
         </div>
-        <div class="event">
+        <div class="event clk" onclick="openSess('correction')">
           <span class="ico">↺</span>
           <div class="body">
             <div class="t">Correction — flag withdrawn</div>
             <div class="s">I'd flagged a $45 lab fee as a duplicate. On a closer read of the EOB it's two distinct draws — the bill is right. Nothing was sent; flag withdrawn.</div>
-            <div class="meta"><a onclick="toast('Caught in my own re-check, before anything went out')">What happened</a></div>
           </div>
           <div class="amt"><span class="chip ok">Self-caught</span></div>
         </div>
-        <div class="event">
+        <div class="event clk" onclick="openSess('hsa')">
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">How do HSAs actually work?</div>
             <div class="s">Tax-free going in, grows untaxed, tax-free out for medical — and it's yours to keep.</div>
-            <div class="meta"><a onclick="toast('Past chat — not in this prototype yet')">Open chat</a></div>
           </div>
         </div>
       </div>
@@ -985,6 +971,16 @@
         <button onclick="caseSend()">➤</button>
       </div>
     </div>
+  </section>
+
+  <!-- ── SESSION (past session, read-only recap) ── -->
+  <section class="view" data-view="session">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title" id="sessTitle">Session</div><div class="sub" id="sessSub"></div></div>
+    </div>
+    <div class="scroll" id="sessScroll"></div>
+    <div class="dock"><div class="chatpill" onclick="toast('This session is on the record — message to reopen it')">Message this session…</div></div>
   </section>
 
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
@@ -1420,6 +1416,24 @@
     state.investStarted = true;
     go('casethread');
     render();
+  }
+  const MSESS = {
+    sarah:{title:"Sarah — dentist dispute",sub:"Watching",lines:["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]},
+    overdraft:{title:"Recovered overdraft fee",sub:"Closed · +$45",lines:["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]},
+    paramount:{title:"Cancelled Paramount+",sub:"Closed · +$12/mo",lines:["Paramount+ went unused for 4 months.","You approved the cancellation Monday — confirmed, and I verified no charge on your June statement. That's $12/mo back."]},
+    sweep:{title:"Weekly sweep",sub:"Done · all clear",lines:["Weekly sweep — I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]},
+    correction:{title:"Correction — flag withdrawn",sub:"Self-caught · nothing sent",lines:["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws — the charge is correct. I withdrew the flag before anything went out."]},
+    kitchen:{title:"Kitchen remodel",sub:"Chat · Tuesday",lines:["You asked whether you could afford the kitchen remodel.","Short version: yes — about $40k works, with your emergency fund untouched and on the timeline you mentioned."]},
+    hsa:{title:"How HSAs work",sub:"Chat · Jun 5",lines:["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical — and the balance is yours to keep, no use-it-or-lose-it."]},
+    hulu:{title:"Hulu",sub:"Cancelled · +$18/mo",lines:["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","I cancelled the standalone plan — confirmation #4F7-220. It stays active until Jul 7, and I'll verify no charge after Jul 8. That's $216/yr back."]},
+  };
+  function openSess(id){
+    const m = MSESS[id];
+    document.getElementById('sessTitle').textContent = m.title;
+    document.getElementById('sessSub').textContent = m.sub;
+    document.getElementById('sessScroll').innerHTML = m.lines.map(l =>
+      `<div class="msg steward"><div class="who">Steward</div><div class="bubble">${l}</div></div>`).join('');
+    go('session');
   }
   function askUpload() {
     if (state.investStarted) { toast('Already tracking that bill — it has a thread'); return; }
