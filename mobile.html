@@ -137,20 +137,12 @@
   .chips span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--canvas);white-space:nowrap;cursor:pointer}
 
   /* case file */
-  .compare{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
-  .compare th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--hairline)}
-  .compare td{padding:8px;border-bottom:1px solid var(--hairline)}
-  .compare tr:last-child td{border-bottom:none}
-  .compare .bad{color:var(--red);font-weight:600}
-  .compare .good{color:var(--money);font-weight:600}
   .steps{counter-reset:s;margin-top:4px}
   .step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--hairline);font-size:13.5px;line-height:1.45}
   .step:last-child{border-bottom:none}
   .step::before{counter-increment:s;content:counter(s);width:22px;height:22px;border-radius:50%;
                 background:rgba(20,58,61,.07);color:var(--ink);font-size:11px;font-weight:700;
                 display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px}
-  .letter{background:#FAFBFC;border:1px dashed #C8D2D6;border-radius:6px;padding:12px;font-size:12.5px;line-height:1.6;color:var(--ink-2);margin-top:4px}
-  .letter .edit{float:right;font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
   .note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:10px}
 
   /* activity */
@@ -177,25 +169,9 @@
   .event .amt{font-size:13.5px;font-weight:700;text-align:right;flex:none}
   .event .amt.money{color:var(--money)}
 
-  /* autonomy */
-  .lead{font-size:13px;color:var(--ink-2);line-height:1.55;margin:2px 4px 14px}
-  .pb .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-  .pb .head .t{font-size:14.5px;font-weight:700}
-  .pb .head .cap{font-size:11.5px;color:var(--muted)}
-  .levels{display:flex;gap:6px}
-  .lvl{flex:1;text-align:center;font-size:10.5px;font-weight:600;padding:7px 2px;border:1px solid var(--hairline);border-radius:6px;color:var(--muted);background:var(--card);cursor:pointer}
-  .lvl b{display:block;font-size:11px;color:inherit}
-  .lvl.on{background:var(--ink);border-color:var(--ink);color:#fff}
-  .lvl.locked{opacity:.45;cursor:not-allowed}
-  .earn{font-size:11px;color:var(--amber);margin-top:8px}
-  .earn.good{color:var(--money)}
   .hardblock{background:rgba(176,66,26,.05);border:1px solid rgba(176,66,26,.25)}
   .hardblock .t{font-size:13.5px;font-weight:700;color:var(--red);margin-bottom:4px}
   .hardblock p{font-size:12.5px;color:var(--ink-2);line-height:1.5}
-  .threshold p{font-size:13px;line-height:1.5;color:var(--ink-2)}
-  .opts{display:flex;gap:8px;margin-top:10px}
-  .opts span{font-size:12px;font-weight:600;padding:6px 12px;border-radius:6px;border:1px solid var(--hairline);background:var(--card);color:var(--ink-2);cursor:pointer}
-  .opts span.on{background:var(--ink);border-color:var(--ink);color:#fff}
 
   /* empty-state modules (cold home) */
   .empty{border:1.5px dashed #C3CDD2;background:transparent;box-shadow:none}
@@ -247,7 +223,7 @@
     <div class="topbar">
       <span class="wordmark">Steward</span>
       <span class="icons">
-        <span class="bell" onclick="toggleAttention()" title="demo: toggle attention state">
+        <span class="bell" onclick="toggleAttention()" title="Notifications">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span class="dot" id="bellDot"></span>
         </span>
@@ -549,7 +525,7 @@
 
       <div class="card summary num">
         <div><div class="v money" id="activityTotal">$259</div><div class="l">Recovered in June</div></div>
-        <div><div class="v" id="activityCount">7</div><div class="l">Actions taken</div></div>
+        <div><div class="v" id="activityCount">8</div><div class="l">Actions taken</div></div>
         <div><div class="v">41</div><div class="l">Charges checked</div></div>
       </div>
       <div class="filters">
@@ -913,7 +889,7 @@
         <div class="msg steward"><div class="who">Steward</div>
           <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this activity.</div>
         </div>
-        <div class="why" onclick="threadStep('inv7')">demo: a few days pass ›</div>
+        <div class="why" onclick="threadStep('inv7')">A few days pass ›</div>
       </div>
       <div class="hideme" id="inv7">
         <div class="day">Jun 17</div>
@@ -932,7 +908,7 @@
             <div class="prog"><div><span class="tick">✓</span>Verified — status: <b>under review</b>. I'll check again Friday.</div></div>
           </div>
         </div>
-        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">demo: their answer arrives ›</div>
+        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">Their answer arrives ›</div>
       </div>
       <div class="hideme" id="inv8">
         <div class="day">Jun 22</div>
@@ -952,7 +928,7 @@
             <div><span class="tick">✓</span>Anthem must respond within 30 days — I'm on the clock</div>
           </div>
         </div>
-        <div class="why" onclick="threadStep('inv9'); resolveCase()">demo: Anthem rules ›</div>
+        <div class="why" onclick="threadStep('inv9'); resolveCase()">Anthem rules ›</div>
       </div>
       <div class="hideme" id="inv9">
         <div class="day">Jul 8</div>
@@ -991,8 +967,8 @@
     </div>
     <div class="scroll">
       <div class="card summary num">
-        <div><div class="v">$86</div><div class="l">per month</div></div>
-        <div><div class="v">$1,032</div><div class="l">per year</div></div>
+        <div><div class="v">$99</div><div class="l">per month</div></div>
+        <div><div class="v">$1,188</div><div class="l">per year</div></div>
         <div><div class="v">7</div><div class="l">active</div></div>
       </div>
 
@@ -1111,7 +1087,7 @@
     <div class="topbar">
       <span class="wordmark">Steward</span>
       <span class="icons">
-        <span class="bell" onclick="location.reload()" title="demo: restart">
+        <span class="bell" onclick="location.reload()" title="Restart">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
         </span>
         <span class="avatar">T</span>
@@ -1390,7 +1366,7 @@
     show('chSubsNoEmail', !state.email);
     show('chSubsEmail', state.email);
     document.getElementById('activityCount').textContent =
-      7 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
+      8 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
         + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
     document.getElementById('activityTotal').textContent = p === 'resolved' ? '$473' : '$259';
     document.getElementById('recoveredAmt').textContent = p === 'resolved' ? '$473' : '$259';
@@ -1521,10 +1497,6 @@
   function promptDismiss() {
     state.phase = 'dismissed'; render();
     toast("Okay — I'll leave it. Ask me anytime to take a look");
-  }
-  function dismissFromBriefing() {
-    state.phase = 'dismissed'; render();
-    toast('De-prioritized — it stays an open decision in Activity');
   }
   function toggleAttention() { location.reload(); }  // bell = demo restart
   function threadStep(id) {
@@ -1695,7 +1667,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">In the full product I\'d answer that from your financial graph. Your One Medical dispute has its own thread — everything about it stays there.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">I\'d answer that from your financial graph. Your One Medical dispute has its own session — everything about it stays there.</div>';
       setTimeout(() => { scroll.insertBefore(r, document.getElementById('ho1')); scroll.scrollTop = scroll.scrollHeight; }, 450);
     }
     scroll.scrollTop = scroll.scrollHeight;
