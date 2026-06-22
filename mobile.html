@@ -555,38 +555,10 @@
         <span onclick="filterDemo(this)">Watching</span><span onclick="filterDemo(this)">Done</span>
       </div>
 
-      <div id="disputeEvent" style="display:none">
-        <div class="daylabel">Just now</div>
-        <div class="card" style="padding:2px 16px">
-          <div class="event">
-            <span class="ico">⇪</span>
-            <div class="body">
-              <div class="t">Sent medical bill dispute</div>
-              <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
-              <div class="meta"><a onclick="startInvest()">View</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
-            </div>
-            <div class="amt"><span class="chip pend">Watching</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="investigatingEvent" style="display:none">
-        <div class="daylabel">Open</div>
-        <div class="card" style="padding:2px 16px">
-          <div class="event">
-            <span class="ico">⌕</span>
-            <div class="body">
-              <div class="t">Looking into a One Medical bill</div>
-              <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
-              <div class="meta"><a onclick="go('casethread')">View</a></div>
-            </div>
-            <div class="amt"><span class="chip pend">Open</span></div>
-          </div>
-        </div>
-      </div>
+      <!-- PINNED: needs you + active/watching, regardless of date -->
+      <div class="daylabel" id="pinNeedsHdr" style="display:none">Needs you</div>
 
       <div id="proposedEvent" style="display:none">
-        <div class="daylabel">Needs your decision</div>
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
           <div class="event">
             <span class="ico">⚑</span>
@@ -600,23 +572,7 @@
         </div>
       </div>
 
-      <div id="handoffEvent" style="display:none">
-        <div class="daylabel">Just now</div>
-        <div class="card" style="padding:2px 16px">
-          <div class="event">
-            <span class="ico">⇪</span>
-            <div class="body">
-              <div class="t">Took over your One Medical billing issue</div>
-              <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
-              <div class="meta"><a onclick="go('chat')">View</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
-            </div>
-            <div class="amt"><span class="chip pend">Watching</span></div>
-          </div>
-        </div>
-      </div>
-
       <div id="rejectedEvent" style="display:none">
-        <div class="daylabel">Just now</div>
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
           <div class="event">
             <span class="ico">✕</span>
@@ -630,8 +586,37 @@
         </div>
       </div>
 
+      <div class="daylabel" id="pinActiveHdr">On it · watching</div>
+
+      <div id="investigatingEvent" style="display:none">
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⌕</span>
+            <div class="body">
+              <div class="t">Looking into a One Medical bill</div>
+              <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
+              <div class="meta"><a onclick="go('casethread')">View</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Open</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="disputeEvent" style="display:none">
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⇪</span>
+            <div class="body">
+              <div class="t">Sent medical bill dispute</div>
+              <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
+              <div class="meta"><a onclick="startInvest()">View</a><a onclick="toast('Confirmation #D-7741 — saved to documents')">Confirmation</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
       <div id="appealEvent" style="display:none">
-        <div class="daylabel">Just now</div>
         <div class="card" style="padding:2px 16px">
           <div class="event">
             <span class="ico">⇪</span>
@@ -645,8 +630,36 @@
         </div>
       </div>
 
+      <div id="handoffEvent" style="display:none">
+        <div class="card" style="padding:2px 16px">
+          <div class="event">
+            <span class="ico">⇪</span>
+            <div class="body">
+              <div class="t">Took over your One Medical billing issue</div>
+              <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
+              <div class="meta"><a onclick="go('chat')">View</a><a onclick="toast('Reply saved to documents')">Reply sent</a></div>
+            </div>
+            <div class="amt"><span class="chip pend">Watching</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:2px 16px">
+        <div class="event">
+          <span class="ico">S</span>
+          <div class="body">
+            <div class="t">Sarah — dentist dispute</div>
+            <div class="s">Out-of-network rates billed in error. She approved from her phone — sent and watching.</div>
+            <div class="meta"><a onclick="toast('Household members approve their own items')">Why her</a></div>
+          </div>
+          <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
+      </div>
+
+      <!-- TIME-ORDERED: done sessions + chats, newest first -->
+      <div class="daylabel" id="doneRecentHdr" style="display:none">Recently closed</div>
+
       <div id="resolvedEvent" style="display:none">
-        <div class="daylabel">Jul 8</div>
         <div class="card" style="padding:2px 16px">
           <div class="event">
             <span class="ico">✓</span>
@@ -661,7 +674,6 @@
       </div>
 
       <div id="huluEvent" style="display:none">
-        <div class="daylabel">Just now</div>
         <div class="card" style="padding:2px 16px">
           <div class="event">
             <span class="ico">✕</span>
@@ -706,15 +718,6 @@
             <div class="meta"><a onclick="toast('No charges correlated with usage since February')">Why</a><a onclick="toast('Okay — I\'ll resubscribe you to Paramount+')">Undo — resubscribe</a></div>
           </div>
           <div class="amt money num">+$12/mo</div>
-        </div>
-        <div class="event">
-          <span class="ico">S</span>
-          <div class="body">
-            <div class="t">Sarah approved a dispute</div>
-            <div class="s">Her dentist billed out-of-network rates in error. She approved from her phone — sent and watching.</div>
-            <div class="meta"><a onclick="toast('Household members approve their own items')">Why her</a></div>
-          </div>
-          <div class="amt money num">~$86</div>
         </div>
         <div class="event">
           <span class="ico">💬</span>
@@ -1394,6 +1397,8 @@
     show('subsAppleWatch', state.apple === 'watching');
     show('handoffEvent', state.handoff === 'sent');
     show('proposedEvent', state.investigated && (p === 'found' || p === 'dismissed'));
+    show('pinNeedsHdr', (state.investigated && (p === 'found' || p === 'dismissed')) || p === 'rejected');
+    show('doneRecentHdr', p === 'resolved' || cancelled);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Activity closed.'
