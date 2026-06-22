@@ -373,7 +373,7 @@
     <div class="navhead">
       <button class="back" onclick="back()">‹</button>
       <div><div class="title">Ask Steward</div><div class="sub">Anything, anytime · audit logged</div></div>
-      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('threads')">Chats</span>
+      <span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="go('activity',true)">History</span>
     </div>
     <div class="scroll" id="chatScroll">
       <div class="day">Today, 9:32 AM</div>
@@ -536,7 +536,7 @@
   <!-- ── ACTIVITY ── -->
   <section class="view" data-view="activity">
     <div class="navhead">
-      <div style="flex:1"><div class="title">Activity</div><div class="sub">Everything I do, on the record</div></div>
+      <div style="flex:1"><div class="title">Activity</div><div class="sub">Every conversation and job · newest first</div></div>
       <span class="avatar">T</span>
     </div>
     <div class="scroll">
@@ -556,7 +556,7 @@
       </div>
 
       <div id="disputeEvent" style="display:none">
-        <div class="daylabel">Today</div>
+        <div class="daylabel">Just now</div>
         <div class="card" style="padding:2px 16px">
           <div class="event">
             <span class="ico">⇪</span>
@@ -675,6 +675,18 @@
         </div>
       </div>
 
+      <div class="daylabel">Today</div>
+      <div class="card" style="padding:2px 16px">
+        <div class="event">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">Medical spend this year</div>
+            <div class="s">You asked how much you've spent on medical — $4,120, mostly March.</div>
+            <div class="meta"><a onclick="go('chat')">Open chat</a></div>
+          </div>
+        </div>
+      </div>
+
       <div class="daylabel">Yesterday</div>
       <div class="card" style="padding:2px 16px">
         <div class="event">
@@ -704,6 +716,14 @@
           </div>
           <div class="amt money num">~$86</div>
         </div>
+        <div class="event">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">Can we afford the kitchen remodel?</div>
+            <div class="s">We talked it through — yes, around $40k, with your emergency fund untouched.</div>
+            <div class="meta"><a onclick="toast('Past chat — not in this prototype yet')">Open chat</a></div>
+          </div>
+        </div>
       </div>
 
       <div class="daylabel">Jun 5</div>
@@ -726,9 +746,17 @@
           </div>
           <div class="amt"><span class="chip ok">Self-caught</span></div>
         </div>
+        <div class="event">
+          <span class="ico">💬</span>
+          <div class="body">
+            <div class="t">How do HSAs actually work?</div>
+            <div class="s">Tax-free going in, grows untaxed, tax-free out for medical — and it's yours to keep.</div>
+            <div class="meta"><a onclick="toast('Past chat — not in this prototype yet')">Open chat</a></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="dock"><div class="chatpill" onclick="go('chat')">Ask about any action…</div></div>
+    <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
   </section>
 
   <!-- ── YOU / HOW STEWARD WORKS ── -->
@@ -979,30 +1007,6 @@
   </section>
 
   <!-- ── THREADS ── -->
-  <section class="view" data-view="threads">
-    <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
-      <div style="flex:1"><div class="title">Chat history</div><div class="sub">Newest first</div></div>
-    </div>
-    <div class="scroll">
-      <div class="card" style="padding:6px 16px">
-        <div class="row" style="cursor:pointer" onclick="go('chat')">
-          <div class="body"><div class="t">Medical spend this year</div><div class="s">Today, 9:32 AM</div></div>
-          <span class="chevron">›</span>
-        </div>
-        <div class="row" style="cursor:pointer" onclick="toast('Past chat — not in this prototype yet')">
-          <div class="body"><div class="t">Can we afford the kitchen remodel?</div><div class="s">Tuesday</div></div>
-          <span class="chevron">›</span>
-        </div>
-        <div class="row" style="cursor:pointer" onclick="toast('Past chat — not in this prototype yet')">
-          <div class="body"><div class="t">How do HSAs actually work?</div><div class="s">Jun 5</div></div>
-          <span class="chevron">›</span>
-        </div>
-      </div>
-      <div class="note">Conversations live here. Tracked work — anything I've committed to do — lives in Activity.</div>
-    </div>
-  </section>
-
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
   <section class="view" data-view="subs">
     <div class="navhead">
