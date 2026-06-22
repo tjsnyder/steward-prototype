@@ -429,6 +429,14 @@
           </div>
           <div class="amt"><span class="chip ok">Done</span></div>
         </div>
+        <div class="event clk" onclick="openSession('correction')">
+          <span class="ico">↺</span>
+          <div class="body">
+            <div class="t">Correction — flag withdrawn</div>
+            <div class="s">I'd flagged a $45 lab fee as a duplicate; on a closer read it's two distinct draws. Nothing was sent.</div>
+          </div>
+          <div class="amt"><span class="chip ok">Self-caught</span></div>
+        </div>
         <div class="event clk" onclick="openSession('hsa')">
           <span class="ico">💬</span>
           <div class="body">
@@ -563,6 +571,7 @@
     sweep:  { title: 'Weekly sweep',           sub: () => 'Done · all clear',                            build: () => recap(["Weekly sweep — I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]) },
     kitchen:{ title: 'Kitchen remodel',        sub: () => 'Chat · Tuesday',                              build: () => recap(["You asked whether you could afford the kitchen remodel.","Short version: yes — about $40k works, with your emergency fund untouched and on the timeline you mentioned. Want me to model a couple of financing options?"]) },
     hsa:    { title: 'How HSAs work',          sub: () => 'Chat · Jun 5',                                build: () => recap(["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical — and the balance is yours to keep, no use-it-or-lose-it. You're not maxing yours; want me to flag it at open enrollment?"]) },
+    correction:{ title:'Correction — flag withdrawn', sub: () => 'Self-caught · nothing sent', build: () => recap(["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws — the charge is correct. I withdrew the flag before anything went out. I'd rather catch my own mistakes than send you a wrong dispute."]) },
     hulu:   { title: 'Hulu',                   sub: () => 'Subscription · flagged',                      build: () => recap(["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","Cancelling saves $216/yr. The full cancel flow is wired in the mobile prototype — say the word and I'll handle it."]) },
   };
 
@@ -592,12 +601,15 @@
     // refresh the rail if the open session reflects state
     if (active === 'ask' || active === 'om') openSession(active);
   }
+  function filterDemo(el) {
+    el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
+    el.classList.add('on');
+  }
   function dismissD() { state.attention = false; render(); toast('Okay — it stays in Needs attention'); }
   function sendD() {
     state.sent = true;
     toast('Dispute filed ✓ Tracking the response');
-    openSession('om');
-    render();
+    render(); // refreshes the rail for the open om/ask session
   }
   function dSend() {
     const box = document.getElementById('dChatBox');
