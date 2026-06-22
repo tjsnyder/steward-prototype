@@ -155,6 +155,10 @@
   .filters{display:flex;gap:8px;margin:2px 2px 12px}
   .filters span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--card);cursor:pointer}
   .filters span.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  #actFeed.f-needs    [data-cat]:not([data-cat="needs"]),
+  #actFeed.f-watching [data-cat]:not([data-cat="watching"]),
+  #actFeed.f-done     [data-cat]:not([data-cat="done"]){display:none!important}
+  .filterempty{font-size:13px;color:var(--ink-2);text-align:center;padding:30px 8px;line-height:1.5}
   .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 4px 8px}
   .event{display:flex;gap:12px;padding:13px 0}
   .event+.event{border-top:1px solid var(--hairline)}
@@ -536,11 +540,12 @@
         <span class="on" onclick="filterDemo(this)">All</span><span onclick="filterDemo(this)">Needs you</span>
         <span onclick="filterDemo(this)">Watching</span><span onclick="filterDemo(this)">Done</span>
       </div>
+      <div class="filterempty" id="actFilterEmpty" style="display:none"></div>
 
       <!-- PINNED: needs you + active/watching, regardless of date -->
-      <div class="daylabel" id="pinNeedsHdr" style="display:none">Needs you</div>
+      <div class="daylabel" id="pinNeedsHdr" data-cat="needs" style="display:none">Needs you</div>
 
-      <div id="proposedEvent" style="display:none">
+      <div id="proposedEvent" data-cat="needs" style="display:none">
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⚑</span>
@@ -553,7 +558,7 @@
         </div>
       </div>
 
-      <div id="rejectedEvent" style="display:none">
+      <div id="rejectedEvent" data-cat="needs" style="display:none">
         <div class="card" style="padding:2px 16px;border-left:3px solid var(--ink)">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">✕</span>
@@ -566,8 +571,8 @@
         </div>
       </div>
 
-      <div class="daylabel" id="pinPausedHdr" style="display:none">Paused · your call</div>
-      <div id="dismissedEvent" style="display:none">
+      <div class="daylabel" id="pinPausedHdr" data-cat="needs" style="display:none">Paused · your call</div>
+      <div id="dismissedEvent" data-cat="needs" style="display:none">
         <div class="card" style="padding:2px 16px;opacity:.72">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⏸</span>
@@ -581,9 +586,9 @@
       </div>
 
       <!-- always-on: the static Sarah card below keeps this header from ever being orphaned -->
-      <div class="daylabel" id="pinActiveHdr">On it · watching</div>
+      <div class="daylabel" id="pinActiveHdr" data-cat="watching">On it · watching</div>
 
-      <div id="investigatingEvent" style="display:none">
+      <div id="investigatingEvent" data-cat="watching" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⌕</span>
@@ -596,7 +601,7 @@
         </div>
       </div>
 
-      <div id="disputeEvent" style="display:none">
+      <div id="disputeEvent" data-cat="watching" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⇪</span>
@@ -609,7 +614,7 @@
         </div>
       </div>
 
-      <div id="appealEvent" style="display:none">
+      <div id="appealEvent" data-cat="watching" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⇪</span>
@@ -622,7 +627,7 @@
         </div>
       </div>
 
-      <div id="handoffEvent" style="display:none">
+      <div id="handoffEvent" data-cat="watching" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="go('chat')">
             <span class="ico">⇪</span>
@@ -635,7 +640,7 @@
         </div>
       </div>
 
-      <div class="card" style="padding:2px 16px">
+      <div class="card" data-cat="watching" style="padding:2px 16px">
         <div class="event clk" onclick="openSess('sarah')">
           <span class="ico">S</span>
           <div class="body">
@@ -647,9 +652,9 @@
       </div>
 
       <!-- TIME-ORDERED: done sessions + chats, newest first -->
-      <div class="daylabel" id="doneRecentHdr" style="display:none">Recently closed</div>
+      <div class="daylabel" id="doneRecentHdr" data-cat="done" style="display:none">Recently closed</div>
 
-      <div id="resolvedEvent" style="display:none">
+      <div id="resolvedEvent" data-cat="done" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="startInvest()">
             <span class="ico">✓</span>
@@ -662,7 +667,7 @@
         </div>
       </div>
 
-      <div id="huluEvent" style="display:none">
+      <div id="huluEvent" data-cat="done" style="display:none">
         <div class="card" style="padding:2px 16px">
           <div class="event clk" onclick="go('subdetail')">
             <span class="ico">✕</span>
@@ -675,8 +680,8 @@
         </div>
       </div>
 
-      <div class="daylabel">Today</div>
-      <div class="card" style="padding:2px 16px">
+      <div class="daylabel" data-cat="done">Today</div>
+      <div class="card" data-cat="done" style="padding:2px 16px">
         <div class="event clk" onclick="go('chat')">
           <span class="ico">💬</span>
           <div class="body">
@@ -686,8 +691,8 @@
         </div>
       </div>
 
-      <div class="daylabel">Yesterday</div>
-      <div class="card" style="padding:2px 16px">
+      <div class="daylabel" data-cat="done">Yesterday</div>
+      <div class="card" data-cat="done" style="padding:2px 16px">
         <div class="event clk" onclick="openSess('overdraft')">
           <span class="ico">✓</span>
           <div class="body">
@@ -713,8 +718,8 @@
         </div>
       </div>
 
-      <div class="daylabel">Jun 5</div>
-      <div class="card" style="padding:2px 16px">
+      <div class="daylabel" data-cat="done">Jun 5</div>
+      <div class="card" data-cat="done" style="padding:2px 16px">
         <div class="event clk" onclick="openSess('sweep')">
           <span class="ico">☰</span>
           <div class="body">
@@ -1329,7 +1334,7 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false, origin: 'email' };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false, origin: 'email', filter: 'all' };
   const stack = [];
   let current = 'home';
   let credTarget = null;
@@ -1393,6 +1398,7 @@
         + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
     document.getElementById('activityTotal').textContent = p === 'resolved' ? '$473' : '$259';
     document.getElementById('recoveredAmt').textContent = p === 'resolved' ? '$473' : '$259';
+    applyFilter();
   }
 
   const COLD = ['welcome', 'sweep', 'digest'];
@@ -1705,9 +1711,23 @@
     }
     scroll.scrollTop = scroll.scrollHeight;
   }
+  const FILTERMAP = { 'All': 'all', 'Needs you': 'needs', 'Watching': 'watching', 'Done': 'done' };
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
     el.classList.add('on');
+    state.filter = FILTERMAP[el.textContent.trim()] || 'all';
+    applyFilter();
+  }
+  function applyFilter() {
+    const feed = document.getElementById('actFeed');
+    if (!feed) return;
+    feed.classList.remove('f-needs', 'f-watching', 'f-done');
+    if (state.filter && state.filter !== 'all') feed.classList.add('f-' + state.filter);
+    const items = [...feed.querySelectorAll('[data-cat]:not(.daylabel)')];
+    const anyVisible = items.some(n => n.offsetParent !== null);
+    const empty = document.getElementById('actFilterEmpty');
+    empty.textContent = { needs: 'Nothing needs you right now.', watching: 'Nothing in flight right now.', done: 'Nothing closed yet.' }[state.filter] || '';
+    empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
 
   current = 'welcome';

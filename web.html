@@ -113,6 +113,10 @@
   .filters{display:flex;gap:8px;margin:2px 0 14px}
   .filters span{font-size:12px;font-weight:600;padding:5px 12px;border-radius:14px;border:1px solid var(--hairline);color:var(--ink-2);background:var(--card);cursor:pointer}
   .filters span.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .dview.f-needs    [data-cat]:not([data-cat="needs"]),
+  .dview.f-watching [data-cat]:not([data-cat="watching"]),
+  .dview.f-done     [data-cat]:not([data-cat="done"]){display:none!important}
+  .filterempty{font-size:13px;color:var(--ink-2);text-align:center;padding:34px 8px;line-height:1.5}
   .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}
   .event{display:flex;gap:14px;padding:13px 4px}
   .event+.event{border-top:1px solid var(--hairline)}
@@ -352,10 +356,11 @@
         <span class="on" onclick="filterDemo(this)">All</span><span onclick="filterDemo(this)">Needs you</span>
         <span onclick="filterDemo(this)">Watching</span><span onclick="filterDemo(this)">Done</span>
       </div>
+      <div class="filterempty" id="dFilterEmpty" style="display:none"></div>
 
       <!-- PINNED: needs you + active/watching, regardless of date -->
-      <div class="daylabel" id="dNeedsHdr">Needs you</div>
-      <div class="card" id="dProposed" style="padding:4px 18px;border-left:3px solid var(--ink)">
+      <div class="daylabel" id="dNeedsHdr" data-cat="needs">Needs you</div>
+      <div class="card" id="dProposed" data-cat="needs" style="padding:4px 18px;border-left:3px solid var(--ink)">
         <div class="event clk" onclick="openSession('om')">
           <span class="ico">⚑</span>
           <div class="body">
@@ -365,7 +370,7 @@
           <div class="amt money num">$214</div>
         </div>
       </div>
-      <div class="card" id="dRejected" style="display:none;padding:4px 18px;border-left:3px solid var(--ink)">
+      <div class="card" id="dRejected" data-cat="needs" style="display:none;padding:4px 18px;border-left:3px solid var(--ink)">
         <div class="event clk" onclick="openSession('om')">
           <span class="ico">✕</span>
           <div class="body">
@@ -376,8 +381,8 @@
         </div>
       </div>
 
-      <div class="daylabel" id="dPausedHdr" style="display:none">Paused · your call</div>
-      <div class="card" id="dPaused" style="display:none;padding:4px 18px;opacity:.72">
+      <div class="daylabel" id="dPausedHdr" data-cat="needs" style="display:none">Paused · your call</div>
+      <div class="card" id="dPaused" data-cat="needs" style="display:none;padding:4px 18px;opacity:.72">
         <div class="event clk" onclick="openSession('om')">
           <span class="ico">⏸</span>
           <div class="body">
@@ -388,8 +393,8 @@
         </div>
       </div>
 
-      <div class="daylabel">On it · watching</div>
-      <div class="card" style="padding:4px 18px">
+      <div class="daylabel" data-cat="watching">On it · watching</div>
+      <div class="card" data-cat="watching" style="padding:4px 18px">
         <div class="event clk" id="dDispute" style="display:none" onclick="openSession('om')">
           <span class="ico">⇪</span>
           <div class="body">
@@ -416,8 +421,8 @@
         </div>
       </div>
 
-      <div class="daylabel" id="dDoneHdr" style="display:none">Recently closed</div>
-      <div class="card" id="dResolvedCard" style="display:none;padding:4px 18px">
+      <div class="daylabel" id="dDoneHdr" data-cat="done" style="display:none">Recently closed</div>
+      <div class="card" id="dResolvedCard" data-cat="done" style="display:none;padding:4px 18px">
         <div class="event clk" onclick="openSession('om')">
           <span class="ico">✓</span>
           <div class="body">
@@ -429,8 +434,8 @@
       </div>
 
       <!-- TIME-ORDERED: done sessions + chats, newest first -->
-      <div class="daylabel">Today</div>
-      <div class="card" style="padding:4px 18px">
+      <div class="daylabel" data-cat="done">Today</div>
+      <div class="card" data-cat="done" style="padding:4px 18px">
         <div class="event clk" onclick="openSession('ask')">
           <span class="ico">💬</span>
           <div class="body">
@@ -440,8 +445,8 @@
         </div>
       </div>
 
-      <div class="daylabel">Yesterday</div>
-      <div class="card" style="padding:4px 18px">
+      <div class="daylabel" data-cat="done">Yesterday</div>
+      <div class="card" data-cat="done" style="padding:4px 18px">
         <div class="event clk" onclick="openSession('overdraft')">
           <span class="ico">✓</span>
           <div class="body">
@@ -467,8 +472,8 @@
         </div>
       </div>
 
-      <div class="daylabel">Jun 5</div>
-      <div class="card" style="padding:4px 18px">
+      <div class="daylabel" data-cat="done">Jun 5</div>
+      <div class="card" data-cat="done" style="padding:4px 18px">
         <div class="event clk" onclick="openSession('sweep')">
           <span class="ico">☰</span>
           <div class="body">
@@ -545,7 +550,7 @@
 <div id="toast"></div>
 
 <script>
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all' };
   let active = 'ask';
 
   function nav(view) {
@@ -660,10 +665,25 @@
       ? '<span class="chip ok">Cancelled</span>'
       : '<span class="linkish" onclick="openSession(\'hulu\')">Review</span>';
     if (active === 'ask' || active === 'om' || active === 'hulu' || active === 'handoff') openSession(active);
+    applyWebFilter();
   }
+  const FILTERMAP = { 'All': 'all', 'Needs you': 'needs', 'Watching': 'watching', 'Done': 'done' };
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
     el.classList.add('on');
+    state.filter = FILTERMAP[el.textContent.trim()] || 'all';
+    applyWebFilter();
+  }
+  function applyWebFilter() {
+    const sec = document.querySelector('.dview[data-view="activity"]');
+    if (!sec) return;
+    sec.classList.remove('f-needs', 'f-watching', 'f-done');
+    if (state.filter && state.filter !== 'all') sec.classList.add('f-' + state.filter);
+    const items = [...sec.querySelectorAll('[data-cat]:not(.daylabel)')];
+    const anyVisible = items.some(n => n.offsetParent !== null);
+    const empty = document.getElementById('dFilterEmpty');
+    empty.textContent = { needs: 'Nothing needs you right now.', watching: 'Nothing in flight right now.', done: 'Nothing closed yet.' }[state.filter] || '';
+    empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
   function dismissD() { state.phase = 'dismissed'; render(); toast('Paused — it stays an open decision in Activity'); }
   function sendD() { state.phase = 'verifying'; render(); openSession('om'); toast('One Medical needs a verification code'); }
