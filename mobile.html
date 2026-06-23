@@ -257,7 +257,7 @@
             <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
             <div class="figbox"><div class="l">Your recovery</div><div class="v money num">$214</div></div>
           </div>
-          <div class="deadline">Window closes Jun 28, drafted and ready. ~78% of similar disputes succeed.</div>
+          <div class="deadline">Window closes Jun 28, drafted and ready. EOB-backed, strong case.</div>
           <div class="btnrow">
             <button class="btn primary" onclick="startInvest()">Open the activity</button>
             <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
@@ -270,7 +270,7 @@
       <div class="card attention" id="rejectedCard" style="display:none">
         <div class="eyebrow">They said no, round two</div>
         <h4>One Medical rejected the dispute</h4>
-        <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise, so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Appeals like this succeed ~64%.</p>
+        <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise, so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Your EOB is the strongest version of the argument.</p>
         <div class="btnrow" style="margin-top:12px">
           <button class="btn primary" onclick="startInvest()">Open the activity</button>
           <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
@@ -556,7 +556,7 @@
             <span class="ico">⚑</span>
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
-              <div class="s">Billed $300 vs. EOB $86, draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
+              <div class="s">Billed $300 vs. EOB $86, draft ready, EOB-backed, strong case. Window closes Jun 28.</div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -569,7 +569,7 @@
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
-              <div class="s">Their reply is saved. Round 2, an Anthem member appeal, is drafted and waiting on you. Appeals like this succeed ~64%.</div>
+              <div class="s">Their reply is saved. Round 2, an Anthem member appeal, is drafted and waiting on you. Your EOB backs it, strong case.</div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -896,7 +896,7 @@
           <h5>One Medical billed $300, EOB says $86</h5>
           <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
           <div class="recover num">$214 back<small>projected</small></div>
-          <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem, based on outcomes from cases like yours.</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Your Anthem EOB lists the allowed amount at $86, a documented overcharge, not a judgment call. Strong case.</p>
           <div class="btnrow" style="margin-top:10px" id="inv5btns">
             <button class="btn primary" onclick="fileDispute()">File the dispute</button>
             <button class="btn ghost" onclick="go('home',true)">Later</button>
@@ -941,7 +941,7 @@
       <div class="hideme" id="inv8">
         <div class="day">Jun 22</div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">They answered, <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b>, they enforce the contracted rate. Appeals like this succeed ~64%.</div>
+          <div class="bubble">They answered, <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b>, they enforce the contracted rate. Your EOB makes the case.</div>
         </div>
         <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
           <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
