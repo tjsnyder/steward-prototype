@@ -56,6 +56,8 @@
   /* home grid */
   .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
   .span2{grid-column:span 2}
+  .glance{display:flex;align-items:center;justify-content:space-between}
+  .glance:hover{background:var(--canvas)}
   .hero-amount{font-size:38px;font-weight:700;letter-spacing:-.02em}
   .delta{display:inline-flex;font-size:12.5px;font-weight:600;color:var(--money);background:rgba(10,124,90,.08);border-radius:4px;padding:2px 8px;margin-left:12px;vertical-align:middle}
   .split{display:flex;border-top:1px solid var(--hairline);margin-top:16px;padding-top:14px}
@@ -197,16 +199,19 @@
       <button class="active" data-nav="home" onclick="nav('home')">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>
         Home<span class="dot" id="navDot"></span></button>
-      <button data-nav="subs" onclick="nav('subs')">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
-        Subscriptions</button>
       <button data-nav="activity" onclick="nav('activity')">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         Activity</button>
+      <button data-nav="finances" onclick="nav('finances')">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l3-4 3 3 4-6"/></svg>
+        Finances</button>
+      <button data-nav="you" onclick="nav('you')">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></svg>
+        You</button>
     </nav>
-    <div class="foot" style="cursor:pointer" onclick="nav('you')" title="How Steward works">
+    <div class="foot" style="cursor:pointer" onclick="nav('you')" title="You">
       <span class="avatar">T</span>
-      <div><div class="who">Tim</div><div class="sub" id="footSub">6 accounts · email on</div></div>
+      <div><div class="who">Tim</div><div class="sub" id="footSub">Not connected yet</div></div>
     </div>
   </aside>
 
@@ -266,42 +271,36 @@
         </div>
       </div>
 
+      <!-- STEWARD AT WORK, the home lead (D18) -->
+      <div class="card" id="atWork" style="border-left:3px solid var(--money)">
+        <div class="eyebrow">Steward at work</div>
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:2px 0 14px">
+          <span class="hero-amount money num" id="homeRecovered">$259</span>
+          <span style="font-size:13px;color:var(--muted)">recovered in June</span>
+        </div>
+        <div class="split num" style="margin-top:0">
+          <div><div class="mini-label">Needs you</div><div class="mini-val" id="homeNeeds">1</div></div>
+          <div><div class="mini-label">Watching</div><div class="mini-val" id="homeWatch">1</div></div>
+          <div><div class="mini-label">Actions taken</div><div class="mini-val">8</div></div>
+          <div><div class="mini-label">Charges checked</div><div class="mini-val">41</div></div>
+        </div>
+        <div style="margin-top:14px"><span class="linkish" onclick="nav('activity')">See everything in Activity →</span></div>
+      </div>
+
+      <!-- net worth demoted to a glance that drills into Finances (D18) -->
+      <div class="card glance" onclick="nav('finances')" style="cursor:pointer">
+        <div><div class="eyebrow" style="margin-bottom:3px">Net worth</div><span class="num" style="font-size:22px;font-weight:700">$284,610</span> <span class="delta num">▲ $3,120 this month</span></div>
+        <span class="linkish">Finances →</span>
+      </div>
+
       <div class="grid">
-        <div class="card span2">
-          <div class="eyebrow">Net worth</div>
-          <span class="hero-amount num">$284,610</span><span class="delta num">▲ $3,120 (1.1%) this month</span>
-          <div style="margin:16px 0 4px">
-            <svg width="100%" height="56" viewBox="0 0 600 56" preserveAspectRatio="none">
-              <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8" fill="none" stroke="#0A7C5A" stroke-width="2"/>
-              <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8 L600,56 L0,56 Z" fill="rgba(10,124,90,.06)"/>
-            </svg>
-          </div>
-          <div class="split num">
-            <div><div class="mini-label">Cash</div><div class="mini-val">$18,240</div></div>
-            <div><div class="mini-label">Investments</div><div class="mini-val">$146,900<span class="up">+2.4%</span></div></div>
-            <div><div class="mini-label">Home (est.)</div><div class="mini-val">$612,000</div></div>
-            <div><div class="mini-label">Mortgage</div><div class="mini-val neg">−$492,530</div></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="eyebrow">June so far</div>
-          <div class="value-card" style="margin:-2px -4px 10px;padding:14px 16px;border-radius:6px">
-            <div class="amt num">Recovered <em>$259</em></div>
-            <a onclick="nav('activity')">See the receipts →</a>
-          </div>
-          <div class="row" style="border:none;padding-top:4px">
-            <div class="body"><div class="t">8 actions taken</div><div class="s">41 charges checked · all on the record</div></div>
-          </div>
-        </div>
-
         <div class="card">
           <div class="eyebrow">To review</div>
-          <div class="row" style="border:none;cursor:pointer" onclick="nav('subs')">
+          <div class="row" style="border:none;cursor:pointer" onclick="nav('finances')">
             <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more</div></div>
             <span class="right num">$18/mo</span>
           </div>
-          <div class="row" style="cursor:pointer" onclick="toast('Transaction detail, not in this prototype')">
+          <div class="row" style="cursor:pointer" onclick="nav('finances')">
             <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
             <span class="right num">$642</span>
           </div>
@@ -321,18 +320,56 @@
       </div>
     </section>
 
-    <!-- SUBSCRIPTIONS -->
-    <section class="dview" data-view="subs">
+    <!-- FINANCES, money overview: net worth + spending + transactions + subscriptions (D20) -->
+    <section class="dview" data-view="finances">
       <div class="pagehead">
-        <h1>Subscriptions</h1>
+        <h1>Finances</h1>
       </div>
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
-          <div class="eyebrow" style="margin-bottom:8px">Subscriptions</div>
-          <p>Connect your accounts and I'll find every recurring subscription and price increase in your transactions, read-only, via Plaid.</p>
+          <div class="eyebrow" style="margin-bottom:8px">Finances</div>
+          <p>Connect your accounts and I'll show your whole picture, net worth, spending, transactions, and the recurring subscriptions worth cancelling, read-only, via Plaid.</p>
           <button class="btn primary" onclick="webConnect('accounts')">Connect accounts</button>
         </div>
       </div>
+
+      <div class="card">
+        <div class="eyebrow">Net worth</div>
+        <span class="hero-amount num">$284,610</span><span class="delta num">▲ $3,120 (1.1%) this month</span>
+        <div style="margin:16px 0 4px">
+          <svg width="100%" height="56" viewBox="0 0 600 56" preserveAspectRatio="none">
+            <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8" fill="none" stroke="#0A7C5A" stroke-width="2"/>
+            <path d="M0,46 C55,43 80,36 125,37 C170,38 200,28 255,29 C310,30 335,19 390,21 C445,23 470,13 525,11 C555,10 580,9 600,8 L600,56 L0,56 Z" fill="rgba(10,124,90,.06)"/>
+          </svg>
+        </div>
+        <div class="split num">
+          <div><div class="mini-label">Cash</div><div class="mini-val">$18,240</div></div>
+          <div><div class="mini-label">Investments</div><div class="mini-val">$146,900<span class="up">+2.4%</span></div></div>
+          <div><div class="mini-label">Home (est.)</div><div class="mini-val">$612,000</div></div>
+          <div><div class="mini-label">Mortgage</div><div class="mini-val neg">−$492,530</div></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="eyebrow">Spending · June</div>
+          <div style="display:flex;align-items:baseline;gap:10px;margin:2px 0 12px"><span class="num" style="font-size:24px;font-weight:700">$4,180</span><span style="font-size:12px;color:var(--muted)">of ~$5,200 typical</span></div>
+          <div class="row" style="border:none;padding:6px 0"><div class="body"><div class="t">Housing</div></div><span class="right num">$2,110</span></div>
+          <div class="row" style="padding:6px 0"><div class="body"><div class="t">Groceries</div></div><span class="right num">$840</span></div>
+          <div class="row" style="padding:6px 0"><div class="body"><div class="t">Dining &amp; takeout</div></div><span class="right num">$430</span></div>
+          <div class="row" style="padding:6px 0"><div class="body"><div class="t">Subscriptions</div></div><span class="right num">$99</span></div>
+          <div style="margin-top:10px"><span class="linkish" onclick="newChat('Where did my money go this month?')">Ask where it went →</span></div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Recent transactions</div>
+          <div class="row" style="border:none;cursor:pointer" onclick="toast('Costco · $642 · Jun 9 · household · Visa ···6411')"><div class="body"><div class="t">Costco</div><div class="s">Jun 9 · household</div></div><span class="right num">$642</span></div>
+          <div class="row" style="cursor:pointer" onclick="openSession('om')"><div class="body"><div class="t">One Medical</div><div class="s">Jun 12 · healthcare <span class="chip pend" style="margin-left:4px">flagged</span></div></div><span class="right num">$300</span></div>
+          <div class="row" style="cursor:pointer" onclick="toast('Whole Foods · $96 · Jun 11 · groceries · Visa ···6411')"><div class="body"><div class="t">Whole Foods</div><div class="s">Jun 11 · groceries</div></div><span class="right num">$96</span></div>
+          <div class="row" style="cursor:pointer" onclick="toast('Shell · $58 · Jun 10 · gas · Visa ···6411')"><div class="body"><div class="t">Shell</div><div class="s">Jun 10 · gas</div></div><span class="right num">$58</span></div>
+        </div>
+      </div>
+
+      <div style="font-size:17px;font-weight:700;color:var(--ink);margin:10px 2px 12px">Subscriptions</div>
       <div class="card"><div class="summary num">
         <div><div class="v">$99</div><div class="l">per month</div></div>
         <div><div class="v">$1,188</div><div class="l">per year</div></div>
@@ -424,7 +461,7 @@
           <span class="ico">⚑</span>
           <div class="body">
             <div class="t">Proposed: dispute One Medical bill</div>
-            <div class="s">Billed $300 vs. EOB $86, draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
+            <div class="s">Billed $300 vs. EOB $86, draft ready, EOB-backed, strong case. Window closes Jun 28.</div>
           </div>
           <div class="amt money num">$214</div>
         </div>
@@ -434,7 +471,7 @@
           <span class="ico">✕</span>
           <div class="body">
             <div class="t">One Medical rejected the dispute</div>
-            <div class="s">Round 2, an Anthem member appeal, is drafted and waiting on you. Appeals like this succeed ~64%.</div>
+            <div class="s">Round 2, an Anthem member appeal, is drafted and waiting on you. Your EOB backs it, strong case.</div>
           </div>
           <div class="amt money num">$214</div>
         </div>
@@ -646,14 +683,14 @@
     if (p === 'found') body = `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
     else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821. Enter it and I'll finish filing.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div>`;
     else if (p === 'sent') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed at 9:36 AM · confirmation #D-7741. Tracking the response (7–10 days).</div><div class="advance" onclick="webPhase('rejected')">▸ their answer arrives</div>`;
-    else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no, "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal (~64% succeed).</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
+    else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no, "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal, and your EOB is the strongest version of the argument.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
     else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem, 30-day clock. I'll escalate to state review if they miss it.</div><div class="advance" onclick="webPhase('resolved')">▸ Anthem rules</div>`;
     else if (p === 'resolved') body = `<div style="margin-top:8px;font-size:12px;color:var(--money)">✓ Anthem ruled in your favor. One Medical reissued the bill at $86, I verified the corrected statement. $214 back.</div>`;
     else if (p === 'dismissed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">Paused, you set this aside. It's still here whenever you want it.</div><div style="margin-top:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('found')">Resume</button></div>`;
     return `
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">I pulled your One Medical statement and the Anthem EOB and compared them line by line.</div></div>
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">Two line items are billed above your plan's contracted rate. You owe <b class="num">$86</b>, not <b class="num">$300</b>.</div></div>
-      <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">${head}</div><b class="money num">$214 back</b> · ~78% of disputes like this succeed with Anthem.${body}</div>`;
+      <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">${head}</div><b class="money num">$214 back</b> · strong case: your Anthem EOB lists the allowed amount as $86, a documented overcharge, not a judgment call.${body}</div>`;
   }
   const SMETA = {
     ask:    { title: 'Ask Steward',           sub: () => '',                                          build: askBuild },
@@ -729,7 +766,7 @@
   function render() {
     const p = state.phase;
     const needs = (p === 'found' || p === 'rejected');
-    ['home', 'activity', 'subs'].forEach(v => {
+    ['home', 'activity', 'finances'].forEach(v => {
       const el = document.querySelector('.dview[data-view="' + v + '"]');
       if (el) el.classList.toggle('cold', state.cold);
     });
@@ -752,6 +789,9 @@
     document.getElementById('dActCount').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
     document.getElementById('dWatchCount').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
     document.getElementById('dRecovered').textContent = p === 'resolved' ? '$473' : '$259';
+    document.getElementById('homeRecovered').textContent = p === 'resolved' ? '$473' : '$259';
+    document.getElementById('homeWatch').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
+    document.getElementById('homeNeeds').textContent = needs ? 1 : 0;
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won, One Medical corrected the bill, $214 verified back, plus two wins on your statements.'
       : p === 'appealed' ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
