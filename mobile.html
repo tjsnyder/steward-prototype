@@ -330,7 +330,7 @@
 
       <div class="sechead" id="toReviewHd"><h3 id="toReviewHead">Flagged by your weekly sweep</h3></div>
       <div class="card" id="mReview" style="padding:6px 16px">
-        <div class="row" id="homeHuluRow" onclick="go('subdetail')" style="cursor:pointer">
+        <div class="row" id="homeHuluRow" onclick="openSess('hulu')" style="cursor:pointer">
           <div class="body"><div class="t">Hulu, price rose</div><div class="s">$13 → $18 · Disney+ already includes it</div></div>
           <span class="right num">$18/mo</span><span class="chevron">›</span>
         </div>
@@ -707,7 +707,7 @@
 
       <div id="huluEvent" data-cat="done" style="display:none">
         <div class="card" style="padding:2px 16px">
-          <div class="event clk" onclick="go('subdetail')">
+          <div class="event clk" onclick="openSess('hulu')">
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">Cancelled Hulu</div>
@@ -1138,7 +1138,7 @@
 
       <div class="sechead"><h3>Worth a look (2)</h3></div>
       <div class="card" style="padding:6px 16px">
-        <div class="row" style="cursor:pointer" onclick="go('subdetail')">
+        <div class="row" style="cursor:pointer" onclick="openSess('hulu')">
           <div class="body"><div class="t">Hulu</div><div class="s">Price rose $13 → $18 · your Disney+ bundle includes it</div></div>
           <span class="right num" id="subsHuluPrice">$18/mo</span>
           <span class="chip ok" id="subsHuluDone" style="display:none">Cancelled</span>
@@ -1176,62 +1176,6 @@
       </div><!-- /finBody -->
     </div>
     <div class="dock"><div class="chatpill" onclick="go('chat',true)">💬&ensp;Message Steward…</div></div>
-  </section>
-
-  <!-- ── SUBSCRIPTION DETAIL: HULU ── -->
-  <section class="view" data-view="subdetail">
-    <div class="navhead">
-      <button class="back" onclick="back()" aria-label="Go back">‹</button>
-      <div style="flex:1"><div class="title">Hulu</div><div class="sub">$18/mo · billed to Visa ···6411</div></div>
-      <span class="chip draft" id="huluChip">FLAGGED</span>
-    </div>
-    <div class="scroll" id="subScroll">
-      <div class="card">
-        <div class="eyebrow">Why it's flagged</div>
-        <div class="prog">
-          <div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b class="num">$13 → $18</b> in May, no notice in your email</div>
-          <div><span class="tick" style="color:var(--amber)">▲</span>Your Disney+ bundle (<b class="num">$10.99</b>) already includes Hulu with ads</div>
-          <div><span class="tick">·</span><b class="num">12</b> charges since Jul 2025 · <b class="num">$187</b> total</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="eyebrow">The plan</div>
-        <div class="steps">
-          <div class="step">Sign in to your Hulu account, I'll ask for the login next.</div>
-          <div class="step">Cancel the standalone plan. It stays active until the period ends Jul 7.</div>
-          <div class="step">Verify no charge appears after Jul 8, then report back in Activity.</div>
-        </div>
-      </div>
-      <div class="card" style="border-color:var(--ink)" id="subBtns">
-        <div class="btnrow">
-          <button class="btn primary" onclick="openCred('hulu')">Cancel Hulu for me</button>
-          <button class="btn ghost" onclick="keepHulu()">Keep it</button>
-        </div>
-        <div class="note">Nothing happens until you approve · you keep Hulu through Jul 7 either way</div>
-      </div>
-
-      <div class="inline-card hideme" id="subProg" style="max-width:100%">
-        <div class="eyebrow">Hulu · account portal</div>
-        <div class="prog">
-          <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Located the active subscription</div>
-          <div><span class="run">⟳</span>Cancelling the renewal…</div>
-        </div>
-      </div>
-      <div class="hideme" id="subDone">
-        <div class="inline-card" style="max-width:100%">
-          <div class="eyebrow">Hulu · account portal</div>
-          <div class="prog">
-            <div><span class="tick">✓</span>Cancelled, confirmation <b>#4F7-220</b></div>
-            <div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div>
-          </div>
-        </div>
-        <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
-          <div class="bubble">Done, that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
-        </div>
-        <div class="btnrow" style="margin-top:2px"><button class="btn ghost" onclick="resubHulu()">Undo, resubscribe</button></div>
-      </div>
-    </div>
   </section>
 
   <!-- ── APPLE-BILLED: ICLOUD+ ── -->
@@ -1494,7 +1438,6 @@
     show('subsHuluPrice', !cancelled);
     show('subsHuluDone', cancelled);
     show('mTxCostcoChip', state.costco === 'open');
-    document.getElementById('huluChip').textContent = cancelled ? 'CANCELLED' : 'FLAGGED';
     show('subsApplePrice', state.apple !== 'watching');
     show('subsAppleWatch', state.apple === 'watching');
 
@@ -1553,7 +1496,7 @@
     applyFilter();
   }
 
-  const IMMERSIVE = ['chat', 'casethread', 'session', 'subdetail', 'subapple'];
+  const IMMERSIVE = ['chat', 'casethread', 'session', 'subapple'];
   function go(view, fromTab) {
     if (view === 'home' && state.cold) view = 'coldhome';
     if (view === current) return;
@@ -1584,7 +1527,7 @@
     correction:{title:"Correction, flag withdrawn",sub:"Self-caught · nothing sent",lines:["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws, the charge is correct. I withdrew the flag before anything went out."]},
     kitchen:{title:"Kitchen remodel",sub:"Chat · Tuesday",lines:["You asked whether you could afford the kitchen remodel.","Short version: yes, about $40k works, with your emergency fund untouched and on the timeline you mentioned."]},
     hsa:{title:"How HSAs work",sub:"Chat · Jun 5",lines:["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical, and the balance is yours to keep, no use-it-or-lose-it."]},
-    hulu:{title:"Hulu",sub:"Cancelled · +$18/mo",lines:["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","I cancelled the standalone plan, confirmation #4F7-220. It stays active until Jul 7, and I'll verify no charge after Jul 8. That's $216/yr back."]},
+    hulu:{title:"Hulu",sub:()=>state.sub==='cancelled'?"Cancelled · +$18/mo":state.sub==='cancelling'?"Cancelling…":"Subscription · flagged",html:huluHtml},
   };
   function openSess(id){
     const m = MSESS[id];
@@ -1599,7 +1542,7 @@
   function sweepHtml(){
     const huluOpen = state.sub !== 'cancelled', costcoOpen = state.costco === 'open', n = sweepFindings();
     const hulu = huluOpen
-      ? `<div class="inline-card"><div class="eyebrow">Subscription · flagged</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Hulu's price rose <b>$13 → $18</b>, and your Disney+ bundle already includes Hulu. <b>$216/yr</b> back if you cancel.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="go('subdetail')">Review &amp; cancel</button></div></div>`
+      ? `<div class="inline-card"><div class="eyebrow">Subscription · flagged</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Hulu's price rose <b>$13 → $18</b>, and your Disney+ bundle already includes Hulu. <b>$216/yr</b> back if you cancel.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="openSess('hulu')">Review &amp; cancel</button></div></div>`
       : `<div class="inline-card"><div class="eyebrow">Subscription · resolved</div><p style="font-size:13px;color:var(--ink-2)">✓ You cancelled Hulu, <b>$216/yr</b> back. I'll verify no charge after Jul 8.</p></div>`;
     const costco = costcoOpen
       ? `<div class="inline-card"><div class="eyebrow">Large transaction · flagged</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Costco, <b>$642</b> on Jun 9. About <b>2× your typical</b> Costco trip, so I flagged it. If it's expected I'll clear it; if not, I can dig into the line items.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="openSess('costco')">Look into it</button><button class="btn ghost" onclick="mobileCostcoClear()">Looks fine</button></div></div>`
@@ -1618,6 +1561,23 @@
       <div class="inline-card"><div class="eyebrow">${cleared ? 'Reviewed · cleared' : 'Large transaction · flagged'}</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Visa ···6411 · household · Jun 9. The merchant doesn't share line items, but I can request an itemized receipt from Costco, or watch for a duplicate or wrong-amount charge on your next statement.</p>${cleared ? `<p style="font-size:12px;color:var(--money);margin-top:8px">✓ You cleared it. I won't flag Costco trips this size again.</p>` : `<div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="toast('I\\'ll request the itemized receipt and watch for duplicates')">Request receipt</button><button class="btn ghost" onclick="mobileCostcoClear()">It's expected</button></div>`}</div>`;
   }
   function mobileCostcoClear(){ state.costco = 'cleared'; render(); openSess('sweep'); toast('Cleared, saved as a standing instruction: don\'t flag Costco trips this size'); }
+  function huluHtml(){
+    const flagged = `<div class="inline-card"><div class="eyebrow">Why it's flagged</div><div class="prog"><div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b>$13 → $18</b> in May, no notice in your email</div><div><span class="tick" style="color:var(--amber)">▲</span>Your Disney+ bundle (<b>$10.99</b>) already includes Hulu with ads</div><div><span class="tick">·</span><b>12</b> charges since Jul 2025 · <b>$187</b> total</div></div></div>`;
+    let action;
+    if (state.sub === 'cancelling') {
+      action = `<div class="inline-card"><div class="eyebrow">Hulu · account portal</div><div class="prog"><div><span class="tick">✓</span>Signed in to Hulu</div><div><span class="tick">✓</span>Located the active subscription</div><div><span class="run">⟳</span>Cancelling the renewal…</div></div></div>`;
+    } else if (state.sub === 'cancelled') {
+      action = `<div class="inline-card"><div class="eyebrow">Cancelled</div><div class="prog"><div><span class="tick">✓</span>Cancelled, confirmation <b>#4F7-220</b></div><div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div></div></div>
+        <div class="msg steward"><div class="who">Steward</div><div class="bubble">Done, that's <b>$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity',true)">Activity log</u>.</div></div>
+        <div class="btnrow" style="margin-top:2px;max-width:84%"><button class="btn ghost" onclick="resubHulu()">Undo, resubscribe</button></div>`;
+    } else {
+      action = `<div class="inline-card action"><div class="eyebrow">Ready when you are</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5"><b>$216/yr</b> back if you cancel. I'll sign in, cancel the standalone plan (you keep it through Jul 7), then verify no charge after Jul 8.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="huluCancel()">Cancel Hulu for me</button><button class="btn ghost" onclick="toast('Kept, saved as a standing instruction: keep Hulu')">Keep it</button></div><div class="note" style="margin-top:8px;text-align:left">Nothing happens until you approve · you keep Hulu through Jul 7 either way</div></div>`;
+    }
+    return `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Hulu's price crept from <b>$13 → $18</b> in May, and your Disney+ bundle already includes Hulu with ads. Flagged by your weekly sweep.</div></div>
+      ${flagged}
+      ${action}`;
+  }
   function askUpload() {
     if (state.investStarted) { toast('Already tracking that bill, it has a thread'); return; }
     state.origin = 'ask';
@@ -1833,7 +1793,6 @@
     const meta = {
       om:     ['One Medical, patient portal', 'Steward signs in as you, only to retrieve your documents.'],
       an:     ['Anthem, member portal', 'Steward signs in as you, only to retrieve your documents.'],
-      hulu:   ['Hulu, your account', 'Steward signs in as you, only to cancel this subscription.'],
       ancold: ['Anthem, member portal', 'Steward signs in as you, only to read your coverage details.'],
       omcold: ['One Medical, billing portal', 'Steward signs in as you, only to submit your reply.'],
     }[which];
@@ -1863,13 +1822,6 @@
       document.getElementById('inv3btns').classList.add('hideme');
       toast('Connected · in your vault');
       setTimeout(() => reveal('invMfa'), 500);
-    } else if (credTarget === 'hulu') {
-      const sc2 = document.getElementById('subScroll');
-      const reveal2 = id => { document.getElementById(id).classList.remove('hideme'); sc2.scrollTop = sc2.scrollHeight; };
-      document.getElementById('subBtns').classList.add('hideme');
-      toast('Connected · in your vault');
-      setTimeout(() => reveal2('subProg'), 400);
-      setTimeout(() => { document.getElementById('subProg').classList.add('hideme'); reveal2('subDone'); state.sub = 'cancelled'; render(); }, 1700);
     } else if (credTarget === 'ancold') {
       document.getElementById('hc3btns').classList.add('hideme');
       toast('Connected · in your vault');
@@ -1881,19 +1833,12 @@
       setTimeout(() => { coldReveal('hc6'); state.handoff = 'sent'; render(); }, 500);
     }
   }
-  function resubHulu(){
-    state.sub = 'open';
-    document.getElementById('subBtns').classList.remove('hideme');
-    document.getElementById('subProg').classList.add('hideme');
-    document.getElementById('subDone').classList.add('hideme');
-    document.getElementById('huluChip').textContent = 'FLAGGED';
-    render();
-    toast('Resubscribed, Hulu is active again');
+  function huluCancel(){
+    if (!requirePaid()) return;
+    state.sub = 'cancelling'; render(); openSess('hulu'); toast('Cancelling Hulu now');
+    setTimeout(() => { state.sub = 'cancelled'; render(); openSess('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }, 1700);
   }
-  function keepHulu() {
-    toast('Noted, saved as a standing instruction: keep Hulu');
-    back();
-  }
+  function resubHulu(){ state.sub = 'open'; render(); openSess('hulu'); toast('Resubscribed, Hulu is active again'); }
   function appleDone() {
     state.apple = 'watching'; render();
     document.getElementById('appleBtns').classList.add('hideme');
