@@ -328,14 +328,14 @@
         <span class="why" style="margin:0">Finances →</span>
       </div>
 
-      <div class="sechead" id="toReviewHd"><h3 id="toReviewHead">To review (2)</h3></div>
+      <div class="sechead" id="toReviewHd"><h3 id="toReviewHead">Flagged by your weekly sweep</h3></div>
       <div class="card" id="mReview" style="padding:6px 16px">
-        <div class="row" id="homeHuluRow" onclick="go('finances',true)" style="cursor:pointer">
-          <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more finding</div></div>
+        <div class="row" id="homeHuluRow" onclick="go('subdetail')" style="cursor:pointer">
+          <div class="body"><div class="t">Hulu, price rose</div><div class="s">$13 → $18 · Disney+ already includes it</div></div>
           <span class="right num">$18/mo</span><span class="chevron">›</span>
         </div>
-        <div class="row" onclick="go('finances',true)" style="cursor:pointer">
-          <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
+        <div class="row" id="revCostco" onclick="openSess('costco')" style="cursor:pointer">
+          <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9 · ~2× your usual</div></div>
           <span class="right num">$642</span><span class="chevron">›</span>
         </div>
       </div>
@@ -682,7 +682,7 @@
           <span class="ico">☰</span>
           <div class="body">
             <div class="t">Weekly sweep, running</div>
-            <div class="s">I check every new charge against your patterns. Nothing flagged so far.</div>
+            <div class="s" id="mSweepSub">I check every new charge against your patterns.</div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
@@ -1123,7 +1123,7 @@
       </div>
 
       <div class="card" style="padding:6px 16px">
-        <div class="row" style="border:none;cursor:pointer" onclick="toast('Costco · $642 · Jun 9 · household · Visa ···6411')"><div class="body"><div class="t">Costco</div><div class="s">Jun 9 · household</div></div><span class="right num">$642</span></div>
+        <div class="row" style="border:none;cursor:pointer" onclick="openSess('costco')"><div class="body"><div class="t">Costco</div><div class="s">Jun 9 · household <span class="chip pend" id="mTxCostcoChip" style="margin-left:4px;font-size:9px">FLAGGED</span></div></div><span class="right num">$642</span></div>
         <div class="row" style="cursor:pointer" onclick="startInvest()"><div class="body"><div class="t">One Medical</div><div class="s">Jun 12 · healthcare</div></div><span class="right num">$300</span></div>
         <div class="row" style="cursor:pointer" onclick="toast('Whole Foods · $96 · Jun 11 · groceries')"><div class="body"><div class="t">Whole Foods</div><div class="s">Jun 11 · groceries</div></div><span class="right num">$96</span></div>
         <div class="row" style="cursor:pointer" onclick="toast('Shell · $58 · Jun 10 · gas')"><div class="body"><div class="t">Shell</div><div class="s">Jun 10 · gas</div></div><span class="right num">$58</span></div>
@@ -1389,7 +1389,7 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, accounts: false, plan: 'paid', chase: 'needs', investigated: false, investStarted: false, origin: 'email', filter: 'all', chatUsed: false };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, accounts: false, plan: 'paid', chase: 'needs', investigated: false, investStarted: false, origin: 'email', filter: 'all', chatUsed: false, costco: 'open' };
   const stack = [];
   let current = 'home';
   let credTarget = null;
@@ -1422,7 +1422,7 @@
   function reconnect(key) { if (key === 'chase') state.chase = 'active'; render(); toast('Reconnected, Chase is syncing again'); }
   function buildMAudit() {
     const p = state.phase, ev = [], da = state.email || state.investStarted;
-    if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges, nothing flagged', 'action']); }
+    if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges + 7 subscriptions, flagged 2 for review (Hulu, Costco)', 'action']); }
     if (state.email) ev.push(['Connected email', 'read-only · bills, statements & EOBs', 'access']);
     if (da && state.investStarted) { ev.push(['Read your One Medical statement', 'from email + portal', 'access']); ev.push(['Read your Anthem EOB', 'allowed amount $86 vs billed $300', 'access']); }
     if (da && ['sent','rejected','appealed','resolved'].includes(p)) { ev.push(['Signed in to One Medical portal', 'you approved', 'access']); ev.push(['Filed dispute with One Medical', 'you approved', 'action']); }
@@ -1476,10 +1476,12 @@
     show('bellDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
     show('tabDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
     show('mGlance', accounts);
-    show('mReview', accounts); show('toReviewHd', accounts);
+    // sweep findings surface as the To-review list; rows hide as findings resolve
+    const huluFlag = accounts && !cancelled, costcoFlag = accounts && state.costco === 'open';
+    show('mReview', huluFlag || costcoFlag); show('toReviewHd', huluFlag || costcoFlag);
+    show('homeHuluRow', huluFlag);
+    show('revCostco', costcoFlag);
     show('mUpcoming', accounts); show('mUpcomingHd', accounts);
-    show('homeHuluRow', !cancelled);
-    document.getElementById('toReviewHead').textContent = cancelled ? 'To review (1)' : 'To review (2)';
     // connect-the-rest prompt
     const rest = document.getElementById('mConnectRest');
     if (!cold && !email) { rest.style.display = ''; rest.querySelector('.t').textContent = 'Connect your email'; rest.querySelector('.s').textContent = 'So I can catch bills, statements & EOBs as they arrive.'; const b = rest.querySelector('button'); b.textContent = 'Connect email'; b.setAttribute('onclick', 'openOauth()'); }
@@ -1491,6 +1493,7 @@
     show('finBody', accounts);
     show('subsHuluPrice', !cancelled);
     show('subsHuluDone', cancelled);
+    show('mTxCostcoChip', state.costco === 'open');
     document.getElementById('huluChip').textContent = cancelled ? 'CANCELLED' : 'FLAGGED';
     show('subsApplePrice', state.apple !== 'watching');
     show('subsAppleWatch', state.apple === 'watching');
@@ -1509,6 +1512,7 @@
     show('appealEvent', disputeActive && p === 'appealed');
     show('handoffEvent', handoffOn);
     show('mSweepWatch', accounts);
+    if (accounts) { const sn = sweepFindings(); const ss = document.getElementById('mSweepSub'); if (ss) ss.textContent = sn ? ('I checked 41 charges + your subscriptions. ' + (sn === 2 ? 'Two findings' : 'One finding') + ' ready for you.') : 'I check every new charge against your patterns. All clear this week.'; }
     show('pinActiveHdr', watchingZone);
     show('resolvedEvent', disputeDone);
     show('huluEvent', huluDone);
@@ -1575,7 +1579,8 @@
   const MSESS = {
     overdraft:{title:"Recovered overdraft fee",sub:"Closed · +$45",lines:["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver, granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]},
     paramount:{title:"Cancelled Paramount+",sub:"Closed · +$12/mo",lines:["Paramount+ went unused for 4 months.","You approved the cancellation Monday, confirmed, and I verified no charge on your June statement. That's $12/mo back."]},
-    sweep:{title:"Weekly sweep",sub:"Done · all clear",lines:["Weekly sweep, I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]},
+    sweep:{title:"Weekly sweep",sub:()=>{const n=sweepFindings();return n?("Watching · "+n+" to review"):"Watching · all clear";},html:sweepHtml},
+    costco:{title:"Large transaction · Costco",sub:()=>state.costco==='cleared'?"Reviewed · you cleared it":"Flagged by your weekly sweep",html:costcoHtml},
     correction:{title:"Correction, flag withdrawn",sub:"Self-caught · nothing sent",lines:["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws, the charge is correct. I withdrew the flag before anything went out."]},
     kitchen:{title:"Kitchen remodel",sub:"Chat · Tuesday",lines:["You asked whether you could afford the kitchen remodel.","Short version: yes, about $40k works, with your emergency fund untouched and on the timeline you mentioned."]},
     hsa:{title:"How HSAs work",sub:"Chat · Jun 5",lines:["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical, and the balance is yours to keep, no use-it-or-lose-it."]},
@@ -1584,11 +1589,35 @@
   function openSess(id){
     const m = MSESS[id];
     document.getElementById('sessTitle').textContent = m.title;
-    document.getElementById('sessSub').textContent = m.sub;
-    document.getElementById('sessScroll').innerHTML = m.lines.map(l =>
+    document.getElementById('sessSub').textContent = typeof m.sub === 'function' ? m.sub() : m.sub;
+    document.getElementById('sessScroll').innerHTML = m.html ? m.html() : m.lines.map(l =>
       `<div class="msg steward"><div class="who">Steward</div><div class="bubble">${l}</div></div>`).join('');
     go('session');
   }
+  // ── Weekly sweep: the monitoring session that produces the flags ──
+  function sweepFindings(){ return (state.accounts && state.sub !== 'cancelled' ? 1 : 0) + (state.accounts && state.costco === 'open' ? 1 : 0); }
+  function sweepHtml(){
+    const huluOpen = state.sub !== 'cancelled', costcoOpen = state.costco === 'open', n = sweepFindings();
+    const hulu = huluOpen
+      ? `<div class="inline-card"><div class="eyebrow">Subscription · flagged</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Hulu's price rose <b>$13 → $18</b>, and your Disney+ bundle already includes Hulu. <b>$216/yr</b> back if you cancel.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="go('subdetail')">Review &amp; cancel</button></div></div>`
+      : `<div class="inline-card"><div class="eyebrow">Subscription · resolved</div><p style="font-size:13px;color:var(--ink-2)">✓ You cancelled Hulu, <b>$216/yr</b> back. I'll verify no charge after Jul 8.</p></div>`;
+    const costco = costcoOpen
+      ? `<div class="inline-card"><div class="eyebrow">Large transaction · flagged</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Costco, <b>$642</b> on Jun 9. About <b>2× your typical</b> Costco trip, so I flagged it. If it's expected I'll clear it; if not, I can dig into the line items.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="openSess('costco')">Look into it</button><button class="btn ghost" onclick="mobileCostcoClear()">Looks fine</button></div></div>`
+      : `<div class="inline-card"><div class="eyebrow">Large transaction · cleared</div><p style="font-size:13px;color:var(--ink-2)">✓ You confirmed this was expected. I won't flag Costco trips like this again.</p></div>`;
+    return `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Your weekly sweep ran. I checked <b>41</b> new charges and your <b>7</b> active subscriptions against your patterns.</div></div>
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">${n ? (n === 2 ? 'Two things are' : 'One thing is') + ' worth your time:' : 'Everything looks normal this week, nothing worth your time.'}</div></div>
+      ${hulu}
+      ${costco}
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">I run this every week and only surface what's worth your time. Everything is in your <u style="cursor:pointer" onclick="go('activity',true)">Activity log</u>.</div></div>`;
+  }
+  function costcoHtml(){
+    const cleared = state.costco === 'cleared';
+    return `
+      <div class="msg steward"><div class="who">Steward</div><div class="bubble">Your weekly sweep flagged this: <b>Costco, $642 on Jun 9</b>, about 2× your typical Costco trip.</div></div>
+      <div class="inline-card"><div class="eyebrow">${cleared ? 'Reviewed · cleared' : 'Large transaction · flagged'}</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5">Visa ···6411 · household · Jun 9. The merchant doesn't share line items, but I can request an itemized receipt from Costco, or watch for a duplicate or wrong-amount charge on your next statement.</p>${cleared ? `<p style="font-size:12px;color:var(--money);margin-top:8px">✓ You cleared it. I won't flag Costco trips this size again.</p>` : `<div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="toast('I\\'ll request the itemized receipt and watch for duplicates')">Request receipt</button><button class="btn ghost" onclick="mobileCostcoClear()">It's expected</button></div>`}</div>`;
+  }
+  function mobileCostcoClear(){ state.costco = 'cleared'; render(); openSess('sweep'); toast('Cleared, saved as a standing instruction: don\'t flag Costco trips this size'); }
   function askUpload() {
     if (state.investStarted) { toast('Already tracking that bill, it has a thread'); return; }
     state.origin = 'ask';
