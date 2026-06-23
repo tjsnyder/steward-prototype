@@ -280,29 +280,35 @@
       <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('activity')"><span class="ok"></span>Nothing needs you, your weekly brief is ready<span class="chev">›</span></div>
       </div></div>
 
-      <div class="card">
-        <div class="eyebrow">Net Worth</div>
-        <div class="hero-amount num">$284,610</div>
-        <span class="delta num">▲ $3,120 (1.1%) this month</span>
-        <div class="spark">
-          <svg width="100%" height="44" viewBox="0 0 330 44" preserveAspectRatio="none">
-            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6" fill="none" stroke="#0A7C5A" stroke-width="2"/>
-            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6 L330,44 L0,44 Z" fill="rgba(10,124,90,.06)"/>
-          </svg>
+      <div class="card" id="mAtWork" style="border-left:3px solid var(--money)">
+        <div class="eyebrow">Steward at work</div>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 12px">
+          <span class="hero-amount money num" id="mRecovered" style="font-size:30px">$259</span>
+          <span style="font-size:13px;color:var(--muted)">recovered in June</span>
         </div>
         <div class="hero-split">
-          <div><div class="mini-label">Investments</div><div class="mini-val num">$146,900<span class="up">+2.4% MTD</span></div></div>
-          <div><div class="mini-label">Cash</div><div class="mini-val num">$18,240</div></div>
+          <div><div class="mini-label">Needs you</div><div class="mini-val num" id="mNeeds">1</div></div>
+          <div><div class="mini-label">Watching</div><div class="mini-val num" id="mWatch">1</div></div>
         </div>
+        <div class="hero-split" style="margin-top:8px">
+          <div><div class="mini-label">Actions taken</div><div class="mini-val num" id="mActions">8</div></div>
+          <div><div class="mini-label">Charges checked</div><div class="mini-val num" id="mCharges">41</div></div>
+        </div>
+        <div class="why" onclick="go('activity',true)">See everything in Activity →</div>
       </div>
 
-      <div class="sechead"><h3 id="toReviewHead">To review (2)</h3></div>
+      <div class="card" id="mGlance" onclick="go('finances',true)" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+        <div><div class="eyebrow" style="margin-bottom:3px">Net worth</div><span class="num" style="font-size:20px;font-weight:700">$284,610</span> <span class="delta num">▲ $3,120</span></div>
+        <span class="why" style="margin:0">Finances →</span>
+      </div>
+
+      <div class="sechead" id="toReviewHd"><h3 id="toReviewHead">To review (2)</h3></div>
       <div class="card" style="padding:6px 16px">
-        <div class="row" id="homeHuluRow" onclick="go('subs')" style="cursor:pointer">
+        <div class="row" id="homeHuluRow" onclick="go('finances',true)" style="cursor:pointer">
           <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more finding</div></div>
           <span class="right num">$18/mo</span><span class="chevron">›</span>
         </div>
-        <div class="row" onclick="toast('Transaction detail, not in this prototype yet')" style="cursor:pointer">
+        <div class="row" onclick="go('finances',true)" style="cursor:pointer">
           <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
           <span class="right num">$642</span><span class="chevron">›</span>
         </div>
@@ -328,23 +334,11 @@
         </div>
       </div>
 
-      <div class="sechead"><h3>Healthcare · 2026</h3></div>
-      <div class="card">
-        <div class="row" style="border:none">
-          <div class="body"><div class="t">Deductible</div><div class="goalbar"><i style="width:72%"></i></div></div>
-          <span class="right num" style="color:var(--muted);font-weight:500">$1,450 / $2,000</span>
-        </div>
-        <div class="row">
-          <div class="body"><div class="t">Out-of-pocket max</div><div class="goalbar"><i style="width:47%"></i></div></div>
-          <span class="right num" style="color:var(--muted);font-weight:500">$2,830 / $6,000</span>
-        </div>
-        <p class="note" style="text-align:left;margin-top:8px">$550 to your deductible, after that, visits cost you 20%, not 100%. Mia's next checkup ≈ <b class="num">$38</b>, not $190.</p>
-      </div>
-
-      <div class="card value-card">
-        <div class="eyebrow">June so far</div>
-        <div class="amt num">Steward recovered <em id="recoveredAmt">$259</em> for you</div>
-        <a onclick="go('activity')">See the receipt →</a>
+      <div class="card" id="mConnectRest" style="display:none;border-left:3px solid var(--ink)">
+        <div class="eyebrow">Connect the rest</div>
+        <p class="t" style="font-weight:600;font-size:14px;margin-bottom:2px">Connect your accounts</p>
+        <p class="s" style="font-size:13px;color:var(--ink-2);margin-bottom:12px">So I can show net worth, spending, and the subscriptions worth cancelling.</p>
+        <button class="btn primary" onclick="openPlaid()">Connect accounts</button>
       </div>
     </div>
     <div class="dock"><div class="chatpill" onclick="go('chat')">💬&ensp;Message Steward…</div></div>
@@ -988,12 +982,58 @@
   </section>
 
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
-  <section class="view" data-view="subs">
+  <section class="view" data-view="finances">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
-      <div style="flex:1"><div class="title">Subscriptions</div></div>
+      <div style="flex:1"><div class="title">Finances</div></div>
+      <span class="avatar">T</span>
     </div>
     <div class="scroll">
+
+      <div class="card empty" id="finEmpty" style="display:none">
+        <div class="eyebrow">Finances</div>
+        <p>Connect your accounts and I'll show your whole picture, net worth, spending, transactions, and the subscriptions worth cancelling. Read-only, via Plaid.</p>
+        <div class="btnrow"><button class="btn primary" onclick="openPlaid()">Connect accounts</button></div>
+      </div>
+
+      <div id="finBody">
+      <div class="card">
+        <div class="eyebrow">Net Worth</div>
+        <div class="hero-amount num">$284,610</div>
+        <span class="delta num">▲ $3,120 (1.1%) this month</span>
+        <div class="spark">
+          <svg width="100%" height="44" viewBox="0 0 330 44" preserveAspectRatio="none">
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6" fill="none" stroke="#0A7C5A" stroke-width="2"/>
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6 L330,44 L0,44 Z" fill="rgba(10,124,90,.06)"/>
+          </svg>
+        </div>
+        <div class="hero-split">
+          <div><div class="mini-label">Investments</div><div class="mini-val num">$146,900<span class="up">+2.4% MTD</span></div></div>
+          <div><div class="mini-label">Cash</div><div class="mini-val num">$18,240</div></div>
+        </div>
+        <div class="hero-split" style="margin-top:8px">
+          <div><div class="mini-label">Home (est.)</div><div class="mini-val num">$612,000</div></div>
+          <div><div class="mini-label">Mortgage</div><div class="mini-val num" style="color:var(--red)">−$492,530</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Spending · June</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin:2px 0 10px"><span class="num" style="font-size:22px;font-weight:700">$4,180</span><span style="font-size:12px;color:var(--muted)">of ~$5,200 typical</span></div>
+        <div class="row" style="border:none;padding:6px 0"><div class="body"><div class="t">Housing</div></div><span class="right num">$2,110</span></div>
+        <div class="row" style="padding:6px 0"><div class="body"><div class="t">Groceries</div></div><span class="right num">$840</span></div>
+        <div class="row" style="padding:6px 0"><div class="body"><div class="t">Dining &amp; takeout</div></div><span class="right num">$430</span></div>
+        <div class="row" style="padding:6px 0"><div class="body"><div class="t">Subscriptions</div></div><span class="right num">$99</span></div>
+        <div class="why" onclick="go('chat',true)">Ask where it went →</div>
+      </div>
+
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="border:none;cursor:pointer" onclick="toast('Costco · $642 · Jun 9 · household · Visa ···6411')"><div class="body"><div class="t">Costco</div><div class="s">Jun 9 · household</div></div><span class="right num">$642</span></div>
+        <div class="row" style="cursor:pointer" onclick="startInvest()"><div class="body"><div class="t">One Medical</div><div class="s">Jun 12 · healthcare</div></div><span class="right num">$300</span></div>
+        <div class="row" style="cursor:pointer" onclick="toast('Whole Foods · $96 · Jun 11 · groceries')"><div class="body"><div class="t">Whole Foods</div><div class="s">Jun 11 · groceries</div></div><span class="right num">$96</span></div>
+        <div class="row" style="cursor:pointer" onclick="toast('Shell · $58 · Jun 10 · gas')"><div class="body"><div class="t">Shell</div><div class="s">Jun 10 · gas</div></div><span class="right num">$58</span></div>
+      </div>
+
+      <div class="sechead"><h3>Subscriptions</h3></div>
       <div class="card summary num">
         <div><div class="v">$99</div><div class="l">per month</div></div>
         <div><div class="v">$1,188</div><div class="l">per year</div></div>
@@ -1024,6 +1064,20 @@
         <div class="row"><div class="body"><div class="t">NYT All Access</div><div class="s">annual plan, renews Oct</div></div><span class="right num">$17/4wk</span></div>
         <div class="row"><div class="body"><div class="t">Apple One</div><div class="s">family plan</div></div><span class="right num">$19.95/mo</span></div>
       </div>
+
+      <div class="sechead"><h3 id="finHealthHdr">Healthcare · 2026</h3></div>
+      <div class="card" id="finHealth">
+        <div class="row" style="border:none">
+          <div class="body"><div class="t">Deductible</div><div class="goalbar"><i style="width:72%"></i></div></div>
+          <span class="right num" style="color:var(--muted);font-weight:500">$1,450 / $2,000</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Out-of-pocket max</div><div class="goalbar"><i style="width:47%"></i></div></div>
+          <span class="right num" style="color:var(--muted);font-weight:500">$2,830 / $6,000</span>
+        </div>
+        <p class="note" style="text-align:left;margin-top:8px">$550 to your deductible, after that, visits cost you 20%, not 100%. Mia's next checkup ≈ <b class="num">$38</b>, not $190.</p>
+      </div>
+      </div><!-- /finBody -->
     </div>
   </section>
 
@@ -1163,6 +1217,8 @@
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Home</button>
     <button class="tab" data-target="activity" onclick="go('activity',true)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Activity</button>
+    <button class="tab" data-target="finances" onclick="go('finances',true)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 3v18h18M7 14l3-4 3 3 4-6"/></svg>Finances</button>
     <button class="tab" data-target="autonomy" onclick="go('autonomy',true)">
       <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></svg>You</button>
   </div>
@@ -1302,7 +1358,15 @@
       8 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
         + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
     document.getElementById('activityTotal').textContent = p === 'resolved' ? '$473' : '$259';
-    document.getElementById('recoveredAmt').textContent = p === 'resolved' ? '$473' : '$259';
+    // Steward-at-work tiles on the home lead (D18)
+    document.getElementById('mRecovered').textContent = p === 'resolved' ? '$473' : '$259';
+    document.getElementById('mNeeds').textContent = (p === 'found' || p === 'rejected') ? 1 : 0;
+    document.getElementById('mWatch').textContent = 1 + (['sent','appealed'].includes(p) ? 1 : 0);
+    document.getElementById('mActions').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
+    document.getElementById('mCharges').textContent = '41';
+    // Finances tab: empty until something is connected
+    show('finEmpty', state.cold);
+    show('finBody', !state.cold);
     applyFilter();
   }
 
