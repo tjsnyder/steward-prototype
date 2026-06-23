@@ -608,30 +608,66 @@
       </div><!-- /legacyHist -->
     </section>
 
-    <!-- YOU / HOW STEWARD WORKS -->
-    <section class="dview" data-view="you" style="max-width:640px">
-      <div class="pagehead">
-        <div>
-          <div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('home')">‹ Home</span></div>
-          <h1>You</h1>
-          <span class="sub">tim@tjsnyder.com · household of 4</span>
-        </div>
-      </div>
+    <!-- YOU, identity, security, connected accounts, audit log, plan -->
+    <section class="dview" data-view="you" style="max-width:680px">
+      <div class="pagehead"><h1>You</h1></div>
+
       <div class="card">
-        <div class="eyebrow">Household</div>
-        <div class="row" style="border:none"><div class="body"><div class="t">Tim</div><div class="s">Owner, approves everything</div></div></div>
-        <div class="row"><div class="body"><div class="t">Sarah</div><div class="s">Partner, sees everything, approves her own items</div></div><span class="chip ok">Active</span></div>
-        <div class="row"><div class="body"><div class="t">Mia &amp; Jonah</div><div class="s">Dependents, their bills route to you both</div></div></div>
+        <div class="eyebrow">Account</div>
+        <div class="row" style="border:none"><div class="body"><div class="t">tim@tjsnyder.com</div><div class="s" id="youConns">Not connected yet</div></div></div>
       </div>
+
+      <div class="card">
+        <div class="eyebrow">How Steward handles your money &amp; data</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Read-only by default, I never move money</div>
+          <div><span class="tick">✓</span>I always ask before any action, nothing automatic</div>
+          <div><span class="tick">✓</span>Per-user encryption, credentials live in a vault</div>
+          <div><span class="tick">✓</span>I never train on or sell your data</div>
+          <div><span class="tick">✓</span>Disconnect any source in one tap, below</div>
+        </div>
+        <p class="note" style="margin-top:6px">★ First-year promise: if I don't find you more than I cost, year two is free.</p>
+      </div>
+
+      <div class="card" style="padding:14px 20px">
+        <div class="eyebrow" style="margin-bottom:6px">Connected accounts</div>
+        <div id="connList"></div>
+      </div>
+
+      <div class="card" style="padding:6px 20px">
+        <div class="row" style="cursor:pointer" onclick="nav('audit')"><div class="body"><div class="t">Access &amp; actions log</div><div class="s">Every sign-in, every action, every document I read</div></div><span class="linkish">›</span></div>
+        <div class="row" style="cursor:pointer" onclick="nav('plan')"><div class="body"><div class="t">Your plan</div><div class="s" id="planSub">$20/mo · acting enabled</div></div><span class="linkish">›</span></div>
+      </div>
+
       <div class="card">
         <div class="eyebrow">Standing instructions</div>
-        <div class="row" style="border:none"><div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div><span class="linkish" onclick="toast('Removed, I\'ll surface everything again')">Remove</span></div>
-        <div class="row"><div class="body"><div class="t">"Always keep HBO Max, the kids use it"</div><div class="s">set May 14, in chat</div></div><span class="linkish" onclick="toast('Removed')">Remove</span></div>
-        <p class="note" style="margin-top:8px">Tell me in chat how you want things handled, I'll remember it here.</p>
+        <p class="note" id="stdInstr" style="margin:0">None yet. Tell me in chat how you want things handled, e.g. "don't surface findings under $25", and I'll remember it here.</p>
       </div>
-      <div class="card" style="padding:6px 20px">
-        <div class="row" style="cursor:pointer" onclick="toast('Connected accounts, not in this prototype yet')"><div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · email watcher on</div></div><span class="linkish">›</span></div>
-        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out, we cancel subscriptions for a living')"><div class="body"><div class="t">Your plan</div><div class="s">$20/mo, it\'s returned 4.7× that this year</div></div><span class="linkish">›</span></div>
+    </section>
+
+    <!-- AUDIT LOG, reachable, read-only -->
+    <section class="dview sview" data-view="audit" style="max-width:680px">
+      <div class="shead"><span class="back" onclick="nav('you')" title="Back">‹</span><div><div class="t">Access &amp; actions log</div><div class="s">Read-only · every event is on the record</div></div></div>
+      <div class="thread" id="auditList" style="padding:14px 2px"></div>
+    </section>
+
+    <!-- PLAN, with one-tap cancel -->
+    <section class="dview" data-view="plan" style="max-width:560px">
+      <div class="pagehead"><div><div style="font-size:12px;margin-bottom:6px"><span class="linkish" onclick="nav('you')">‹ You</span></div><h1>Your plan</h1></div></div>
+      <div class="card">
+        <div class="eyebrow">Watching &amp; finding is free; acting is the paid part</div>
+        <div style="font-size:30px;font-weight:700;margin:6px 0 12px" class="num" id="planPrice">$20/mo</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Findings with dollar amounts, always free</div>
+          <div><span class="tick">✓</span>$20/mo to let me act: dispute, cancel, recover</div>
+          <div><span class="tick">✓</span>Always asks before acting, nothing automatic</div>
+        </div>
+        <div class="note" style="margin-top:12px">★ First-year promise: if I don't find you more than I cost, year two is free.</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Cancelling</div>
+        <p style="font-size:13px;color:var(--ink-2);line-height:1.55;margin-bottom:12px">One tap and you're out, no retention games, no "are you sure" maze. We cancel subscriptions for a living; ours is no different.</p>
+        <div id="planBtns"></div>
       </div>
     </section>
     <!-- SESSION, chat / job thread (replaces the old right-hand rail) -->
@@ -654,7 +690,7 @@
 
 <script>
   // Per-source progressive fill (D16): email lights bills/EOBs; accounts (Plaid) lights net worth, spending, subscriptions.
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false, plan: 'paid' };
   let active = 'ask';
   const isCold = () => !state.email && !state.accounts;
 
@@ -860,6 +896,7 @@
       ? '<span class="chip ok">Cancelled</span>'
       : '<span class="linkish" onclick="openSession(\'hulu\')">Review</span>';
     if (active === 'om' || active === 'hulu' || active === 'handoff') buildSession(active);
+    renderTrust();
     applyWebFilter();
   }
   const FILTERMAP = { 'All': 'all', 'Needs you': 'needs', 'Watching': 'watching', 'Done': 'done' };
@@ -920,6 +957,57 @@
     setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
     th.scrollTop = th.scrollHeight;
   }
+  // ── Trust artifacts: connected accounts, audit log, plan ──
+  function connRow(t, s, status, key) {
+    const chip = status === 'needs' ? '<span class="chip pend">Needs reconnect</span>' : '<span class="chip ok">Active</span>';
+    const act = status === 'needs'
+      ? `<span class="linkish" onclick="reconnect('${key}')">Reconnect</span>`
+      : `<span class="linkish" onclick="revokeSource('${key}')">Revoke</span>`;
+    return `<div class="row"><div class="body"><div class="t">${t}</div><div class="s">${s}</div></div><div style="display:flex;gap:14px;align-items:center">${chip}${act}</div></div>`;
+  }
+  function buildConnList() {
+    let h = '';
+    if (!state.email && !state.accounts) return '<p class="note" style="margin:0">Nothing connected yet. Connect a source from Home or Finances, I only ever get read-only access.</p>';
+    if (state.email) h += connRow('Email · tim@tjsnyder.com', 'Read-only · bills, statements &amp; EOBs · last read 2m ago', 'active', 'email');
+    if (state.accounts) {
+      h += connRow('Chase · checking + savings', 'Read-only · balances &amp; transactions · sign-in expired', 'needs', 'chase');
+      h += connRow('5 more institutions · via Plaid', 'Read-only · balances &amp; transactions · synced 1h ago', 'active', 'accounts');
+    }
+    return h;
+  }
+  function revokeSource(key) {
+    if (key === 'email') state.email = false; else state.accounts = false;
+    render();
+    toast(key === 'email' ? 'Email disconnected, I\'ve stopped reading your mail' : 'Accounts disconnected, access revoked');
+  }
+  function reconnect(key) { toast('Reconnected, Chase is syncing again'); }
+  function buildAudit() {
+    const p = state.phase, ev = [];
+    if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges against your patterns, nothing flagged', 'action']); }
+    if (state.email) { ev.push(['Connected email', 'read-only · bills, statements & EOBs', 'access']); ev.push(['Read your One Medical statement', 'pulled from email + portal', 'access']); ev.push(['Read your Anthem EOB', 'allowed amount $86 vs billed $300', 'access']); }
+    if (state.email && ['verifying','sent','rejected','appealed','resolved'].includes(p)) { ev.push(['Signed in to One Medical portal', 'you approved', 'access']); ev.push(['Filed dispute with One Medical', 'you approved', 'action']); }
+    if (state.email && ['appealed','resolved'].includes(p)) ev.push(['Filed Anthem member appeal', 'you approved', 'action']);
+    if (state.email && p === 'resolved') ev.push(['Verified the corrected statement', 'One Medical reissued at $86, $214 back', 'action']);
+    if (!ev.length) ev.push(['No activity yet', 'connect a source and your log fills here', 'access']);
+    return ev.map(([t, s, kind]) => `<div class="msg steward" style="max-width:100%"><div class="who">${kind === 'action' ? 'Action' : 'Access'}</div><div class="bubble"><b>${t}</b><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${s}</div></div></div>`).join('');
+  }
+  function planUpgrade() { state.plan = 'paid'; render(); toast('You\'re on $20/mo, I can act now, always with your approval'); }
+  function planCancel() { state.plan = 'free'; render(); toast('Cancelled, you\'re on the free plan; I\'ll keep watching & finding'); }
+  function renderTrust() {
+    const fb = [];
+    if (state.accounts) fb.push('6 accounts');
+    if (state.email) fb.push('email on');
+    document.getElementById('youConns').textContent = fb.length ? fb.join(' · ') : 'Not connected yet';
+    document.getElementById('connList').innerHTML = buildConnList();
+    document.getElementById('auditList').innerHTML = buildAudit();
+    const paid = state.plan === 'paid';
+    document.getElementById('planSub').textContent = paid ? '$20/mo · acting enabled' : 'Free · watching & finding';
+    document.getElementById('planPrice').textContent = paid ? '$20/mo' : 'Free';
+    document.getElementById('planBtns').innerHTML = paid
+      ? '<button class="btn ghost" onclick="planCancel()">Cancel my plan</button>'
+      : '<button class="btn primary" onclick="planUpgrade()">Start, $20/mo</button>';
+  }
+
   // Connecting fills only the modules that source can populate (D16).
   function webConnect(kind) {
     if (kind === 'email') state.email = true; else state.accounts = true;
