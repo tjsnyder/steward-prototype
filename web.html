@@ -226,19 +226,22 @@
       <div class="coldempty">
         <div class="card" style="border-left:3px solid var(--ink)">
           <div class="eyebrow">A bill that looks wrong</div>
-          <p>Send it to me — I'll check it against what you actually owe and fight it if it's off.</p>
-          <button class="btn primary" onclick="newChat('')">Send me a bill — I'll check it</button>
+          <p>Send it to me — I'll check it against what you actually owe and fight it if it's off. Or connect your email and I'll catch new bills, statements &amp; EOBs as they arrive.</p>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+            <button class="btn primary" onclick="newChat('')">Send me a bill — I'll check it</button>
+            <span class="linkish" onclick="webConnect('email')">or connect email — read-only</span>
+          </div>
         </div>
         <div class="grid">
           <div class="card">
             <div class="eyebrow">Net worth</div>
             <p>See your whole picture — accounts, investments, your home. Read-only, via Plaid.</p>
-            <button class="btn primary" onclick="webConnect()">Connect accounts</button>
+            <button class="btn primary" onclick="webConnect('accounts')">Connect accounts</button>
           </div>
           <div class="card">
             <div class="eyebrow">Subscriptions</div>
-            <p>I'll find your subscriptions from email receipts and renewal notices — no bank connection needed.</p>
-            <button class="btn primary" onclick="webConnect()">Connect email — read-only</button>
+            <p>I'll spot recurring subscriptions and price creep in your transactions — read-only, via Plaid.</p>
+            <button class="btn primary" onclick="webConnect('accounts')">Connect accounts</button>
           </div>
         </div>
       </div>
@@ -323,8 +326,8 @@
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
           <div class="eyebrow" style="margin-bottom:8px">Subscriptions</div>
-          <p>Connect your email and I'll find every subscription from your receipts and renewal notices — read-only, no bank connection needed.</p>
-          <button class="btn primary" onclick="webConnect()">Connect email — read-only</button>
+          <p>Connect your accounts and I'll find every recurring subscription and price increase in your transactions — read-only, via Plaid.</p>
+          <button class="btn primary" onclick="webConnect('accounts')">Connect accounts</button>
         </div>
       </div>
       <div class="card"><div class="summary num">
@@ -802,11 +805,13 @@
     th.scrollTop = th.scrollHeight;
   }
   // Connecting graduates the app off the empty (cold) state.
-  function webConnect() {
+  function webConnect(kind) {
     state.cold = false;
     render();
     nav('home');
-    toast('Connected — 7 subscriptions found, ~$340 to recover');
+    toast(kind === 'email'
+      ? 'Email connected — I\'ll catch new bills, statements & EOBs as they arrive'
+      : 'Connected — 7 subscriptions flagged, plus your full picture');
   }
 
   render();

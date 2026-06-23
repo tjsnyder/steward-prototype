@@ -1122,8 +1122,11 @@
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">A bill that looks wrong</div>
-        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">Send it to me — I'll check it against what you actually owe and fight it if it's off.</p>
-        <button class="btn primary" style="width:100%" onclick="go('chat',true)">Send me a bill — I'll check it</button>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">Send it to me — I'll check it against what you actually owe and fight it if it's off. Or connect your email and I'll catch new bills, statements &amp; EOBs as they arrive.</p>
+        <div class="btnrow">
+          <button class="btn primary" onclick="go('chat',true)">Send me a bill — I'll check it</button>
+        </div>
+        <div class="why" onclick="openOauth()">or connect email — I'll watch for bills &amp; statements</div>
       </div>
 
       <div class="card empty">
@@ -1135,23 +1138,11 @@
         <div class="why" onclick="toast('Tell me your address in chat — I\'ll estimate your home\'s value, no connection needed')">or start manually — try your home address</div>
       </div>
 
-      <div class="card empty" id="chSubsNoEmail">
+      <div class="card empty">
         <div class="eyebrow">Subscriptions</div>
-        <p>I can find your subscriptions from email receipts and renewal notices — no bank connection needed.</p>
+        <p>I'll spot recurring subscriptions and price creep in your transactions — connect your accounts, read-only via Plaid.</p>
         <div class="btnrow">
-          <button class="btn primary" onclick="openOauth()">Connect email — read-only</button>
-        </div>
-      </div>
-
-      <div class="card" id="chSubsEmail" style="display:none">
-        <div class="eyebrow">Subscriptions · from your email</div>
-        <div class="row"><div class="body"><div class="t">7 found from receipts</div><div class="s">Netflix, Hulu, Spotify, Disney+, NYT, Apple One, iCloud+</div></div><span class="right num">~$86/mo</span></div>
-        <div class="row">
-          <div class="body"><div class="t">Catch the rest — and verify</div><div class="s">Some don't email you. And when I cancel one, I verify the billing actually stops — that takes the card statement.</div></div>
-        </div>
-        <div class="btnrow" style="margin-top:4px">
-          <button class="btn primary" onclick="openPlaid()">Connect the card they bill</button>
-          <button class="btn ghost" onclick="toast('No rush — the 7 from email are being watched')">Later</button>
+          <button class="btn primary" onclick="openPlaid()">Connect accounts</button>
         </div>
       </div>
 
@@ -1301,8 +1292,6 @@
       ? 'Opened from Ask Steward — bill read, your EOB is next.'
       : 'From the email notice — pulling the bill from their portal.';
     document.getElementById('ctSub').textContent = cm[0] + ' · ' + cm[2];
-    show('chSubsNoEmail', !state.email);
-    show('chSubsEmail', state.email);
     document.getElementById('activityCount').textContent =
       8 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
         + (cancelled ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
@@ -1392,7 +1381,7 @@
   function plaidAllow() {
     closePlaid();
     state.cold = false;  // accounts connected — the home graduates
-    toast('6 accounts connected — building your picture');
+    toast('6 accounts connected — building your picture, 7 subscriptions flagged');
     go('home', true);
   }
   function oauthAllow() {
@@ -1400,7 +1389,7 @@
     state.cold = false;  // any connection graduates the home off the cold state
     closeOauth();
     go('home', true);
-    toast('Connected — 7 subscriptions found, ~$340 to recover');
+    toast('Email connected — I\'ll catch new bills, statements & EOBs as they arrive');
   }
   function openPay() { document.getElementById('paySheet').classList.add('open'); }
   function paySubscribe() {
