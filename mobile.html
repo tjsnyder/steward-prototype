@@ -754,22 +754,31 @@
   <!-- ── YOU / HOW STEWARD WORKS ── -->
   <section class="view" data-view="autonomy">
     <div class="navhead">
-      <div style="flex:1"><div class="title">You</div><div class="sub">tim@tjsnyder.com · household of 4</div></div>
+      <div style="flex:1"><div class="title">You</div><div class="sub" id="mYouConns">Not connected yet</div></div>
       <span class="avatar">T</span>
     </div>
     <div class="scroll">
 
       <div class="card">
-        <div class="eyebrow">Standing instructions</div>
-        <div class="row" style="border:none">
-          <div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div>
-          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed, I\'ll surface everything again')">Remove</a>
+        <div class="eyebrow">How Steward handles your money &amp; data</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Read-only by default, I never move money</div>
+          <div><span class="tick">✓</span>I always ask before any action, nothing automatic</div>
+          <div><span class="tick">✓</span>Per-user encryption, credentials live in a vault</div>
+          <div><span class="tick">✓</span>I never train on or sell your data</div>
+          <div><span class="tick">✓</span>Disconnect any source in one tap, below</div>
         </div>
-        <div class="row">
-          <div class="body"><div class="t">"Always keep HBO Max, the kids use it"</div><div class="s">set May 14, in chat</div></div>
-          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed')">Remove</a>
-        </div>
-        <div class="note" style="text-align:left;margin-top:8px">Tell me in chat how you want things handled, I'll remember it here.</div>
+        <div class="note" style="text-align:left;margin-top:6px">★ First-year promise: if I don't find you more than I cost, year two is free.</div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Connected accounts</div>
+        <div id="mConnList"></div>
+      </div>
+
+      <div class="card" style="padding:6px 16px">
+        <div class="row" style="cursor:pointer" onclick="go('audit')"><div class="body"><div class="t">Access &amp; actions log</div><div class="s">Every sign-in, every action, every document I read</div></div><span class="chevron">›</span></div>
+        <div class="row" style="cursor:pointer" onclick="go('plan')"><div class="body"><div class="t">Your plan</div><div class="s" id="mPlanSub">$20/mo · acting enabled</div></div><span class="chevron">›</span></div>
       </div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
@@ -784,22 +793,42 @@
       </div>
 
       <div class="card">
-        <div class="eyebrow">Household</div>
-        <div class="row" style="border:none"><div class="body"><div class="t">Tim</div><div class="s">Owner, approves everything</div></div></div>
-        <div class="row"><div class="body"><div class="t">Sarah</div><div class="s">Partner, sees everything, approves her own items</div></div><span class="chip ok">Active</span></div>
-        <div class="row"><div class="body"><div class="t">Mia &amp; Jonah</div><div class="s">Dependents, their bills route to you both</div></div></div>
-        <div class="note" style="text-align:left;margin-top:6px"><u style="cursor:pointer" onclick="toast('Invites, not in this prototype yet')">Invite someone</u>, accountants and aging parents are next.</div>
+        <div class="eyebrow">Standing instructions</div>
+        <div class="note" style="text-align:left;margin:0">None yet. Tell me in chat how you want things handled, e.g. "don't surface findings under $25", and I'll remember it here.</div>
       </div>
+    </div>
+  </section>
 
-      <div class="card" style="padding:6px 16px">
-        <div class="row" style="cursor:pointer" onclick="toast('Chase changed their sign-in, 30 seconds to reconnect, then I\'m caught up')">
-          <div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · <span style="color:var(--amber);font-weight:600">Chase needs a fresh sign-in</span></div></div>
-          <span class="chevron">›</span>
+  <!-- ── AUDIT LOG ── -->
+  <section class="view" data-view="audit">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Access &amp; actions log</div><div class="sub">Read-only · every event is on the record</div></div>
+    </div>
+    <div class="scroll" id="mAuditList"></div>
+  </section>
+
+  <!-- ── PLAN ── -->
+  <section class="view" data-view="plan">
+    <div class="navhead">
+      <button class="back" onclick="back()">‹</button>
+      <div style="flex:1"><div class="title">Your plan</div></div>
+    </div>
+    <div class="scroll">
+      <div class="card">
+        <div class="eyebrow">Watching &amp; finding is free; acting is the paid part</div>
+        <div class="num" id="mPlanPrice" style="font-size:30px;font-weight:700;margin:6px 0 10px">$20/mo</div>
+        <div class="prog">
+          <div><span class="tick">✓</span>Findings with dollar amounts, always free</div>
+          <div><span class="tick">✓</span>$20/mo to let me act: dispute, cancel, recover</div>
+          <div><span class="tick">✓</span>Always asks before acting, nothing automatic</div>
         </div>
-        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out, we cancel subscriptions for a living')">
-          <div class="body"><div class="t">Your plan</div><div class="s">$20/mo, it's returned 4.7× that this year</div></div>
-          <span class="chevron">›</span>
-        </div>
+        <div class="note" style="text-align:left;margin-top:10px">★ First-year promise: if I don't find you more than I cost, year two is free.</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Cancelling</div>
+        <p style="font-size:13px;color:var(--ink-2);line-height:1.55;margin-bottom:12px">One tap and you're out, no retention games, no "are you sure" maze. We cancel subscriptions for a living; ours is no different.</p>
+        <div id="mPlanBtns"></div>
       </div>
     </div>
   </section>
@@ -891,14 +920,26 @@
         <div class="inline-card action">
           <div class="eyebrow">Needs you</div>
           <h5>One Medical billed $300, EOB says $86</h5>
-          <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
+          <p>I can log in to One Medical's portal and submit this for you. You've given me read-only access so far, so I'll ask before each portal action, nothing is sent until you approve.</p>
           <div class="recover num">$214 back<small>projected</small></div>
           <p style="font-size:12px;color:var(--muted);margin-top:6px">Your Anthem EOB lists the allowed amount at $86, a documented overcharge, not a judgment call. Strong case.</p>
           <div class="btnrow" style="margin-top:10px" id="inv5btns">
-            <button class="btn primary" onclick="fileDispute()">File the dispute</button>
+            <button class="btn primary" onclick="fileDispute()">Yes, log in and file it</button>
             <button class="btn ghost" onclick="go('home',true)">Later</button>
           </div>
           <span class="why" onclick="toast('It cites your EOB: allowed $86 vs billed $300, codes 99213 &amp; 36415')">what I'll send</span>
+          <span class="why" onclick="portalFail()">or if their portal won't cooperate, I'll hand you the ready-to-send dispute</span>
+        </div>
+      </div>
+
+      <div class="hideme" id="invManual">
+        <div class="inline-card">
+          <div class="eyebrow">Portal trouble · ready for you</div>
+          <p style="font-size:13px;color:var(--ink-2);line-height:1.5">One Medical's portal rejected the automated sign-in, their site changed since last time. I'm not stuck: here's your dispute, ready to paste into their portal or send by email. I'll track the response either way.</p>
+          <div class="btnrow" style="margin-top:10px">
+            <button class="btn primary" onclick="toast('Copied, paste it into One Medical\'s portal or email')">Copy the dispute</button>
+            <button class="btn ghost" onclick="manualSent()">I've sent it</button>
+          </div>
         </div>
       </div>
 
@@ -1299,12 +1340,63 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, accounts: false, investigated: false, investStarted: false, origin: 'email', filter: 'all', chatUsed: false };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, accounts: false, plan: 'paid', chase: 'needs', investigated: false, investStarted: false, origin: 'email', filter: 'all', chatUsed: false };
   const stack = [];
   let current = 'home';
   let credTarget = null;
 
   function show(id, on) { document.getElementById(id).style.display = on ? '' : 'none'; }
+
+  // ── Trust artifacts: connected accounts, audit log, plan (mirrors web) ──
+  function mConnRow(t, s, status, key) {
+    const chip = status === 'needs' ? '<span class="chip pend">Needs reconnect</span>' : '<span class="chip ok">Active</span>';
+    const act = status === 'needs'
+      ? `<a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;cursor:pointer" onclick="reconnect('${key}')">Reconnect</a>`
+      : `<a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;cursor:pointer" onclick="revokeSource('${key}')">Revoke</a>`;
+    return `<div class="row"><div class="body"><div class="t">${t}</div><div class="s">${s}</div></div><div style="display:flex;gap:10px;align-items:center;flex:none">${chip}${act}</div></div>`;
+  }
+  function buildMConnList() {
+    if (!state.email && !state.accounts) return '<div class="note" style="text-align:left;margin:0">Nothing connected yet. Connect a source from Home or Finances, I only ever get read-only access.</div>';
+    let h = '';
+    if (state.email) h += mConnRow('Email · tim@tjsnyder.com', 'Read-only · bills, statements &amp; EOBs', 'active', 'email');
+    if (state.accounts) {
+      h += mConnRow('Chase · checking + savings', state.chase === 'needs' ? 'Read-only · sign-in expired' : 'Read-only · synced just now', state.chase, 'chase');
+      h += mConnRow('5 more · via Plaid', 'Read-only · balances &amp; transactions', 'active', 'accounts');
+    }
+    return h;
+  }
+  function revokeSource(key) {
+    if (key === 'email') state.email = false; else state.accounts = false;
+    render();
+    toast(key === 'email' ? 'Email disconnected, I\'ve stopped reading your mail' : 'Accounts disconnected, access revoked');
+  }
+  function reconnect(key) { if (key === 'chase') state.chase = 'active'; render(); toast('Reconnected, Chase is syncing again'); }
+  function buildMAudit() {
+    const p = state.phase, ev = [];
+    if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges, nothing flagged', 'action']); }
+    if (state.email) { ev.push(['Connected email', 'read-only · bills, statements & EOBs', 'access']); ev.push(['Read your One Medical statement', 'from email + portal', 'access']); ev.push(['Read your Anthem EOB', 'allowed amount $86 vs billed $300', 'access']); }
+    if (state.email && ['sent','rejected','appealed','resolved'].includes(p)) { ev.push(['Signed in to One Medical portal', 'you approved', 'access']); ev.push(['Filed dispute with One Medical', 'you approved', 'action']); }
+    if (state.email && ['appealed','resolved'].includes(p)) ev.push(['Filed Anthem member appeal', 'you approved', 'action']);
+    if (state.email && p === 'resolved') ev.push(['Verified the corrected statement', '$214 back', 'action']);
+    if (!ev.length) ev.push(['No activity yet', 'connect a source and your log fills here', 'access']);
+    return ev.map(([t, s, kind]) => `<div class="msg steward" style="max-width:100%"><div class="who">${kind === 'action' ? 'Action' : 'Access'}</div><div class="bubble"><b>${t}</b><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${s}</div></div></div>`).join('');
+  }
+  function planUpgrade() { state.plan = 'paid'; render(); toast('You\'re on $20/mo, I can act now, always with your approval'); }
+  function planCancel() { state.plan = 'free'; render(); toast('Cancelled, you\'re on the free plan; I\'ll keep watching & finding'); }
+  function requirePaid() { if (state.plan === 'paid') return true; toast('Acting is on the $20/mo plan, watching & finding stays free'); go('plan'); return false; }
+  function renderTrust() {
+    const fb = [];
+    if (state.accounts) fb.push('6 accounts'); if (state.email) fb.push('email on');
+    document.getElementById('mYouConns').textContent = fb.length ? fb.join(' · ') : 'Not connected yet';
+    document.getElementById('mConnList').innerHTML = buildMConnList();
+    document.getElementById('mAuditList').innerHTML = buildMAudit();
+    const paid = state.plan === 'paid';
+    document.getElementById('mPlanSub').textContent = paid ? '$20/mo · acting enabled' : 'Free · watching & finding';
+    document.getElementById('mPlanPrice').textContent = paid ? '$20/mo' : 'Free';
+    document.getElementById('mPlanBtns').innerHTML = paid
+      ? '<button class="btn ghost" onclick="planCancel()">Cancel my plan</button>'
+      : '<button class="btn primary" onclick="planUpgrade()">Start, $20/mo</button>';
+  }
 
   function render() {
     const p = state.phase;
@@ -1399,6 +1491,7 @@
     document.getElementById('mWatch').textContent = watching;
     document.getElementById('mActions').textContent = actions;
     document.getElementById('mCharges').textContent = accounts ? '41' : '0';
+    renderTrust();
     applyFilter();
   }
 
@@ -1547,7 +1640,20 @@
     }
     sc.scrollTop = sc.scrollHeight;
   }
+  function portalFail() {
+    if (!requirePaid()) return;
+    document.getElementById('inv5btns').classList.add('hideme');
+    document.getElementById('invManual').classList.remove('hideme');
+    toast('Their portal balked, here\'s the ready-to-send dispute');
+  }
+  function manualSent() {
+    document.getElementById('invManual').classList.add('hideme');
+    state.phase = 'sent'; render();
+    toast('Logged as sent, I\'ll track the response');
+    setTimeout(() => threadStep('inv7'), 400);
+  }
   function fileDispute() {
+    if (!requirePaid()) return;
     document.getElementById('inv5btns').classList.add('hideme');
     state.phase = 'sent'; render();
     toast('Filed ✓ I\'ll report back here');
@@ -1570,6 +1676,7 @@
     toast('Okay, round 2 stays available until Jul 30');
   }
   function fileAppeal() {
+    if (!requirePaid()) return;
     document.getElementById('inv8btns').classList.add('hideme');
     state.phase = 'appealed'; render();
     toast('Appeal filed ✓ I\'m on the 30-day clock');
@@ -1589,6 +1696,7 @@
 
   // just-in-time credential flow
   function openCred(which) {
+    if ((which === 'hulu' || which === 'omcold') && !requirePaid()) return;
     credTarget = which;
     const meta = {
       om:     ['One Medical, patient portal', 'Steward signs in as you, only to retrieve your documents.'],
