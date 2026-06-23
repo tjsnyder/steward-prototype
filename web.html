@@ -117,6 +117,12 @@
   .dview.f-watching [data-cat]:not([data-cat="watching"]),
   .dview.f-done     [data-cat]:not([data-cat="done"]){display:none!important}
   .filterempty{font-size:13px;color:var(--ink-2);text-align:center;padding:34px 8px;line-height:1.5}
+
+  /* empty (cold) state — before anything is connected */
+  .coldempty{display:none}
+  .coldempty p{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin:0 0 12px}
+  .dview.cold > .coldempty{display:block}
+  .dview.cold > *:not(.pagehead):not(.askbar):not(.coldempty){display:none!important}
   .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}
   .event{display:flex;gap:14px;padding:13px 4px}
   .event+.event{border-top:1px solid var(--hairline)}
@@ -197,7 +203,7 @@
     </nav>
     <div class="foot" style="cursor:pointer" onclick="nav('you')" title="How Steward works">
       <span class="avatar">T</span>
-      <div><div class="who">Tim</div><div class="sub">6 accounts · email on</div></div>
+      <div><div class="who">Tim</div><div class="sub" id="footSub">6 accounts · email on</div></div>
     </div>
   </aside>
 
@@ -214,6 +220,27 @@
         <button class="attach" onclick="toast('Attach any bill or document — I\'ll read it')">＋</button>
         <input id="homeAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')homeAskSend()">
         <button class="send" onclick="homeAskSend()">➤</button>
+      </div>
+
+      <!-- EMPTY STATE — shown until something is connected -->
+      <div class="coldempty">
+        <div class="card" style="border-left:3px solid var(--ink)">
+          <div class="eyebrow">A bill that looks wrong</div>
+          <p>Send it to me — I'll check it against what you actually owe and fight it if it's off.</p>
+          <button class="btn primary" onclick="newChat('')">Send me a bill — I'll check it</button>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="eyebrow">Net worth</div>
+            <p>See your whole picture — accounts, investments, your home. Read-only, via Plaid.</p>
+            <button class="btn primary" onclick="webConnect()">Connect accounts</button>
+          </div>
+          <div class="card">
+            <div class="eyebrow">Subscriptions</div>
+            <p>I'll find your subscriptions from email receipts and renewal notices — no bank connection needed.</p>
+            <button class="btn primary" onclick="webConnect()">Connect email — read-only</button>
+          </div>
+        </div>
       </div>
 
       <div class="card attention" id="dAttention">
@@ -293,6 +320,13 @@
       <div class="pagehead">
         <h1>Subscriptions</h1>
       </div>
+      <div class="coldempty">
+        <div class="card" style="text-align:center;padding:38px 22px">
+          <div class="eyebrow" style="margin-bottom:8px">Subscriptions</div>
+          <p>Connect your email and I'll find every subscription from your receipts and renewal notices — read-only, no bank connection needed.</p>
+          <button class="btn primary" onclick="webConnect()">Connect email — read-only</button>
+        </div>
+      </div>
       <div class="card"><div class="summary num">
         <div><div class="v">$99</div><div class="l">per month</div></div>
         <div><div class="v">$1,188</div><div class="l">per year</div></div>
@@ -354,6 +388,12 @@
     <section class="dview" data-view="activity">
       <div class="pagehead">
         <h1>Activity</h1>
+      </div>
+      <div class="coldempty">
+        <div class="card" style="text-align:center;padding:38px 22px">
+          <div class="eyebrow" style="margin-bottom:8px">Activity</div>
+          <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">Nothing yet. Once you bring me something — a bill, a question — every job and conversation lands here, on the record.</p>
+        </div>
       </div>
       <div class="card value-card">
         <div class="eyebrow">Your week · Jun 8–14</div>
@@ -555,12 +595,10 @@
   </main>
 </div>
 
-<div id="onboard"><div class="obcard" id="obBody"></div></div>
-
 <div id="toast"></div>
 
 <script>
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all' };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', cold: true };
   let active = 'ask';
 
   let lastView = 'home';
@@ -671,8 +709,13 @@
   function render() {
     const p = state.phase;
     const needs = (p === 'found' || p === 'rejected');
+    ['home', 'activity', 'subs'].forEach(v => {
+      const el = document.querySelector('.dview[data-view="' + v + '"]');
+      if (el) el.classList.toggle('cold', state.cold);
+    });
+    document.getElementById('footSub').textContent = state.cold ? 'Not connected yet' : '6 accounts · email on';
     document.getElementById('dAttention').style.display = (state.attention && p === 'found') ? '' : 'none';
-    document.getElementById('navDot').style.display = (state.attention && needs) ? '' : 'none';
+    document.getElementById('navDot').style.display = (state.attention && needs && !state.cold) ? '' : 'none';
     document.getElementById('dNeedsHdr').style.display = needs ? '' : 'none';
     document.getElementById('dProposed').style.display = p === 'found' ? '' : 'none';
     document.getElementById('dRejected').style.display = p === 'rejected' ? '' : 'none';
@@ -758,52 +801,14 @@
     setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
     th.scrollTop = th.scrollHeight;
   }
-  // ── onboarding funnel ──
-  const OB = {
-    welcome: () => `<div class="ob-hero">
-        <div class="wm">Steward</div>
-        <h1>A chief of staff for your financial life.</h1>
-        <div class="q">What brings you in?</div>
-        <div class="door" onclick="obBill()"><div class="t">A bill that looks wrong</div><div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div></div>
-        <div class="door" onclick="obStep('oauth')"><div class="t">Subscriptions piling up</div><div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div></div>
-        <div class="door" onclick="obStep('plaid')"><div class="t">How am I doing, money-wise?</div><div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div></div>
-      </div>`,
-    oauth: () => `<div class="card"><div class="eyebrow">Connect Google — tim@tjsnyder.com</div>
-        <div style="font-size:13px;color:var(--ink-2);margin-bottom:10px">Steward is requesting <b>read-only</b> access to your mail.</div>
-        <div class="prog"><div><span class="tick">✓</span>Read bills, statements &amp; financial notices</div><div><span class="tick" style="color:var(--red)">✕</span>Send, delete, or move anything</div><div><span class="tick" style="color:var(--red)">✕</span>Train on your data — ever</div></div>
-        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" onclick="obSweep()">Allow read-only access</button><button class="btn ghost" onclick="obStep('welcome')">Back</button></div></div>`,
-    sweep: () => `<div class="card"><div class="eyebrow">First sweep · reading 90 days of financial mail</div>
-        <div class="prog" id="obSweepProg"><div><span class="tick">✓</span>Connected tim@tjsnyder.com · read-only</div></div></div>`,
-    digest: () => `<div class="card value-card"><div class="eyebrow">Looks recoverable</div><div class="amt num">~<em>$340</em> in the first pass</div></div>
-      <div class="card" style="padding:6px 18px">
-        <div class="row" style="border:none"><div class="body"><div class="t">Hulu — price creep + bundle overlap</div><div class="s">Rose to $18 · Disney+ bundle includes it</div></div><span class="right num" style="color:var(--money)">$216/yr</span></div>
-        <div class="row"><div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Apple One already includes 2TB</div></div><span class="right num" style="color:var(--money)">$36/yr</span></div>
-        <div class="row"><div class="body"><div class="t">One Medical bill — worth checking</div><div class="s">"Statement ready" notice</div></div><span class="chip pend">Look closer</span></div>
-      </div>
-      <div style="display:flex;gap:10px"><button class="btn primary" onclick="obStep('pay')">Handle these for me</button><button class="btn ghost" onclick="graduate()">Just watch (free)</button></div>`,
-    pay: () => `<div class="card"><div class="eyebrow">Let Steward act</div>
-        <div style="font-size:30px;font-weight:700;margin:6px 0 10px" class="num">$20<span style="font-size:13px;color:var(--muted);font-weight:500"> /mo · or $192/yr</span></div>
-        <div class="prog"><div><span class="tick">✓</span>Every playbook, unlimited actions</div><div><span class="tick">✓</span>Always asks before acting</div><div><span class="tick">✓</span>Cancel in one tap. No retention games.</div></div>
-        <div style="font-size:11.5px;color:var(--muted);margin:12px 0;line-height:1.5">★ First-year promise: if I don't find you more than I cost, year two is free.</div>
-        <div style="display:flex;gap:10px"><button class="btn primary" onclick="graduate()">Start — $20/mo</button><button class="btn ghost" onclick="graduate()">Stay free</button></div></div>`,
-    plaid: () => `<div class="card"><div class="eyebrow">Connect accounts — via Plaid</div>
-        <div style="font-size:13px;color:var(--ink-2);margin-bottom:10px">Read-only access to balances and transactions.</div>
-        <div class="prog"><div><span class="tick">✓</span>See balances, transactions &amp; recurring charges</div><div><span class="tick" style="color:var(--red)">✕</span>Move money — not possible with this access</div><div><span class="tick" style="color:var(--red)">✕</span>See your bank password — Plaid tokenizes it</div></div>
-        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn primary" onclick="graduate()">Continue with Plaid</button><button class="btn ghost" onclick="obStep('welcome')">Back</button></div></div>`,
-  };
-  function obStep(s){ document.getElementById('obBody').innerHTML = OB[s](); }
-  function graduate(){ document.getElementById('onboard').classList.add('hide'); nav('home'); }
-  function obBill(){ graduate(); nav('activity'); openSession('om'); }
-  function obSweep(){
-    obStep('sweep');
-    const add = html => document.getElementById('obSweepProg').insertAdjacentHTML('beforeend', html);
-    setTimeout(()=>add('<div><span class="tick">✓</span>1,212 emails scanned · 31 billers identified</div>'),700);
-    setTimeout(()=>add('<div><span class="tick">✓</span>7 subscriptions found from receipts</div>'),1500);
-    setTimeout(()=>add('<div><span class="tick">✓</span>2 medical bills · 1 insurance renewal noticed</div>'),2300);
-    setTimeout(()=>obStep('digest'),3300);
+  // Connecting graduates the app off the empty (cold) state.
+  function webConnect() {
+    state.cold = false;
+    render();
+    nav('home');
+    toast('Connected — 7 subscriptions found, ~$340 to recover');
   }
 
-  obStep('welcome');
   render();
 </script>
 </body>

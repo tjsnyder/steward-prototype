@@ -1159,96 +1159,6 @@
     <div class="dock"><div class="chatpill" onclick="go('chat',true)">Message Steward…</div></div>
   </section>
 
-  <!-- ── WELCOME (onboarding) ── -->
-  <section class="view" data-view="welcome">
-    <div class="scroll" style="display:flex">
-      <div class="welcome">
-        <div class="wm">Steward</div>
-        <h1>A chief of staff for your financial life.</h1>
-        <p style="font-size:13.5px;color:rgba(255,255,255,.7);margin-bottom:6px">What brings you in?</p>
-        <div class="door" onclick="go('chat',true)">
-          <div class="t">A bill that looks wrong</div>
-          <div class="s">Send it to me — I'll check it against what you actually owe and fight it if it's off.</div>
-        </div>
-        <div class="door" onclick="openOauth()">
-          <div class="t">Subscriptions piling up</div>
-          <div class="s">I'll find them in your email receipts, flag the junk, and cancel what you approve.</div>
-        </div>
-        <div class="door" onclick="openPlaid()">
-          <div class="t">How am I doing, money-wise?</div>
-          <div class="s">Connect accounts read-only — net worth, spending, and straight answers.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FIRST SWEEP ── -->
-  <section class="view" data-view="sweep">
-    <div class="navhead">
-      <div style="flex:1"><div class="title">First sweep</div><div class="sub">Reading 90 days of financial mail — read-only</div></div>
-    </div>
-    <div class="scroll" id="sweepScroll">
-      <div class="inline-card" style="max-width:100%">
-        <div class="prog"><div><span class="tick">✓</span>Connected <b>tim@tjsnyder.com</b> · read-only</div></div>
-      </div>
-      <div class="inline-card hideme" id="sw1" style="max-width:100%">
-        <div class="prog"><div><span class="tick">✓</span><b class="num">1,212</b> emails scanned · <b class="num">31</b> billers &amp; merchants identified</div></div>
-      </div>
-      <div class="inline-card hideme" id="sw2" style="max-width:100%">
-        <div class="prog"><div><span class="tick">✓</span><b class="num">7</b> subscriptions found from receipts &amp; renewal notices</div></div>
-      </div>
-      <div class="inline-card hideme" id="sw3" style="max-width:100%">
-        <div class="prog"><div><span class="tick">✓</span><b class="num">2</b> medical bills · <b class="num">1</b> insurance renewal noticed</div></div>
-      </div>
-      <div class="hideme" id="sw4">
-        <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
-          <div class="bubble">Done — that took 41 seconds. Here's what's worth your attention.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FIRST FINDINGS DIGEST ── -->
-  <section class="view" data-view="digest">
-    <div class="navhead">
-      <div style="flex:1"><div class="title">What I found</div><div class="sub">First sweep · just now</div></div>
-    </div>
-    <div class="scroll">
-      <div class="card value-card">
-        <div class="eyebrow">Looks recoverable</div>
-        <div class="amt num">~<em>$340</em> in the first pass</div>
-        <a>Before connecting a single account beyond email.</a>
-      </div>
-
-      <div class="sechead"><h3>Findings (4)</h3></div>
-      <div class="card" style="padding:6px 16px">
-        <div class="row" style="cursor:pointer" onclick="go('subdetail')">
-          <div class="body"><div class="t">Hulu — price creep + bundle overlap</div><div class="s">Rose to $18 · your Disney+ bundle includes it</div></div>
-          <span class="right num" style="color:var(--money)">$216/yr</span><span class="chevron">›</span>
-        </div>
-        <div class="row" style="cursor:pointer" onclick="go('subapple')">
-          <div class="body"><div class="t">iCloud+ duplicate</div><div class="s">Apple One already includes 2TB iCloud</div></div>
-          <span class="right num" style="color:var(--money)">$36/yr</span><span class="chevron">›</span>
-        </div>
-        <div class="row" style="cursor:pointer" onclick="startInvest()">
-          <div class="body"><div class="t">One Medical bill — worth checking</div><div class="s">"Statement ready" notice · bill is behind their portal</div></div>
-          <span class="chip pend">Look closer</span><span class="chevron">›</span>
-        </div>
-        <div class="row" style="cursor:pointer" onclick="toast('Carrier re-shopping is coming soon — for now I\'ll remind you before it renews')">
-          <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you before it renews</div></div>
-          <span class="chip draft">Coming soon</span><span class="chevron">›</span>
-        </div>
-      </div>
-
-      <div class="card" style="border-color:var(--ink)">
-        <div class="btnrow">
-          <button class="btn primary" onclick="openPay()">Handle these for me</button>
-          <button class="btn ghost" onclick="payFree()">Just watch (free)</button>
-        </div>
-        <div class="note">Watching &amp; finding stays free forever. Acting is the paid part.</div>
-      </div>
-    </div>
-  </section>
 
   <!-- ── TAB BAR (shared) ── -->
   <div class="tabbar" id="tabbar">
@@ -1401,7 +1311,7 @@
     applyFilter();
   }
 
-  const COLD = ['welcome', 'sweep', 'digest'];
+  const COLD = [];
   function go(view, fromTab) {
     if (view === 'home' && state.cold) view = 'coldhome';
     if (view === current) return;
@@ -1488,16 +1398,9 @@
   function oauthAllow() {
     state.email = true;
     state.cold = false;  // any connection graduates the home off the cold state
-    closeOauth(); go('sweep');
-    const reveal = id => {
-      document.getElementById(id).classList.remove('hideme');
-      const sc = document.getElementById('sweepScroll'); sc.scrollTop = sc.scrollHeight;
-    };
-    setTimeout(() => reveal('sw1'), 700);
-    setTimeout(() => reveal('sw2'), 1600);
-    setTimeout(() => reveal('sw3'), 2500);
-    setTimeout(() => reveal('sw4'), 3300);
-    setTimeout(() => go('digest'), 4600);
+    closeOauth();
+    go('home', true);
+    toast('Connected — 7 subscriptions found, ~$340 to recover');
   }
   function openPay() { document.getElementById('paySheet').classList.add('open'); }
   function paySubscribe() {
@@ -1730,10 +1633,9 @@
     empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
 
-  current = 'welcome';
-  document.querySelector('[data-view="welcome"]').classList.add('active');
-  document.getElementById('tabbar').style.display = 'none';
-  render();
+  // Boot straight into the empty (cold) state — no onboarding.
+  state.cold = true;
+  go('home', true);
 </script>
 </body>
 </html>
