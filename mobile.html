@@ -13,6 +13,8 @@
     --amber:#B07C10; --red:#B0421A; --r:8px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:4px}
+  input:focus-visible,textarea:focus-visible{outline:2px solid var(--money);outline-offset:1px}
   html,body{height:100%}
   body{font-family:'Geist',-apple-system,sans-serif;background:#E8EBEE;color:var(--text);
        display:flex;justify-content:center;align-items:center}
@@ -102,8 +104,8 @@
   .dock{border-top:1px solid var(--hairline);background:var(--card);padding:10px 16px 6px;flex:none}
   .chatpill{display:flex;align-items:center;gap:10px;border:1px solid var(--hairline);border-radius:22px;
             padding:10px 16px;font-size:13.5px;color:var(--muted);background:var(--canvas);cursor:pointer}
-  .tabbar{display:flex;justify-content:space-around;padding:10px 8px 18px;background:var(--card);flex:none;border-top:1px solid var(--hairline)}
-  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#9AA7AC;position:relative;cursor:pointer;background:none;border:none;font-family:inherit}
+  .tabbar{display:flex;justify-content:space-around;padding:8px 8px calc(14px + env(safe-area-inset-bottom));background:var(--card);flex:none;border-top:1px solid var(--hairline)}
+  .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:44px;padding:0 6px;font-size:10px;font-weight:600;color:#9AA7AC;position:relative;cursor:pointer;background:none;border:none;font-family:inherit}
   .tab.active{color:var(--ink)}
   .tab svg{width:21px;height:21px}
   .tab .adot{position:absolute;top:-1px;right:2px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
@@ -130,7 +132,7 @@
   .receipt{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--hairline);margin-top:10px;padding-top:10px}
   .receipt .tick{color:var(--money);font-weight:700}
   .chatinput{display:flex;gap:10px;align-items:center}
-  .chatinput input{flex:1;border:1px solid var(--hairline);border-radius:22px;padding:10px 16px;font-size:13.5px;font-family:inherit;background:var(--canvas);outline:none}
+  .chatinput input{flex:1;border:1px solid var(--hairline);border-radius:22px;padding:9px 16px;font-size:16px;font-family:inherit;background:var(--canvas);outline:none}
   .chatinput button{width:38px;height:38px;border-radius:50%;border:none;background:var(--ink);color:#fff;font-size:15px;cursor:pointer;flex:none}
   .chatinput .attachbtn{background:var(--card);border:1px solid var(--hairline);color:var(--ink-2);font-size:18px}
   .chips{display:flex;gap:8px;padding:0 2px 10px;overflow-x:auto}
@@ -199,6 +201,12 @@
   /* invest + credential sheet */
   .prog{font-size:13px;line-height:2.1;color:var(--ink-2)}
   .prog .tick{color:var(--money);font-weight:700;margin-right:8px}
+  .prog .run{color:var(--amber);font-weight:700;margin-right:8px;animation:pulse 1.1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .recall{margin-top:10px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-2);background:rgba(176,124,16,.08);border:1px solid rgba(176,124,16,.25);border-radius:8px;padding:8px 11px}
+  .recall .why{margin:0;margin-left:auto;white-space:nowrap;color:var(--ink);font-weight:600}
+  .demoskip{display:inline-flex;align-items:center;gap:6px;margin:12px auto 0;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);cursor:pointer;border:1px dashed var(--hairline);border-radius:6px;padding:4px 9px;opacity:.85}
+  .demoskip::before{content:"DEMO";font-size:8.5px;letter-spacing:.08em;background:var(--hairline);color:var(--muted);border-radius:3px;padding:1px 4px}
   .hideme{display:none!important}
   .sheet-back{position:absolute;inset:0;background:rgba(20,37,38,.45);display:none;align-items:flex-end;z-index:40}
   .sheet-back.open{display:flex}
@@ -207,7 +215,7 @@
   .sheet h4{font-size:16px;font-weight:700;margin-bottom:2px}
   .sheet .sub2{font-size:12px;color:var(--muted);margin-bottom:10px}
   .sheet label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 2px 5px}
-  .sheet input{width:100%;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:14px;font-family:inherit;background:var(--canvas);outline:none}
+  .sheet input{width:100%;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;font-size:16px;font-family:inherit;background:var(--canvas);outline:none}
   .vaultnote{display:flex;gap:8px;font-size:11.5px;color:var(--muted);line-height:1.5;margin:14px 0}
   .vaultnote .lock{flex:none}
 
@@ -215,7 +223,14 @@
   #toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
          font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
          transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  .toast-undo{margin-left:14px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:700}
+  .coldlead{padding:2px 2px 6px}
+  .coldlead h2{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:6px;line-height:1.2}
+  .coldlead > p{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:10px}
+  .guardstrip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .guardstrip span{font-size:11px;font-weight:600;color:var(--ink-2);background:var(--card);border:1px solid var(--hairline);border-radius:20px;padding:3px 9px}
+  .costline{font-size:12px;color:var(--muted);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -227,7 +242,7 @@
     <div class="topbar">
       <span class="wordmark">Steward</span>
       <span class="icons">
-        <span class="bell" onclick="go('activity',true)" title="Notifications">
+        <span class="bell" onclick="go('activity',true)" title="Notifications" role="button" tabindex="0" aria-label="Open Activity">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span class="dot" id="bellDot"></span>
         </span>
@@ -255,16 +270,15 @@
           <div class="figures">
             <div class="figbox"><div class="l">They billed</div><div class="v num">$300</div></div>
             <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
-            <div class="figbox"><div class="l">Your recovery</div><div class="v money num">$214</div></div>
+            <div class="figbox"><div class="l">If it lands</div><div class="v num" style="color:var(--amber)">~$214</div></div>
           </div>
           <div class="deadline">Window closes Jun 28, drafted and ready. EOB-backed, strong case.</div>
           <div class="btnrow">
-            <button class="btn primary" onclick="startInvest()">Open the activity</button>
-            <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
+            <button class="btn primary" onclick="startInvest()">Review &amp; file</button>
+            <button class="btn ghost" onclick="dismissAttention()">Not now</button>
           </div>
           <span class="why" onclick="toast('Flagged because the billed CPT rates exceed your plan\'s contracted rates')">Why I flagged this</span>
         </div>
-        <div class="queueline" onclick="toast('Queue view, not in this prototype yet')">2 more need attention<span class="chev">›</span></div>
       </div>
 
       <div class="card attention" id="rejectedCard" style="display:none">
@@ -273,7 +287,7 @@
         <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise, so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Your EOB is the strongest version of the argument.</p>
         <div class="btnrow" style="margin-top:12px">
           <button class="btn primary" onclick="startInvest()">Open the activity</button>
-          <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
+          <button class="btn ghost" onclick="dismissRejected()">Not now</button>
         </div>
       </div>
 
@@ -287,14 +301,11 @@
           <span style="font-size:13px;color:var(--muted)">recovered in June</span>
         </div>
         <div class="hero-split">
-          <div><div class="mini-label">Needs you</div><div class="mini-val num" id="mNeeds">1</div></div>
-          <div><div class="mini-label">Watching</div><div class="mini-val num" id="mWatch">1</div></div>
+          <div onclick="gotoActivity('needs')" style="cursor:pointer"><div class="mini-label" style="color:var(--amber)">Needs you</div><div class="mini-val num" id="mNeeds" style="color:var(--amber)">1</div></div>
+          <div onclick="gotoActivity('watching')" style="cursor:pointer"><div class="mini-label">Watching</div><div class="mini-val num" id="mWatch">1</div></div>
         </div>
-        <div class="hero-split" style="margin-top:8px">
-          <div><div class="mini-label">Actions taken</div><div class="mini-val num" id="mActions">8</div></div>
-          <div><div class="mini-label">Charges checked</div><div class="mini-val num" id="mCharges">41</div></div>
-        </div>
-        <div class="why" onclick="go('activity',true)">See everything in Activity →</div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted)"><span class="num" id="mActions">8</span> actions taken · <span class="num" id="mCharges">41</span> charges checked</div>
+        <div class="why" style="margin-top:10px" onclick="go('activity',true)">See everything in Activity →</div>
       </div>
 
       <div class="card" id="mGlance" onclick="go('finances',true)" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between">
@@ -347,7 +358,7 @@
   <!-- ── CHAT ── -->
   <section class="view" data-view="chat">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div><div class="title">Ask Steward</div></div>
     </div>
     <div class="scroll" id="chatScroll">
@@ -399,10 +410,21 @@
         <div class="inline-card action">
           <div class="eyebrow">Ready to send, your approval</div>
           <h5>Reply to One Medical billing</h5>
-          <p>"Re: invoice #OM-44218, this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
+          <p id="ho3draft">"Re: invoice #OM-44218, this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
           <div class="btnrow" style="margin-top:10px" id="ho3btns">
             <button class="btn primary" onclick="handoffSend()">Send reply</button>
-            <button class="btn ghost" onclick="toast('Letter editing, not in this prototype yet')">Edit</button>
+            <button class="btn ghost" onclick="editDraft('ho3draft', this)">Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hideme" id="ho3work">
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · billing portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Opened the billing portal</div>
+            <div><span class="tick">✓</span>Attached your Anthem details</div>
+            <div><span class="run">⟳</span>Submitting the correction…</div>
           </div>
         </div>
       </div>
@@ -413,12 +435,13 @@
             <div class="receipt"><span class="tick">✓</span>I'll track the resubmission, typically 2–3 weeks, and verify the corrected claim shows up on your Anthem EOB. It's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
+        <div class="recall hideme" id="hoRecall"><span>You can still pull this back before their billing team opens it.</span><span class="why" onclick="undoHandoff()">Undo</span></div>
         <div class="inline-card">
           <div class="eyebrow">One more thing, only if you want</div>
           <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
           <div class="btnrow" style="margin-top:10px" id="ho5btns">
             <button class="btn primary" onclick="openOauth()">Connect email</button>
-            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Maybe later</button>
+            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Not now</button>
           </div>
         </div>
       </div>
@@ -498,7 +521,7 @@
           <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
           <div class="btnrow" style="margin-top:10px">
             <button class="btn primary" onclick="openOauth()">Connect email</button>
-            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Maybe later</button>
+            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Not now</button>
           </div>
         </div>
       </div>
@@ -506,9 +529,9 @@
     </div>
     <div class="dock">
       <div class="chatinput">
-        <button class="attachbtn" onclick="askUpload()">＋</button>
+        <button class="attachbtn" onclick="askUpload()" aria-label="Attach a file">＋</button>
         <input id="chatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')sendChat()">
-        <button onclick="sendChat()">➤</button>
+        <button onclick="sendChat()" aria-label="Send message">➤</button>
       </div>
     </div>
   </section>
@@ -790,7 +813,7 @@
   <!-- ── AUDIT LOG ── -->
   <section class="view" data-view="audit">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div style="flex:1"><div class="title">Access &amp; actions log</div><div class="sub">Read-only · every event is on the record</div></div>
     </div>
     <div class="scroll" id="mAuditList"></div>
@@ -799,7 +822,7 @@
   <!-- ── PLAN ── -->
   <section class="view" data-view="plan">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div style="flex:1"><div class="title">Your plan</div></div>
     </div>
     <div class="scroll">
@@ -824,7 +847,7 @@
   <!-- ── CASE THREAD: ONE MEDICAL ── -->
   <section class="view" data-view="casethread">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div><div class="title">One Medical dispute</div><div class="sub" id="ctSub">New bill noticed</div></div>
     </div>
     <div class="scroll" id="caseScroll">
@@ -874,7 +897,7 @@
         </div>
         <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
           <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
-          <button class="btn ghost" onclick="toast('Okay, I\'ll keep the bill on file unchecked')">Skip for now</button>
+          <button class="btn ghost" onclick="toast('Okay, I\'ll keep the bill on file unchecked')">Not now</button>
         </div>
       </div>
 
@@ -913,7 +936,7 @@
           <p style="font-size:12px;color:var(--muted);margin-top:6px">Your Anthem EOB lists the allowed amount at $86, a documented overcharge, not a judgment call. Strong case.</p>
           <div class="btnrow" style="margin-top:10px" id="inv5btns">
             <button class="btn primary" onclick="fileDispute()">Yes, log in and file it</button>
-            <button class="btn ghost" onclick="go('home',true)">Later</button>
+            <button class="btn ghost" onclick="go('home',true)">Not now</button>
           </div>
           <span class="why" onclick="toast('It cites your EOB: allowed $86 vs billed $300, codes 99213 &amp; 36415')">what I'll send</span>
           <span class="why" onclick="portalFail()">or if their portal won't cooperate, I'll hand you the ready-to-send dispute</span>
@@ -931,6 +954,16 @@
         </div>
       </div>
 
+      <div class="hideme" id="invWork">
+        <div class="inline-card">
+          <div class="eyebrow">One Medical · billing portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in to the portal</div>
+            <div><span class="tick">✓</span>Attached your Anthem EOB as evidence</div>
+            <div><span class="run">⟳</span>Submitting the dispute…</div>
+          </div>
+        </div>
+      </div>
       <div class="hideme" id="inv6">
         <div class="inline-card">
           <div class="eyebrow">One Medical · billing portal</div>
@@ -939,11 +972,12 @@
             <div><span class="tick">✓</span>Dispute filed, confirmation <b>#D-7741</b></div>
             <div><span class="tick">✓</span>EOB attached as evidence</div>
           </div>
+          <div class="recall hideme" id="invRecall"><span>You can still pull this back before One Medical opens it.</span><span class="why" onclick="undoFile()">Undo</span></div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
           <div class="bubble">Filed, as you asked. They typically answer in 7–10 days, I'll keep checking the portal and report back here, in this session.</div>
         </div>
-        <div class="why" onclick="threadStep('inv7')">A few days pass ›</div>
+        <div class="demoskip" onclick="threadStep('inv7')">skip ahead a few days</div>
       </div>
       <div class="hideme" id="inv7">
         <div class="day">Jun 17</div>
@@ -962,7 +996,7 @@
             <div class="prog"><div><span class="tick">✓</span>Verified, status: <b>under review</b>. I'll check again Friday.</div></div>
           </div>
         </div>
-        <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">Their answer arrives ›</div>
+        <div class="demoskip hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">skip to their reply</div>
       </div>
       <div class="hideme" id="inv8">
         <div class="day">Jun 22</div>
@@ -971,7 +1005,17 @@
         </div>
         <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
           <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
-          <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
+          <button class="btn ghost" onclick="dismissRejected()">Not now</button>
+        </div>
+      </div>
+      <div class="hideme" id="invWork2">
+        <div class="inline-card">
+          <div class="eyebrow">Anthem · member appeal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Signed in to Anthem member portal</div>
+            <div><span class="tick">✓</span>Attached the EOB and itemized statement</div>
+            <div><span class="run">⟳</span>Submitting the member appeal…</div>
+          </div>
         </div>
       </div>
       <div class="hideme" id="inv8b">
@@ -981,8 +1025,9 @@
             <div><span class="tick">✓</span>Appeal filed, both documents attached</div>
             <div><span class="tick">✓</span>Anthem must respond within 30 days, I'm on the clock</div>
           </div>
+          <div class="recall hideme" id="invRecall2"><span>You can still pull this appeal back before Anthem opens it.</span><span class="why" onclick="undoAppeal()">Undo</span></div>
         </div>
-        <div class="why" onclick="threadStep('inv9'); resolveCase()">Anthem rules ›</div>
+        <div class="demoskip" onclick="threadStep('inv9'); resolveCase()">skip to Anthem's ruling</div>
       </div>
       <div class="hideme" id="inv9">
         <div class="day">Jul 8</div>
@@ -996,9 +1041,9 @@
     </div>
     <div class="dock">
       <div class="chatinput">
-        <button class="attachbtn" onclick="toast('Attach anything about this bill, it stays with this session')">＋</button>
+        <button class="attachbtn" onclick="toast('Attach anything about this bill, it stays with this session')" aria-label="Attach a file">＋</button>
         <input id="caseBox" placeholder="Message this session…" onkeydown="if(event.key==='Enter')caseSend()">
-        <button onclick="caseSend()">➤</button>
+        <button onclick="caseSend()" aria-label="Send message">➤</button>
       </div>
     </div>
   </section>
@@ -1006,7 +1051,7 @@
   <!-- ── SESSION (past session, read-only recap) ── -->
   <section class="view" data-view="session">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div style="flex:1"><div class="title" id="sessTitle">Session</div><div class="sub" id="sessSub"></div></div>
     </div>
     <div class="scroll" id="sessScroll"></div>
@@ -1117,7 +1162,7 @@
   <!-- ── SUBSCRIPTION DETAIL: HULU ── -->
   <section class="view" data-view="subdetail">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div style="flex:1"><div class="title">Hulu</div><div class="sub">$18/mo · billed to Visa ···6411</div></div>
       <span class="chip draft" id="huluChip">FLAGGED</span>
     </div>
@@ -1150,11 +1195,18 @@
         <div class="eyebrow">Hulu · account portal</div>
         <div class="prog">
           <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Cancelled, confirmation <b>#4F7-220</b></div>
-          <div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div>
+          <div><span class="tick">✓</span>Located the active subscription</div>
+          <div><span class="run">⟳</span>Cancelling the renewal…</div>
         </div>
       </div>
       <div class="hideme" id="subDone">
+        <div class="inline-card" style="max-width:100%">
+          <div class="eyebrow">Hulu · account portal</div>
+          <div class="prog">
+            <div><span class="tick">✓</span>Cancelled, confirmation <b>#4F7-220</b></div>
+            <div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div>
+          </div>
+        </div>
         <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
           <div class="bubble">Done, that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
         </div>
@@ -1166,7 +1218,7 @@
   <!-- ── APPLE-BILLED: ICLOUD+ ── -->
   <section class="view" data-view="subapple">
     <div class="navhead">
-      <button class="back" onclick="back()">‹</button>
+      <button class="back" onclick="back()" aria-label="Go back">‹</button>
       <div style="flex:1"><div class="title">iCloud+ duplicate</div><div class="sub">$2.99/mo · billed through Apple</div></div>
     </div>
     <div class="scroll">
@@ -1203,7 +1255,7 @@
     <div class="topbar">
       <span class="wordmark">Steward</span>
       <span class="icons">
-        <span class="bell" onclick="location.reload()" title="Restart">
+        <span class="bell" onclick="location.reload()" title="Restart the demo" role="button" tabindex="0" aria-label="Restart the demo">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
         </span>
         <span class="avatar">T</span>
@@ -1211,6 +1263,13 @@
     </div>
     <div class="scroll">
       <div id="caseSlotCold"></div>
+
+      <div class="coldlead">
+        <h2>A chief of staff for your money.</h2>
+        <p>I find what you're owed or wasting, overcharged medical bills, zombie subscriptions, quiet price creep, and with your go-ahead I fix it.</p>
+        <div class="guardstrip"><span>Asks before it acts</span><span>Read-only by default</span><span>2FA stays with you</span><span>One-tap undo</span><span>Audit log</span></div>
+        <div class="costline">Free to find money. <b>$20/mo</b> only when you want me to act.</div>
+      </div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">A bill that looks wrong</div>
@@ -1306,7 +1365,7 @@
     </div>
   </div>
 
-  <div id="toast"></div>
+  <div id="toast" role="status" aria-live="assertive" aria-atomic="true"></div>
 </div>
 
 <script>
@@ -1564,22 +1623,32 @@
   }
   function back() { go(stack.pop() || 'home', false); stack.pop(); }
 
-  function toast(msg) {
+  function toast(msg, undoFn) {
     const el = document.getElementById('toast');
-    el.textContent = msg; el.classList.add('show');
-    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
+    el.textContent = msg;
+    if (undoFn) {
+      const u = document.createElement('span');
+      u.textContent = 'Undo'; u.className = 'toast-undo'; u.setAttribute('role', 'button'); u.tabIndex = 0;
+      u.onclick = () => { el.classList.remove('show'); clearTimeout(el._t); undoFn(); };
+      el.appendChild(u);
+    }
+    el.classList.add('show');
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), undoFn ? 5200 : 2200);
   }
 
   function dismissAttention() {
+    const prev = state.phase;
     const card = document.getElementById('attentionCard');
     card.classList.add('bye');
-    setTimeout(() => { state.phase = 'dismissed'; card.classList.remove('bye'); render(); }, 260);
-    toast('Okay, it stays in Needs attention');
+    clearTimeout(state._dismissT);
+    state._dismissT = setTimeout(() => { state.phase = 'dismissed'; card.classList.remove('bye'); render(); }, 260);
+    toast('Paused. Find it in Activity, resume anytime.', () => { clearTimeout(state._dismissT); card.classList.remove('bye'); state.phase = prev; render(); });
   }
   function promptDismiss() {
+    const prev = state.phase;
     state.investigated = true;   // keep a paused record in Activity instead of vanishing
     state.phase = 'dismissed'; render();
-    toast("Okay, I'll leave it paused. Pick it back up anytime in Activity");
+    toast('Paused. Find it in Activity, resume anytime.', () => { state.phase = prev; state.investigated = false; render(); });
   }
   function threadStep(id) {
     document.getElementById(id).classList.remove('hideme');
@@ -1619,9 +1688,30 @@
   function fileDispute() {
     if (!requirePaid()) return;
     document.getElementById('inv5btns').classList.add('hideme');
-    state.phase = 'sent'; render();
-    toast('Filed ✓ I\'ll report back here');
-    setTimeout(() => threadStep('inv6'), 400);
+    threadStep('invWork');
+    toast('Filing your dispute now');
+    setTimeout(() => {
+      document.getElementById('invWork').classList.add('hideme');
+      state.phase = 'sent'; render();
+      threadStep('inv6'); armRecall('invRecall');
+      toast('Filed ✓ confirmation #D-7741');
+    }, 1700);
+  }
+  function armRecall(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('hideme');
+    clearTimeout(state._rt);
+    state._rt = setTimeout(() => el.classList.add('hideme'), 7000);
+  }
+  function undoFile() {
+    clearTimeout(state._rt);
+    document.getElementById('invWork').classList.add('hideme');
+    document.getElementById('invRecall').classList.add('hideme');
+    document.getElementById('inv6').classList.add('hideme');
+    document.getElementById('inv5btns').classList.remove('hideme');
+    state.phase = 'found'; render();
+    toast('Pulled back, nothing was submitted');
   }
   function mfa2Submit() {
     const c = document.getElementById('mfa2Code').value.trim();
@@ -1637,14 +1727,28 @@
   }
   function dismissRejected() {
     state.phase = 'dismissed'; render();
-    toast('Okay, round 2 stays available until Jul 30');
+    toast('Paused. Round 2 stays available until Jul 30.', () => { state.phase = 'rejected'; render(); });
   }
   function fileAppeal() {
     if (!requirePaid()) return;
     document.getElementById('inv8btns').classList.add('hideme');
-    state.phase = 'appealed'; render();
-    toast('Appeal filed ✓ I\'m on the 30-day clock');
-    setTimeout(() => threadStep('inv8b'), 400);
+    threadStep('invWork2');
+    toast('Filing your Anthem appeal now');
+    setTimeout(() => {
+      document.getElementById('invWork2').classList.add('hideme');
+      state.phase = 'appealed'; render();
+      threadStep('inv8b'); armRecall('invRecall2');
+      toast('Appeal filed ✓ 30-day clock');
+    }, 1700);
+  }
+  function undoAppeal() {
+    clearTimeout(state._rt);
+    document.getElementById('invWork2').classList.add('hideme');
+    document.getElementById('invRecall2').classList.add('hideme');
+    document.getElementById('inv8b').classList.add('hideme');
+    document.getElementById('inv8btns').classList.remove('hideme');
+    state.phase = 'rejected'; render();
+    toast('Pulled back, nothing was submitted');
   }
   function mfaSubmit() {
     const code = document.getElementById('mfaCode').value.trim();
@@ -1701,7 +1805,7 @@
       document.getElementById('subBtns').classList.add('hideme');
       toast('Connected · in your vault');
       setTimeout(() => reveal2('subProg'), 400);
-      setTimeout(() => { reveal2('subDone'); state.sub = 'cancelled'; render(); }, 1400);
+      setTimeout(() => { document.getElementById('subProg').classList.add('hideme'); reveal2('subDone'); state.sub = 'cancelled'; render(); }, 1700);
     } else if (credTarget === 'ancold') {
       document.getElementById('hc3btns').classList.add('hideme');
       toast('Connected · in your vault');
@@ -1735,13 +1839,44 @@
     document.getElementById('chatBox').value = t;
     sendChat();
   }
+  function editDraft(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const on = el.getAttribute('contenteditable') === 'true';
+    if (!on) {
+      el.setAttribute('contenteditable', 'true');
+      el.style.outline = '2px solid var(--money)'; el.style.outlineOffset = '4px'; el.style.borderRadius = '6px';
+      el.focus(); if (btn) btn.textContent = 'Done';
+      toast('Edit the draft, then send when it reads right');
+    } else {
+      el.setAttribute('contenteditable', 'false'); el.style.outline = 'none';
+      if (btn) btn.textContent = 'Edit'; toast('Saved your edits to the draft');
+    }
+  }
   function handoffSend() {
-    state.handoff = 'sent'; render();
+    if (!requirePaid()) return;
     document.getElementById('ho3btns').classList.add('hideme');
-    document.getElementById('ho4').classList.remove('hideme');
     const sc = document.getElementById('chatScroll');
-    sc.scrollTop = sc.scrollHeight;
-    toast('Reply sent ✓ Tracking the resubmission');
+    document.getElementById('ho3work').classList.remove('hideme'); sc.scrollTop = sc.scrollHeight;
+    toast('Submitting the correction now');
+    setTimeout(() => {
+      document.getElementById('ho3work').classList.add('hideme');
+      state.handoff = 'sent'; render();
+      document.getElementById('ho4').classList.remove('hideme');
+      const r = document.getElementById('hoRecall'); r.classList.remove('hideme');
+      clearTimeout(state._rt); state._rt = setTimeout(() => r.classList.add('hideme'), 7000);
+      sc.scrollTop = sc.scrollHeight;
+      toast('Sent ✓ Tracking the resubmission');
+    }, 1700);
+  }
+  function undoHandoff() {
+    clearTimeout(state._rt);
+    document.getElementById('ho3work').classList.add('hideme');
+    document.getElementById('hoRecall').classList.add('hideme');
+    document.getElementById('ho4').classList.add('hideme');
+    document.getElementById('ho3btns').classList.remove('hideme');
+    state.handoff = 'active'; render();
+    toast('Pulled back, nothing was submitted');
   }
   function sendChat() {
     const box = document.getElementById('chatBox');
@@ -1781,6 +1916,12 @@
     scroll.scrollTop = scroll.scrollHeight;
   }
   const FILTERMAP = { 'All': 'all', 'Needs you': 'needs', 'Watching': 'watching', 'Done': 'done' };
+  function gotoActivity(f) {
+    state.filter = f || 'all';
+    const labels = { all: 'All', needs: 'Needs you', watching: 'Watching', done: 'Done' };
+    document.querySelectorAll('.filters span').forEach(s => s.classList.toggle('on', s.textContent.trim() === labels[state.filter]));
+    go('activity', true); applyFilter();
+  }
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
     el.classList.add('on');

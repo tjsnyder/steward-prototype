@@ -13,6 +13,8 @@
     --amber:#B07C10; --red:#B0421A; --r:8px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:4px}
+  input:focus-visible{outline:2px solid var(--money);outline-offset:1px}
   html,body{height:100%}
   body{font-family:'Geist',-apple-system,sans-serif;background:var(--canvas);color:var(--text);font-size:14px}
   .num{font-variant-numeric:tabular-nums}
@@ -97,12 +99,21 @@
             text-align:left;padding:9px 10px;border-bottom:1px solid var(--hairline)}
   .table td{padding:11px 10px;border-bottom:1px solid var(--hairline);vertical-align:middle}
   .table tr:last-child td{border-bottom:none}
+  .table .flagrow{background:rgba(176,124,16,.06)}
+  .table .flagrow td:first-child{box-shadow:inset 3px 0 var(--amber)}
   .table .name{font-weight:600}
   .table .sub{font-size:11px;color:var(--muted);margin-top:2px}
   .src{font-size:10px;font-weight:600;color:var(--ink-2);background:var(--canvas);border:1px solid var(--hairline);border-radius:4px;padding:2px 7px;white-space:nowrap}
   .src.v{color:var(--money);background:rgba(10,124,90,.06);border-color:rgba(10,124,90,.25)}
   .linkish{font-size:12px;font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
   .advance{margin-top:8px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .demoskip{margin-top:10px;font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--muted);cursor:pointer;border:1px dashed var(--hairline);border-radius:6px;padding:4px 8px;display:inline-flex;align-items:center;gap:5px;opacity:.85}
+  .demoskip::before{content:"DEMO";font-size:8.5px;letter-spacing:.08em;background:var(--hairline);color:var(--muted);border-radius:3px;padding:1px 4px}
+  .worklist{margin-top:8px;font-size:12px;line-height:1.95;color:var(--ink-2)}
+  .worklist .run{color:var(--amber);font-weight:600}
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .worklist .run{animation:pulse 1.1s ease-in-out infinite}
+  .recall{margin-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--ink-2);background:rgba(176,124,16,.08);border:1px solid rgba(176,124,16,.25);border-radius:8px;padding:7px 10px}
 
   .summary{display:flex;text-align:center;padding:6px 0}
   .summary>div{flex:1}
@@ -123,6 +134,12 @@
   /* empty (cold) state, before anything is connected */
   .coldempty{display:none}
   .coldempty p{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin:0 0 12px}
+  .coldlead{margin-bottom:18px}
+  .coldlead h2{font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:6px}
+  .coldlead > p{font-size:14px;max-width:600px}
+  .guardstrip{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+  .guardstrip span{font-size:11.5px;font-weight:600;color:var(--ink-2);background:var(--canvas);border:1px solid var(--hairline);border-radius:20px;padding:4px 11px}
+  .costline{font-size:12.5px;color:var(--muted)}
   .dview.cold > .coldempty{display:block}
   .dview.cold > *:not(.pagehead):not(.askbar):not(.coldempty){display:none!important}
   .daylabel{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 4px 8px}
@@ -186,7 +203,8 @@
   #toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
          font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
          transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+  .toast-undo{margin-left:16px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
@@ -225,13 +243,19 @@
       </div>
 
       <div class="askbar">
-        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')" aria-label="Attach a file">＋</button>
         <input id="homeAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')homeAskSend()">
-        <button class="send" onclick="homeAskSend()">➤</button>
+        <button class="send" onclick="homeAskSend()" aria-label="Send message">➤</button>
       </div>
 
       <!-- EMPTY STATE, shown until something is connected -->
       <div class="coldempty">
+        <div class="coldlead">
+          <h2>A chief of staff for your money.</h2>
+          <p>I find what you're owed or wasting, overcharged medical bills, zombie subscriptions, quiet price creep, and with your go-ahead I fix it.</p>
+          <div class="guardstrip"><span>Asks before it acts</span><span>Read-only by default</span><span>2FA stays with you</span><span>One-tap undo</span><span>Full audit log</span></div>
+          <div class="costline">Free to find money. <b>$20/mo</b> only when you want me to act on it.</div>
+        </div>
         <div class="card" style="border-left:3px solid var(--ink)">
           <div class="eyebrow">A bill that looks wrong</div>
           <p>Send it to me, I'll check it against what you actually owe and fight it if it's off. Or connect your email and I'll catch new bills, statements &amp; EOBs as they arrive.</p>
@@ -263,11 +287,11 @@
         <div class="figrow">
           <div class="figbox"><div class="l">They billed</div><div class="v num">$300</div></div>
           <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
-          <div class="figbox"><div class="l">Recovery</div><div class="v money num">$214</div></div>
+          <div class="figbox"><div class="l">If it lands</div><div class="v num" style="color:var(--amber)">~$214</div></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px">
-          <button class="btn primary" onclick="openSession('om')">Open it</button>
-          <button class="btn ghost" onclick="dismissD()">Dismiss</button>
+          <button class="btn primary" onclick="openSession('om')">Review &amp; file</button>
+          <button class="btn ghost" onclick="dismissD()">Not now</button>
         </div>
       </div>
 
@@ -278,13 +302,11 @@
           <span class="hero-amount money num" id="homeRecovered">$259</span>
           <span style="font-size:13px;color:var(--muted)">recovered in June</span>
         </div>
-        <div class="split num" style="margin-top:0">
-          <div><div class="mini-label">Needs you</div><div class="mini-val" id="homeNeeds">1</div></div>
-          <div><div class="mini-label">Watching</div><div class="mini-val" id="homeWatch">1</div></div>
-          <div><div class="mini-label">Actions taken</div><div class="mini-val" id="homeActions">0</div></div>
-          <div><div class="mini-label">Charges checked</div><div class="mini-val" id="homeCharges">0</div></div>
+        <div class="split num" style="margin-top:0;max-width:340px">
+          <div class="actcell" onclick="gotoActivity('needs')" style="cursor:pointer"><div class="mini-label" style="color:var(--amber)">Needs you</div><div class="mini-val" id="homeNeeds" style="color:var(--amber)">1</div></div>
+          <div class="actcell" onclick="gotoActivity('watching')" style="cursor:pointer"><div class="mini-label">Watching</div><div class="mini-val" id="homeWatch">1</div></div>
         </div>
-        <div style="margin-top:14px"><span class="linkish" onclick="nav('activity')">See everything in Activity →</span></div>
+        <div style="margin-top:13px;font-size:12px;color:var(--muted)"><span class="num" id="homeActions">0</span> actions taken &middot; <span class="num" id="homeCharges">0</span> charges checked &middot; <span class="linkish" onclick="nav('activity')">all activity →</span></div>
       </div>
 
       <!-- connect-the-rest prompt: shown when one source is connected but not the other (D16) -->
@@ -334,9 +356,9 @@
         <h1>Finances</h1>
       </div>
       <div class="askbar">
-        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')" aria-label="Attach a file">＋</button>
         <input id="finAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')askSend('finAsk')">
-        <button class="send" onclick="askSend('finAsk')">➤</button>
+        <button class="send" onclick="askSend('finAsk')" aria-label="Send message">➤</button>
       </div>
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
@@ -391,49 +413,42 @@
       </div></div>
       <div class="card" style="padding:6px 14px">
         <table class="table">
-          <tr><th>Subscription</th><th>Insight</th><th>Source</th><th style="text-align:right">Monthly</th><th></th></tr>
-          <tr>
+          <tr><th>Subscription</th><th>Insight</th><th style="text-align:right">Monthly</th><th></th></tr>
+          <tr class="flagrow">
             <td><div class="name">Hulu</div><div class="sub">Visa ···6411</div></td>
             <td>Price rose $13 → $18 · Disney+ bundle includes it</td>
-            <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num"><b>$18.00</b></td>
             <td><span id="subHuluRev"><span class="linkish" onclick="openSession('hulu')">Review</span></span></td>
           </tr>
-          <tr>
+          <tr class="flagrow">
             <td><div class="name">iCloud+</div><div class="sub">Apple ID</div></td>
             <td>Duplicate, Apple One already includes 2TB iCloud</td>
-            <td><span class="src">receipts only, Apple blob</span></td>
             <td style="text-align:right" class="num"><b>$2.99</b></td>
             <td><span class="linkish" onclick="openSession('icloud')">Review</span></td>
           </tr>
           <tr>
             <td><div class="name">Netflix</div><div class="sub">Visa ···6411</div></td>
             <td>Used steadily</td>
-            <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num">$15.49</td><td></td>
           </tr>
           <tr>
             <td><div class="name">Spotify Duo</div><div class="sub">Amex ···0042</div></td>
             <td>Used steadily</td>
-            <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num">$14.99</td><td></td>
           </tr>
           <tr>
             <td><div class="name">Disney+ bundle</div><div class="sub">Visa ···6411</div></td>
             <td>Includes Hulu w/ ads</td>
-            <td><span class="src v">billing + receipts</span></td>
             <td style="text-align:right" class="num">$10.99</td><td></td>
           </tr>
           <tr>
             <td><div class="name">NYT All Access</div><div class="sub">Visa ···6411</div></td>
             <td>Annual · renews Oct, I'll flag it 2 weeks before</td>
-            <td><span class="src">billing only, no receipts</span></td>
             <td style="text-align:right" class="num">$17/4wk</td><td></td>
           </tr>
           <tr>
             <td><div class="name">Apple One</div><div class="sub">Apple ID</div></td>
             <td>Family plan</td>
-            <td><span class="src">receipts only, Apple blob</span></td>
             <td style="text-align:right" class="num">$19.95</td><td></td>
           </tr>
         </table>
@@ -446,9 +461,9 @@
         <h1>Activity</h1>
       </div>
       <div class="askbar">
-        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')" aria-label="Attach a file">＋</button>
         <input id="actAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')askSend('actAsk')">
-        <button class="send" onclick="askSend('actAsk')">➤</button>
+        <button class="send" onclick="askSend('actAsk')" aria-label="Send message">➤</button>
       </div>
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
@@ -533,6 +548,14 @@
           <div class="body">
             <div class="t">Filed Anthem member appeal</div>
             <div class="s">You approved round 2. Anthem must respond within 30 days, I'm watching the clock.</div>
+          </div>
+          <div class="amt"><span class="chip pend">Watching</span></div>
+        </div>
+        <div class="event clk" id="dHandoff" style="display:none" onclick="openSession('handoff')">
+          <span class="ico">⇪</span>
+          <div class="body">
+            <div class="t">Sent corrected insurance to One Medical</div>
+            <div class="s">Your old Cigna plan was billed; I sent your active Anthem details. Tracking the resubmission, ~2–3 weeks.</div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
@@ -656,7 +679,7 @@
 
     <!-- AUDIT LOG, reachable, read-only -->
     <section class="dview sview" data-view="audit" style="max-width:680px">
-      <div class="shead"><span class="back" onclick="nav('you')" title="Back">‹</span><div><div class="t">Access &amp; actions log</div><div class="s">Read-only · every event is on the record</div></div></div>
+      <div class="shead"><span class="back" onclick="nav('you')" title="Back" role="button" tabindex="0" aria-label="Back">‹</span><div><div class="t">Access &amp; actions log</div><div class="s">Read-only · every event is on the record</div></div></div>
       <div class="thread" id="auditList" style="padding:14px 2px"></div>
     </section>
 
@@ -682,24 +705,24 @@
     <!-- SESSION, chat / job thread (replaces the old right-hand rail) -->
     <section class="dview sview" data-view="session">
       <div class="shead">
-        <span class="back" onclick="sessionBack()" title="Back">‹</span>
+        <span class="back" onclick="sessionBack()" title="Back" role="button" tabindex="0" aria-label="Back">‹</span>
         <div><div class="t" id="sessTitle">Ask Steward</div><div class="s" id="sessSub"></div></div>
       </div>
       <div class="thread" id="dThread"></div>
       <div class="chatdock">
-        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')" aria-label="Attach a file">＋</button>
         <input id="dChatBox" placeholder="Message this session…" onkeydown="if(event.key==='Enter')dSend()">
-        <button class="send" onclick="dSend()">➤</button>
+        <button class="send" onclick="dSend()" aria-label="Send message">➤</button>
       </div>
     </section>
   </main>
 </div>
 
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="assertive" aria-atomic="true"></div>
 
 <script>
   // Per-source progressive fill (D16): email lights bills/EOBs; accounts (Plaid) lights net worth, spending, subscriptions.
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false, plan: 'paid', chase: 'needs' };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false, plan: 'paid', chase: 'needs', recall: false };
   let active = 'ask';
   const isCold = () => !state.email && !state.accounts;
   function requirePaid() { if (state.plan === 'paid') return true; toast('Acting is on the $20/mo plan, watching & finding stays free'); nav('plan'); return false; }
@@ -714,10 +737,17 @@
     document.querySelector('.main').scrollTop = 0;
   }
   function sessionBack() { nav(lastView || 'home'); }
-  function toast(msg) {
+  function toast(msg, undoFn) {
     const el = document.getElementById('toast');
-    el.textContent = msg; el.classList.add('show');
-    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2200);
+    el.textContent = msg;
+    if (undoFn) {
+      const u = document.createElement('span');
+      u.textContent = 'Undo'; u.className = 'toast-undo'; u.setAttribute('role', 'button'); u.tabIndex = 0;
+      u.onclick = () => { el.classList.remove('show'); clearTimeout(el._t); undoFn(); };
+      el.appendChild(u);
+    }
+    el.classList.add('show');
+    clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), undoFn ? 5200 : 2200);
   }
 
   // ── sessions: every conversation and job, rendered in the rail ──
@@ -738,14 +768,16 @@
   }
   function omBuild() {
     const p = state.phase;
-    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won', dismissed:'Paused · your call', manual:'Portal trouble · ready for you'}[p] || 'Needs you';
+    const head = {found:'Needs you', verifying:'Verifying with One Medical', filing:'Filing now', sent:'Filed · watching', rejected:'Needs you · round 2', appealing:'Filing the appeal', appealed:'Watching · appeal filed', resolved:'Closed · won', dismissed:'Paused · your call', manual:'Portal trouble · ready for you'}[p] || 'Needs you';
     let body = '';
     if (p === 'found') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">I can log in to One Medical's portal and submit this for you. You've given me read-only access so far, so I'll ask before each portal action.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">Yes, log in and file it</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
-    else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821 to authorize the sign-in. Enter it and I'll finish filing, I'll wait as long as you need.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div><div class="advance" onclick="webPhase('manual')">▸ Can't get the code, or portal won't cooperate? I'll hand you the ready-to-send dispute</div>`;
+    else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821 to authorize the sign-in. Enter it and I'll finish filing, I'll wait as long as you need.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div><div style="margin-top:8px;font-size:11.5px;color:var(--muted)">Can't get the code, or the portal won't cooperate? <span class="linkish" onclick="webPhase('manual')">I'll hand you the ready-to-send dispute</span></div>`;
+    else if (p === 'filing') body = `<div class="worklist"><div>✓ Signed in to One Medical's portal</div><div>✓ Attached your Anthem EOB as evidence</div><div class="run">⟳ Submitting the dispute…</div></div>`;
     else if (p === 'manual') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical's portal rejected the automated sign-in, their site changed since last time. I'm not stuck: here's your dispute, ready to paste into their portal or send by email. I'll track the response either way.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="toast('Copied, paste it into One Medical\\'s portal or email')">Copy the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="webPhase('sent')">I've sent it</button></div>`;
-    else if (p === 'sent') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed at 9:36 AM · confirmation #D-7741. Tracking the response (7–10 days).</div><div class="advance" onclick="webPhase('rejected')">▸ their answer arrives</div>`;
-    else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no, "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal, and your EOB is the strongest version of the argument.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
-    else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem, 30-day clock. I'll escalate to state review if they miss it.</div><div class="advance" onclick="webPhase('resolved')">▸ Anthem rules</div>`;
+    else if (p === 'sent') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed at 9:36 AM · confirmation #D-7741. Tracking the response (7–10 days).</div>${state.recall ? `<div class="recall"><span>You can still pull this back before One Medical opens it.</span><span class="linkish" style="margin-left:auto;white-space:nowrap" onclick="undoSend()">Undo</span></div>` : ''}<div class="demoskip" onclick="webPhase('rejected')">skip to their reply</div>`;
+    else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no, "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal, and your EOB is the strongest version of the argument.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webAppeal()">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
+    else if (p === 'appealing') body = `<div class="worklist"><div>✓ Signed in to Anthem member portal</div><div>✓ Attached the EOB and itemized statement</div><div class="run">⟳ Submitting the member appeal…</div></div>`;
+    else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem, 30-day clock. I'll escalate to state review if they miss it.</div>${state.recall ? `<div class="recall"><span>You can still pull this appeal back before Anthem opens it.</span><span class="linkish" style="margin-left:auto;white-space:nowrap" onclick="undoSend()">Undo</span></div>` : ''}<div class="demoskip" onclick="webPhase('resolved')">skip to Anthem's ruling</div>`;
     else if (p === 'resolved') body = `<div style="margin-top:8px;font-size:12px;color:var(--money)">✓ Anthem ruled in your favor. One Medical reissued the bill at $86, I verified the corrected statement. $214 back.</div>`;
     else if (p === 'dismissed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">Paused, you set this aside. It's still here whenever you want it.</div><div style="margin-top:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('found')">Resume</button></div>`;
     return `
@@ -766,7 +798,9 @@
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.</div></div>
       <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">${state.sub === 'cancelled' ? 'Cancelled' : 'Worth a look'}</div>
         <b class="money num">$216/yr</b> back if you cancel.
-        ${state.sub === 'cancelled'
+        ${state.sub === 'cancelling'
+          ? `<div class="worklist"><div>✓ Signed in to Hulu</div><div>✓ Located the active subscription</div><div class="run">⟳ Cancelling the renewal…</div></div>`
+          : state.sub === 'cancelled'
           ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Cancelled, confirmation #4F7-220. Active until Jul 7; I'll verify no charge after Jul 8.</div><div style="margin-top:8px"><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="webResubHulu()">Undo, resubscribe</button></div>`
           : `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webCancelHulu()">Cancel Hulu for me</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Kept, saved as a standing instruction')">Keep it</button></div>`}
       </div>` },
@@ -774,8 +808,10 @@
     handoff:{ title: 'One Medical, wrong insurance', sub: () => state.handoff === 'sent' ? 'Watching · resubmitting' : 'Needs you', build: () => `
       <div class="msg steward"><div class="who">Steward</div><div class="bubble">Caught up from your email thread: One Medical billed your old <b>Cigna</b> plan (inactive since 2023). They need your current <b>Anthem</b> details to resubmit.</div></div>
       <div class="minicard"><div class="eyebrow" style="margin-bottom:4px">Anthem · from your vault</div>Member ID <b>ANT-447-1220</b> · Group <b>#GA-8812</b> · active since Jan 1, 2024.
-        ${state.handoff === 'sent'
-          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Sent the corrected insurance to One Medical's billing portal. Tracking the resubmission (~2–3 weeks) and I'll verify the corrected claim on your EOB.</div>`
+        ${state.handoff === 'sending'
+          ? `<div class="worklist"><div>✓ Opened One Medical's billing portal</div><div>✓ Attached your Anthem member details</div><div class="run">⟳ Submitting the correction…</div></div>`
+          : state.handoff === 'sent'
+          ? `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Sent the corrected insurance to One Medical's billing portal. Tracking the resubmission (~2–3 weeks) and I'll verify the corrected claim on your EOB.</div>${state.recall ? `<div class="recall"><span>You can still pull this back before their billing team opens it.</span><span class="linkish" style="margin-left:auto;white-space:nowrap" onclick="undoHandoff()">Undo</span></div>` : ''}`
           : `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webHandoffSend()">Send corrected insurance</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="toast('Drafted, I\'ll hold until you say go')">Edit first</button></div>`}
       </div>` },
   };
@@ -829,7 +865,7 @@
     const cold = isCold();
     const email = state.email, accounts = state.accounts;
     const medNeeds = email && ['found','rejected','manual'].includes(p);
-    const disputeWatching = email && ['verifying','sent','appealed'].includes(p);
+    const disputeWatching = email && ['verifying','filing','sent','appealing','appealed'].includes(p);
     const disputeDone = email && p === 'resolved';
 
     // section empty-state gating (per source: finances needs accounts; home/activity need anything)
@@ -863,9 +899,10 @@
     } else { rest.style.display = 'none'; }
 
     // honest Steward-at-work numbers (accrue from real actions, no fabricated history)
+    const handoffOn = ['sending','sent'].includes(state.handoff);
     const recovered = disputeDone ? 214 : 0;
-    const watching = (disputeWatching ? 1 : 0) + (accounts ? 1 : 0);
-    const actions = (email && ['sent','rejected','appealed','resolved'].includes(p)) ? 1 : 0;
+    const watching = (disputeWatching ? 1 : 0) + (accounts ? 1 : 0) + (handoffOn ? 1 : 0);
+    const actions = (email && ['sent','rejected','appealed','resolved'].includes(p) ? 1 : 0) + (state.handoff === 'sent' ? 1 : 0);
     document.getElementById('homeRecovered').textContent = '$' + recovered;
     document.getElementById('homeNeeds').textContent = medNeeds ? 1 : 0;
     document.getElementById('homeWatch').textContent = watching;
@@ -879,17 +916,19 @@
     document.getElementById('dPausedHdr').style.display = (email && p === 'dismissed') ? '' : 'none';
     document.getElementById('dPaused').style.display = (email && p === 'dismissed') ? '' : 'none';
     document.getElementById('dManual').style.display = (email && p === 'manual') ? '' : 'none';
-    document.getElementById('dDispute').style.display = (email && ['verifying','sent'].includes(p)) ? '' : 'none';
-    if (email && ['verifying','sent'].includes(p)) {
+    document.getElementById('dDispute').style.display = (email && ['verifying','filing','sent'].includes(p)) ? '' : 'none';
+    if (email && ['verifying','filing','sent'].includes(p)) {
       document.querySelector('#dDispute .t').textContent = p === 'sent' ? 'Sent medical bill dispute' : 'Filing dispute with One Medical';
       document.querySelector('#dDispute .s').textContent =
         p === 'verifying' ? 'Verifying your identity to file, finishing now.'
+        : p === 'filing' ? 'Submitting your dispute to One Medical now.'
         : 'One Medical billed $300 vs. EOB $86, you approved. Tracking the response, typically 7–10 days.';
     }
-    document.getElementById('dAppeal').style.display = (email && p === 'appealed') ? '' : 'none';
+    document.getElementById('dAppeal').style.display = (email && ['appealing','appealed'].includes(p)) ? '' : 'none';
+    document.getElementById('dHandoff').style.display = handoffOn ? '' : 'none';
     document.getElementById('dSweepWatch').style.display = accounts ? '' : 'none';
-    document.getElementById('dWatchHdr').style.display = (disputeWatching || accounts) ? '' : 'none';
-    document.getElementById('dWatchCard').style.display = (disputeWatching || accounts) ? '' : 'none';
+    document.getElementById('dWatchHdr').style.display = (disputeWatching || accounts || handoffOn) ? '' : 'none';
+    document.getElementById('dWatchCard').style.display = (disputeWatching || accounts || handoffOn) ? '' : 'none';
     document.getElementById('dDoneHdr').style.display = (!cold) ? '' : 'none';
     document.getElementById('dResolvedCard').style.display = disputeDone ? '' : 'none';
     document.getElementById('dClosedEmpty').style.display = (!cold && !disputeDone) ? '' : 'none';
@@ -915,6 +954,12 @@
     applyWebFilter();
   }
   const FILTERMAP = { 'All': 'all', 'Needs you': 'needs', 'Watching': 'watching', 'Done': 'done' };
+  function gotoActivity(f) {
+    state.filter = f || 'all';
+    const labels = { all: 'All', needs: 'Needs you', watching: 'Watching', done: 'Done' };
+    document.querySelectorAll('.filters span').forEach(s => s.classList.toggle('on', s.textContent.trim() === labels[state.filter]));
+    nav('activity'); applyWebFilter();
+  }
   function filterDemo(el) {
     el.parentElement.querySelectorAll('span').forEach(s => s.classList.remove('on'));
     el.classList.add('on');
@@ -932,21 +977,36 @@
     empty.textContent = { needs: 'Nothing needs you right now.', watching: 'Nothing in flight right now.', done: 'Nothing closed yet.' }[state.filter] || '';
     empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
-  function dismissD() { state.phase = 'dismissed'; render(); toast('Paused, it stays an open decision in Activity'); }
+  function dismissD() { const prev = state.phase; state.phase = 'dismissed'; render(); toast('Paused. Find it in Activity, resume anytime.', () => { state.phase = prev; render(); openSession('om'); }); }
   function sendD() { if (!requirePaid()) return; state.phase = 'verifying'; render(); openSession('om'); toast('One Medical needs a verification code'); }
   function webMfaSubmit() {
     const c = (document.getElementById('webMfa') || {}).value || '';
     if (c.trim().length < 4) { toast('Enter the code One Medical texted you'); return; }
-    state.phase = 'sent'; render(); openSession('om'); toast('Verified, dispute filed ✓');
+    state.phase = 'filing'; render(); openSession('om'); toast('Verified, filing your dispute now');
+    setTimeout(() => { state.phase = 'sent'; armRecall(); render(); openSession('om'); toast('Filed ✓ confirmation #D-7741'); }, 1700);
+  }
+  function webAppeal() {
+    if (!requirePaid()) return;
+    state.phase = 'appealing'; render(); openSession('om'); toast('Filing your Anthem appeal now');
+    setTimeout(() => { state.phase = 'appealed'; armRecall(); render(); openSession('om'); toast('Appeal filed ✓ 30-day clock'); }, 1700);
+  }
+  function armRecall() { state.recall = true; clearTimeout(state._rt); state._rt = setTimeout(() => { state.recall = false; if (active === 'om' || active === 'handoff') buildSession(active); }, 7000); }
+  function undoSend() {
+    state.recall = false; clearTimeout(state._rt);
+    state.phase = state.phase === 'appealed' ? 'rejected' : 'found';
+    render(); openSession('om'); toast('Pulled back, nothing was submitted');
   }
   function webPhase(ph) {
     state.phase = ph; render(); openSession('om');
     const msg = {rejected:'One Medical replied, rejected. Round 2 ready.', appealed:'Appeal filed ✓ Watching the 30-day clock', resolved:'Won, $214 back, verified', found:'Resumed, back on your call', manual:'Their portal balked, here\'s the ready-to-send dispute', sent:'Logged as sent, I\'ll track the response'}[ph];
     if (msg) toast(msg);
   }
-  function webCancelHulu(){ if (!requirePaid()) return; state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
+  function webCancelHulu(){ if (!requirePaid()) return; state.sub = 'cancelling'; render(); openSession('hulu'); toast('Cancelling Hulu now');
+    setTimeout(() => { state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }, 1600); }
   function webResubHulu(){ state.sub = 'open'; render(); openSession('hulu'); toast('Resubscribed, Hulu is active again'); }
-  function webHandoffSend(){ if (!requirePaid()) return; state.handoff = 'sent'; render(); openSession('handoff'); toast('Sent ✓ Tracking the resubmission'); }
+  function webHandoffSend(){ if (!requirePaid()) return; state.handoff = 'sending'; render(); openSession('handoff'); toast('Submitting the correction now');
+    setTimeout(() => { state.handoff = 'sent'; armRecall(); render(); openSession('handoff'); toast('Sent ✓ Tracking the resubmission'); }, 1700); }
+  function undoHandoff(){ state.recall = false; clearTimeout(state._rt); state.handoff = null; render(); openSession('handoff'); toast('Pulled back, nothing was submitted'); }
   function dSend() {
     const box = document.getElementById('dChatBox');
     const text = box.value.trim(); if (!text) return;
