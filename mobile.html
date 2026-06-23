@@ -1301,24 +1301,6 @@
     </div>
   </div>
 
-  <div class="sheet-back" id="paySheet">
-    <div class="sheet">
-      <h4>Let Steward act</h4>
-      <div class="sub2">Watching &amp; finding stays free. Acting, canceling, disputing, re-shopping, is the full plan.</div>
-      <div class="price num">$20<small>/mo · or $192/yr</small></div>
-      <div class="prog">
-        <div><span class="tick">✓</span>Every playbook, unlimited actions</div>
-        <div><span class="tick">✓</span>Always asks before acting, nothing automatic</div>
-        <div><span class="tick">✓</span>Cancel in one tap. No retention games.</div>
-      </div>
-      <div class="vaultnote"><span>★</span><span><b>First-year promise:</b> if I don't find you more than I cost, year two is free.</span></div>
-      <div class="btnrow">
-        <button class="btn primary" onclick="paySubscribe()">Start, $20/mo</button>
-        <button class="btn ghost" onclick="payFree()">Stay free</button>
-      </div>
-    </div>
-  </div>
-
   <div class="sheet-back" id="credSheet">
     <div class="sheet">
       <h4 id="credTitle">One Medical, patient portal</h4>
@@ -1522,7 +1504,6 @@
     render();
   }
   const MSESS = {
-    sarah:{title:"Sarah, dentist dispute",sub:"Watching",lines:["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone, I've sent it and I'm watching for the response. Household members approve their own items."]},
     overdraft:{title:"Recovered overdraft fee",sub:"Closed · +$45",lines:["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver, granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]},
     paramount:{title:"Cancelled Paramount+",sub:"Closed · +$12/mo",lines:["Paramount+ went unused for 4 months.","You approved the cancellation Monday, confirmed, and I verified no charge on your June statement. That's $12/mo back."]},
     sweep:{title:"Weekly sweep",sub:"Done · all clear",lines:["Weekly sweep, I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]},
@@ -1591,17 +1572,6 @@
     closeOauth();
     go('home', true);
     toast('Email connected, I read your last 90 days, found 1 bill worth checking');
-  }
-  function openPay() { document.getElementById('paySheet').classList.add('open'); }
-  function paySubscribe() {
-    document.getElementById('paySheet').classList.remove('open');
-    toast("Welcome aboard, let's go get that $340");
-    go('home', true);
-  }
-  function payFree() {
-    document.getElementById('paySheet').classList.remove('open');
-    toast("Staying free, I'll keep finding; upgrade whenever");
-    go('home', true);
   }
   function back() { go(stack.pop() || 'home', false); stack.pop(); }
 
