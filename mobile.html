@@ -220,6 +220,7 @@
   .tool .tstat.ok{color:var(--money)}
   .tool .tstat.run{color:var(--amber);animation:pulse 1.1s ease-in-out infinite}
   .tool .tstat.wait{color:var(--amber)}
+  .tool .tstat.fail{color:var(--red)}
   .tool .tout{padding:0 11px 9px;font-size:12px;color:var(--ink-2);line-height:1.45}
   .tool .tbody{padding:0 11px 11px}
   .recall{margin-top:10px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--ink-2);background:rgba(176,124,16,.08);border:1px solid rgba(176,124,16,.25);border-radius:8px;padding:8px 11px}
@@ -360,6 +361,10 @@
         </div>
         <div class="row">
           <div class="body"><div class="t">Auto insurance renews Jul 2</div><div class="s">I'll remind you two weeks before · carrier re-shopping coming soon</div></div>
+          <span class="chip draft">Coming soon</span>
+        </div>
+        <div class="row">
+          <div class="body"><div class="t">Property tax on your home</div><div class="s">I'll check your assessment for over-valuation and file an abatement if it's off</div></div>
           <span class="chip draft">Coming soon</span>
         </div>
         <div class="row">
@@ -709,9 +714,21 @@
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">Cancelled Hulu</div>
-              <div class="s">Price crept to $18 and your Disney+ bundle already includes it. Confirmation #4F7-220, active until Jul 7; I'll verify no charge after Jul 8.</div>
+              <div class="s">Flagged by your weekly sweep. Confirmation #4F7-220, active until Jul 7; I'll verify no charge after Jul 8.</div>
             </div>
             <div class="amt money num">+$18/mo</div>
+          </div>
+        </div>
+      </div>
+      <div id="costcoEvent" data-cat="done" style="display:none">
+        <div class="card" style="padding:2px 16px">
+          <div class="event clk" onclick="openSess('costco')">
+            <span class="ico">✓</span>
+            <div class="body">
+              <div class="t">Reviewed the Costco charge</div>
+              <div class="s">Flagged by your weekly sweep. You confirmed $642 on Jun 9 was expected; cleared.</div>
+            </div>
+            <div class="amt"><span class="chip ok">Cleared</span></div>
           </div>
         </div>
       </div>
@@ -950,9 +967,10 @@
       </div>
 
       <div class="hideme" id="invManual">
+        <div class="tool"><div class="thd"><span class="tico">▸_</span><span class="tname">portal.sign_in</span><span class="targ">one_medical</span><span class="tstat fail">✕</span></div><div class="tout">automated sign-in rejected, their site changed since last time</div></div>
         <div class="inline-card">
-          <div class="eyebrow">Portal trouble · ready for you</div>
-          <p style="font-size:13px;color:var(--ink-2);line-height:1.5">One Medical's portal rejected the automated sign-in, their site changed since last time. I'm not stuck: here's your dispute, ready to paste into their portal or send by email. I'll track the response either way.</p>
+          <div class="eyebrow">Ready for you</div>
+          <p style="font-size:13px;color:var(--ink-2);line-height:1.5">I'm not stuck: here's your dispute, ready to paste into their portal or send by email. I'll track the response either way.</p>
           <div class="btnrow" style="margin-top:10px">
             <button class="btn primary" onclick="toast('Copied, paste it into One Medical\'s portal or email')">Copy the dispute</button>
             <button class="btn ghost" onclick="manualSent()">I've sent it</button>
@@ -1011,6 +1029,16 @@
         <div class="tool"><div class="thd"><span class="tico">▸_</span><span class="tname">schedule_watch</span><span class="targ">appeal · escalate if missed</span><span class="tstat ok">✓</span></div><div class="tout">I&rsquo;ll escalate to state review if Anthem misses the deadline</div></div>
         <div class="recall hideme" id="invRecall2"><span>You can still pull this appeal back before Anthem opens it.</span><span class="why" onclick="undoAppeal()">Undo</span></div>
         <div class="demoskip" onclick="threadStep('inv9'); resolveCase()">skip to Anthem's ruling</div>
+        <div class="demoskip" onclick="threadStep('invEscalated')">demo: Anthem misses the deadline</div>
+      </div>
+      <div class="hideme" id="invEscalated">
+        <div class="day">Jul 23</div>
+        <div class="tool"><div class="thd"><span class="tico">▸_</span><span class="tname">check_deadline</span><span class="targ">anthem · appeal</span><span class="tstat fail">✕</span></div><div class="tout">30-day deadline passed with no response</div></div>
+        <div class="tool"><div class="thd"><span class="tico">▸_</span><span class="tname">escalate_to_state_review</span><span class="targ">state insurance regulator</span><span class="tstat ok">✓</span></div><div class="tout">filed automatically, as I said I would</div></div>
+        <div class="msg steward"><div class="who">Steward</div>
+          <div class="bubble">Anthem missed the window, so I escalated to your state insurance regulator without waiting on you. I&rsquo;ll keep watching.</div>
+        </div>
+        <div class="demoskip" onclick="threadStep('inv9'); resolveCase()">skip to the ruling</div>
       </div>
       <div class="hideme" id="inv9">
         <div class="day">Jul 8</div>
@@ -1387,6 +1415,7 @@
     show('rejectedCard', disputeActive && p === 'rejected');
     show('bellDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
     show('tabDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
+    show('mAtWork', !cold);   // never show the agent-work summary on a cold home (parity with web; handles revoke-to-cold)
     show('mGlance', accounts);
     // sweep findings surface as the To-review list; rows hide as findings resolve
     const huluFlag = accounts && !cancelled, costcoFlag = accounts && state.costco === 'open';
@@ -1425,10 +1454,12 @@
     show('mSweepWatch', accounts);
     if (accounts) { const sn = sweepFindings(); const ss = document.getElementById('mSweepSub'); if (ss) ss.textContent = sn ? ('I checked 41 charges + your subscriptions. ' + (sn === 2 ? 'Two findings' : 'One finding') + ' ready for you.') : 'I check every new charge against your patterns. All clear this week.'; }
     show('pinActiveHdr', watchingZone);
+    const costcoDone = accounts && state.costco === 'cleared';
     show('resolvedEvent', disputeDone);
     show('huluEvent', huluDone);
+    show('costcoEvent', costcoDone);
     show('doneRecentHdr', !cold);
-    show('mClosedEmpty', !cold && !disputeDone && !huluDone);
+    show('mClosedEmpty', !cold && !disputeDone && !huluDone && !costcoDone);
     document.querySelectorAll('.warm').forEach(e => e.classList.add('hideme')); // fabricated demo chat, always hidden (honest first-run)
 
     // honest numbers (accrue from real actions, no fabricated history)
@@ -1508,7 +1539,7 @@
   const say = t => `<div class="msg steward"><div class="who">Steward</div><div class="bubble">${t}</div></div>`;
   // a tool call in the agent runtime loop. status: ok | run | wait. body = interactive control (2FA, credential, approval).
   function tool(name, arg, status, out, body) {
-    const ic = { ok: '<span class="tstat ok">✓</span>', run: '<span class="tstat run">⟳</span>', wait: '<span class="tstat wait">●</span>' }[status] || '';
+    const ic = { ok: '<span class="tstat ok">✓</span>', run: '<span class="tstat run">⟳</span>', wait: '<span class="tstat wait">●</span>', fail: '<span class="tstat fail">✕</span>' }[status] || '';
     return `<div class="tool"><div class="thd"><span class="tico">▸_</span><span class="tname">${name}</span>${arg ? `<span class="targ">${arg}</span>` : ''}${ic}</div>${out ? `<div class="tout">${out}</div>` : ''}${body ? `<div class="tbody">${body}</div>` : ''}</div>`;
   }
   // ── Weekly sweep: the monitoring session that produces the flags ──
@@ -1530,7 +1561,7 @@
   }
   function costcoHtml(){
     const cleared = state.costco === 'cleared';
-    return say(`Your weekly sweep flagged this: <b>Costco, $642 on Jun 9</b>, about 2× your typical Costco trip.`) +
+    return say(`Your <span class="linkish" onclick="openSweepFrom()">weekly sweep</span> flagged this: <b>Costco, $642 on Jun 9</b>, about 2× your typical Costco trip.`) +
       tool('fetch_transaction', 'costco · $642', 'ok', 'Jun 9 · household · Visa ···6411 · no line items shared by merchant') +
       (cleared
         ? tool('update_rule', 'dont_flag · costco ~$642', 'ok', `You cleared it. I won&rsquo;t flag Costco trips this size again.`)
@@ -1538,6 +1569,7 @@
           `<div class="btnrow" style="max-width:88%"><button class="btn primary" onclick="toast('Requesting the itemized receipt and watching for duplicates')">Request receipt</button><button class="btn ghost" onclick="mobileCostcoClear()">It&rsquo;s expected</button></div>`);
   }
   function mobileCostcoClear(){ state.costco = 'cleared'; render(); openSess('sweep'); toast('Cleared, saved as a standing instruction: don\'t flag Costco trips this size'); }
+  function openSweepFrom(){ openSess('sweep'); }
   function huluHtml(){
     const flagged = `<div class="inline-card"><div class="eyebrow">Why it's flagged</div><div class="prog"><div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b>$13 → $18</b> in May, no notice in your email</div><div><span class="tick" style="color:var(--amber)">▲</span>Your Disney+ bundle (<b>$10.99</b>) already includes Hulu with ads</div><div><span class="tick">·</span><b>12</b> charges since Jul 2025 · <b>$187</b> total</div></div></div>`;
     let action;
@@ -1551,7 +1583,7 @@
     } else {
       action = `<div class="inline-card action"><div class="eyebrow">Ready when you are</div><p style="font-size:13px;color:var(--ink-2);line-height:1.5"><b>$216/yr</b> back if you cancel. I&rsquo;ll sign in, cancel the standalone plan (you keep it through Jul 7), then verify no charge after Jul 8.</p><div class="btnrow" style="margin-top:10px"><button class="btn primary" onclick="huluCancel()">Cancel Hulu for me</button><button class="btn ghost" onclick="toast('Kept, saved as a standing instruction: keep Hulu')">Keep it</button></div><div class="note" style="margin-top:8px;text-align:left">Nothing happens until you approve · you keep Hulu through Jul 7 either way</div></div>`;
     }
-    return say(`Hulu&rsquo;s price crept from <b>$13 → $18</b> in May, and your Disney+ bundle already includes Hulu with ads. Flagged by your weekly sweep.`) +
+    return say(`Hulu&rsquo;s price crept from <b>$13 → $18</b> in May, and your Disney+ bundle already includes Hulu with ads. Flagged by your <span class="linkish" onclick="openSweepFrom()">weekly sweep</span>.`) +
       flagged + action;
   }
   function askUpload() {
