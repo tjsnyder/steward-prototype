@@ -281,20 +281,28 @@
         <div class="split num" style="margin-top:0">
           <div><div class="mini-label">Needs you</div><div class="mini-val" id="homeNeeds">1</div></div>
           <div><div class="mini-label">Watching</div><div class="mini-val" id="homeWatch">1</div></div>
-          <div><div class="mini-label">Actions taken</div><div class="mini-val">8</div></div>
-          <div><div class="mini-label">Charges checked</div><div class="mini-val">41</div></div>
+          <div><div class="mini-label">Actions taken</div><div class="mini-val" id="homeActions">0</div></div>
+          <div><div class="mini-label">Charges checked</div><div class="mini-val" id="homeCharges">0</div></div>
         </div>
         <div style="margin-top:14px"><span class="linkish" onclick="nav('activity')">See everything in Activity →</span></div>
       </div>
 
+      <!-- connect-the-rest prompt: shown when one source is connected but not the other (D16) -->
+      <div class="card" id="homeConnectRest" style="display:none;border-left:3px solid var(--ink)">
+        <div class="eyebrow">Connect the rest</div>
+        <p class="t" style="font-weight:600;font-size:14px;margin-bottom:2px">Connect your accounts</p>
+        <p class="s" style="font-size:13px;color:var(--ink-2);margin-bottom:12px">So I can show net worth, spending, and the subscriptions worth cancelling.</p>
+        <button class="btn primary" onclick="webConnect('accounts')">Connect accounts</button>
+      </div>
+
       <!-- net worth demoted to a glance that drills into Finances (D18) -->
-      <div class="card glance" onclick="nav('finances')" style="cursor:pointer">
+      <div class="card glance" id="homeGlance" onclick="nav('finances')" style="cursor:pointer">
         <div><div class="eyebrow" style="margin-bottom:3px">Net worth</div><span class="num" style="font-size:22px;font-weight:700">$284,610</span> <span class="delta num">▲ $3,120 this month</span></div>
         <span class="linkish">Finances →</span>
       </div>
 
       <div class="grid">
-        <div class="card">
+        <div class="card" id="homeReview">
           <div class="eyebrow">To review</div>
           <div class="row" style="border:none;cursor:pointer" onclick="nav('finances')">
             <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more</div></div>
@@ -306,7 +314,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="homeUpcoming">
           <div class="eyebrow">Upcoming</div>
           <div class="row" style="border:none">
             <div class="body"><div class="t">Mortgage</div><div class="s">Jun 15 · autopay</div></div>
@@ -445,7 +453,7 @@
       <div class="card"><div class="summary num">
         <div><div class="v money" id="dRecovered">$259</div><div class="l">Recovered in June</div></div>
         <div><div class="v" id="dActCount">8</div><div class="l">Actions taken</div></div>
-        <div><div class="v">41</div><div class="l">Charges checked</div></div>
+        <div><div class="v" id="dCharges">41</div><div class="l">Charges checked</div></div>
         <div><div class="v" id="dWatchCount">1</div><div class="l">Watching</div></div>
       </div></div>
       <div class="filters">
@@ -489,8 +497,8 @@
         </div>
       </div>
 
-      <div class="daylabel" data-cat="watching">On it · watching</div>
-      <div class="card" data-cat="watching" style="padding:4px 18px">
+      <div class="daylabel" id="dWatchHdr" data-cat="watching">On it · watching</div>
+      <div class="card" id="dWatchCard" data-cat="watching" style="padding:4px 18px">
         <div class="event clk" id="dDispute" style="display:none" onclick="openSession('om')">
           <span class="ico">⇪</span>
           <div class="body">
@@ -507,11 +515,11 @@
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
-        <div class="event clk" onclick="openSession('sarah')">
-          <span class="ico">S</span>
+        <div class="event clk" id="dSweepWatch" style="display:none" onclick="openSession('sweep')">
+          <span class="ico">☰</span>
           <div class="body">
-            <div class="t">Sarah, dentist dispute</div>
-            <div class="s">Out-of-network rates billed in error. She approved from her phone, sent and watching.</div>
+            <div class="t">Weekly sweep, running</div>
+            <div class="s">I check every new charge against your patterns. Nothing flagged so far.</div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
@@ -528,7 +536,10 @@
           <div class="amt money num">+$214</div>
         </div>
       </div>
+      <div class="card" id="dClosedEmpty" data-cat="done" style="text-align:center;padding:20px 18px;color:var(--muted);font-size:13px">Nothing closed yet. Every win Steward lands will show here, on the record.</div>
 
+      <!-- Established-user history; hidden on a fresh account (D16 honest first-run) -->
+      <div id="legacyHist" style="display:none">
       <!-- TIME-ORDERED: done sessions + chats, newest first -->
       <div class="daylabel" data-cat="done">Today</div>
       <div class="card" data-cat="done" style="padding:4px 18px">
@@ -594,6 +605,7 @@
           </div>
         </div>
       </div>
+      </div><!-- /legacyHist -->
     </section>
 
     <!-- YOU / HOW STEWARD WORKS -->
@@ -641,8 +653,10 @@
 <div id="toast"></div>
 
 <script>
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', cold: true };
+  // Per-source progressive fill (D16): email lights bills/EOBs; accounts (Plaid) lights net worth, spending, subscriptions.
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false };
   let active = 'ask';
+  const isCold = () => !state.email && !state.accounts;
 
   let lastView = 'home';
   function nav(view) {
@@ -765,39 +779,83 @@
 
   function render() {
     const p = state.phase;
-    const needs = (p === 'found' || p === 'rejected');
-    ['home', 'activity', 'finances'].forEach(v => {
-      const el = document.querySelector('.dview[data-view="' + v + '"]');
-      if (el) el.classList.toggle('cold', state.cold);
-    });
-    document.getElementById('footSub').textContent = state.cold ? 'Not connected yet' : '6 accounts · email on';
-    document.getElementById('dAttention').style.display = (state.attention && p === 'found') ? '' : 'none';
-    document.getElementById('navDot').style.display = (state.attention && needs && !state.cold) ? '' : 'none';
-    document.getElementById('dNeedsHdr').style.display = needs ? '' : 'none';
-    document.getElementById('dProposed').style.display = p === 'found' ? '' : 'none';
-    document.getElementById('dRejected').style.display = p === 'rejected' ? '' : 'none';
-    document.getElementById('dPausedHdr').style.display = p === 'dismissed' ? '' : 'none';
-    document.getElementById('dPaused').style.display = p === 'dismissed' ? '' : 'none';
-    document.getElementById('dDispute').style.display = ['verifying','sent'].includes(p) ? '' : 'none';
-    if (['verifying','sent'].includes(p)) {
+    const cold = isCold();
+    const email = state.email, accounts = state.accounts;
+    const medNeeds = email && (p === 'found' || p === 'rejected');
+    const disputeWatching = email && ['verifying','sent','appealed'].includes(p);
+    const disputeDone = email && p === 'resolved';
+
+    // section empty-state gating (per source: finances needs accounts; home/activity need anything)
+    document.querySelector('.dview[data-view="home"]').classList.toggle('cold', cold);
+    document.querySelector('.dview[data-view="activity"]').classList.toggle('cold', cold);
+    document.querySelector('.dview[data-view="finances"]').classList.toggle('cold', !accounts);
+
+    const fb = [];
+    if (accounts) fb.push('6 accounts');
+    if (email) fb.push('email on');
+    document.getElementById('footSub').textContent = fb.length ? fb.join(' · ') : 'Not connected yet';
+
+    // ── HOME modules ──
+    document.getElementById('dAttention').style.display = (email && state.attention && p === 'found') ? '' : 'none';
+    document.getElementById('navDot').style.display = (email && state.attention && medNeeds) ? '' : 'none';
+    document.getElementById('atWork').style.display = cold ? 'none' : '';
+    document.getElementById('homeGlance').style.display = accounts ? '' : 'none';
+    document.getElementById('homeReview').style.display = accounts ? '' : 'none';
+    document.getElementById('homeUpcoming').style.display = (accounts || email) ? '' : 'none';
+    const rest = document.getElementById('homeConnectRest');
+    if (!cold && !email) {
+      rest.style.display = '';
+      rest.querySelector('.t').textContent = 'Connect your email';
+      rest.querySelector('.s').textContent = 'So I can catch bills, statements & EOBs as they arrive.';
+      const b = rest.querySelector('button'); b.textContent = 'Connect email'; b.setAttribute('onclick', "webConnect('email')");
+    } else if (!cold && !accounts) {
+      rest.style.display = '';
+      rest.querySelector('.t').textContent = 'Connect your accounts';
+      rest.querySelector('.s').textContent = 'So I can show net worth, spending, and the subscriptions worth cancelling.';
+      const b = rest.querySelector('button'); b.textContent = 'Connect accounts'; b.setAttribute('onclick', "webConnect('accounts')");
+    } else { rest.style.display = 'none'; }
+
+    // honest Steward-at-work numbers (accrue from real actions, no fabricated history)
+    const recovered = disputeDone ? 214 : 0;
+    const watching = (disputeWatching ? 1 : 0) + (accounts ? 1 : 0);
+    const actions = (email && ['sent','rejected','appealed','resolved'].includes(p)) ? 1 : 0;
+    document.getElementById('homeRecovered').textContent = '$' + recovered;
+    document.getElementById('homeNeeds').textContent = medNeeds ? 1 : 0;
+    document.getElementById('homeWatch').textContent = watching;
+    document.getElementById('homeActions').textContent = actions;
+    document.getElementById('homeCharges').textContent = accounts ? '41' : '0';
+
+    // ── ACTIVITY feed ──
+    document.getElementById('dNeedsHdr').style.display = medNeeds ? '' : 'none';
+    document.getElementById('dProposed').style.display = (email && p === 'found') ? '' : 'none';
+    document.getElementById('dRejected').style.display = (email && p === 'rejected') ? '' : 'none';
+    document.getElementById('dPausedHdr').style.display = (email && p === 'dismissed') ? '' : 'none';
+    document.getElementById('dPaused').style.display = (email && p === 'dismissed') ? '' : 'none';
+    document.getElementById('dDispute').style.display = (email && ['verifying','sent'].includes(p)) ? '' : 'none';
+    if (email && ['verifying','sent'].includes(p)) {
       document.querySelector('#dDispute .t').textContent = p === 'verifying' ? 'Filing dispute with One Medical' : 'Sent medical bill dispute';
       document.querySelector('#dDispute .s').textContent = p === 'verifying' ? 'Verifying your identity to file, finishing now.' : 'One Medical billed $300 vs. EOB $86, you approved. Tracking the response, typically 7–10 days.';
     }
-    document.getElementById('dAppeal').style.display = p === 'appealed' ? '' : 'none';
-    document.getElementById('dDoneHdr').style.display = p === 'resolved' ? '' : 'none';
-    document.getElementById('dResolvedCard').style.display = p === 'resolved' ? '' : 'none';
-    document.getElementById('dActCount').textContent = 8 + (['sent','rejected'].includes(p) ? 1 : 0) + (['appealed','resolved'].includes(p) ? 2 : 0);
-    document.getElementById('dWatchCount').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
-    document.getElementById('dRecovered').textContent = p === 'resolved' ? '$473' : '$259';
-    document.getElementById('homeRecovered').textContent = p === 'resolved' ? '$473' : '$259';
-    document.getElementById('homeWatch').textContent = 1 + (['verifying','sent','appealed'].includes(p) ? 1 : 0);
-    document.getElementById('homeNeeds').textContent = needs ? 1 : 0;
+    document.getElementById('dAppeal').style.display = (email && p === 'appealed') ? '' : 'none';
+    document.getElementById('dSweepWatch').style.display = accounts ? '' : 'none';
+    document.getElementById('dWatchHdr').style.display = (disputeWatching || accounts) ? '' : 'none';
+    document.getElementById('dWatchCard').style.display = (disputeWatching || accounts) ? '' : 'none';
+    document.getElementById('dDoneHdr').style.display = disputeDone ? '' : 'none';
+    document.getElementById('dResolvedCard').style.display = disputeDone ? '' : 'none';
+    document.getElementById('dClosedEmpty').style.display = (!cold && !disputeDone) ? '' : 'none';
+
+    document.getElementById('dRecovered').textContent = '$' + recovered;
+    document.getElementById('dActCount').textContent = actions;
+    document.getElementById('dWatchCount').textContent = watching;
+    document.getElementById('dCharges').textContent = accounts ? '41' : '0';
     document.getElementById('wkLead').textContent =
-      p === 'resolved' ? 'Won, One Medical corrected the bill, $214 verified back, plus two wins on your statements.'
+      p === 'resolved' ? 'Won, One Medical corrected the bill and $214 is verified back, your first recovery.'
       : p === 'appealed' ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
       : p === 'rejected' ? 'One Medical said no, round two is drafted and waiting on you.'
-      : p === 'sent' ? 'A productive week, dispute filed and being tracked, and two wins verified on your statements.'
-      : 'A solid week, two wins verified, and one decision waiting on you.';
+      : p === 'sent' ? "Dispute filed and being tracked. I'll let you know the moment they respond."
+      : email ? 'I found one bill worth disputing, your call on whether I file it.'
+      : 'Connect a source and I\'ll start finding money worth recovering.';
+
     document.getElementById('subHuluRev').innerHTML = state.sub === 'cancelled'
       ? '<span class="chip ok">Cancelled</span>'
       : '<span class="linkish" onclick="openSession(\'hulu\')">Review</span>';
@@ -862,14 +920,14 @@
     setTimeout(() => { th.appendChild(r); th.scrollTop = th.scrollHeight; }, 450);
     th.scrollTop = th.scrollHeight;
   }
-  // Connecting graduates the app off the empty (cold) state.
+  // Connecting fills only the modules that source can populate (D16).
   function webConnect(kind) {
-    state.cold = false;
+    if (kind === 'email') state.email = true; else state.accounts = true;
     render();
     nav('home');
     toast(kind === 'email'
-      ? 'Email connected, I\'ll catch new bills, statements & EOBs as they arrive'
-      : 'Connected, 7 subscriptions flagged, plus your full picture');
+      ? 'Email connected, I read your last 90 days, found 1 bill worth checking'
+      : 'Accounts connected, building your picture, 2 subscriptions worth a look');
   }
 
   render();
