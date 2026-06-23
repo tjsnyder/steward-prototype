@@ -227,7 +227,7 @@
     <div class="topbar">
       <span class="wordmark">Steward</span>
       <span class="icons">
-        <span class="bell" onclick="toggleAttention()" title="Notifications">
+        <span class="bell" onclick="go('activity',true)" title="Notifications">
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
           <span class="dot" id="bellDot"></span>
         </span>
@@ -359,7 +359,7 @@
           <span onclick="sendPreset('Which subscriptions can I cancel?')">Which subscriptions can I cancel?</span>
         </div>
       </div>
-      <div class="day">Today, 9:32 AM</div>
+      <div class="day warm">Today, 9:32 AM</div>
       <div class="msg user warm"><div class="bubble">How much have we spent on medical this year?</div></div>
       <div class="msg steward warm"><div class="who">Steward</div>
         <div class="bubble"><span class="num"><b>$4,120</b></span> so far, most of it in March (Mia's urgent care visit). You're tracking under last year.</div>
@@ -584,7 +584,7 @@
         </div>
       </div>
 
-      <!-- always-on: the static Sarah card below keeps this header from ever being orphaned -->
+      <!-- shown only when something is actually in flight (render gates on watchingZone) -->
       <div class="daylabel" id="pinActiveHdr" data-cat="watching">On it · watching</div>
 
       <div id="investigatingEvent" data-cat="watching" style="display:none">
@@ -1372,12 +1372,14 @@
   }
   function reconnect(key) { if (key === 'chase') state.chase = 'active'; render(); toast('Reconnected, Chase is syncing again'); }
   function buildMAudit() {
-    const p = state.phase, ev = [];
+    const p = state.phase, ev = [], da = state.email || state.investStarted;
     if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges, nothing flagged', 'action']); }
-    if (state.email) { ev.push(['Connected email', 'read-only · bills, statements & EOBs', 'access']); ev.push(['Read your One Medical statement', 'from email + portal', 'access']); ev.push(['Read your Anthem EOB', 'allowed amount $86 vs billed $300', 'access']); }
-    if (state.email && ['sent','rejected','appealed','resolved'].includes(p)) { ev.push(['Signed in to One Medical portal', 'you approved', 'access']); ev.push(['Filed dispute with One Medical', 'you approved', 'action']); }
-    if (state.email && ['appealed','resolved'].includes(p)) ev.push(['Filed Anthem member appeal', 'you approved', 'action']);
-    if (state.email && p === 'resolved') ev.push(['Verified the corrected statement', '$214 back', 'action']);
+    if (state.email) ev.push(['Connected email', 'read-only · bills, statements & EOBs', 'access']);
+    if (da && state.investStarted) { ev.push(['Read your One Medical statement', 'from email + portal', 'access']); ev.push(['Read your Anthem EOB', 'allowed amount $86 vs billed $300', 'access']); }
+    if (da && ['sent','rejected','appealed','resolved'].includes(p)) { ev.push(['Signed in to One Medical portal', 'you approved', 'access']); ev.push(['Filed dispute with One Medical', 'you approved', 'action']); }
+    if (da && ['appealed','resolved'].includes(p)) ev.push(['Filed Anthem member appeal', 'you approved', 'action']);
+    if (da && p === 'resolved') ev.push(['Verified the corrected statement', '$214 back', 'action']);
+    if (state.handoff === 'sent') ev.push(['Took over your One Medical billing issue', 'sent corrected insurance, you approved', 'action']);
     if (!ev.length) ev.push(['No activity yet', 'connect a source and your log fills here', 'access']);
     return ev.map(([t, s, kind]) => `<div class="msg steward" style="max-width:100%"><div class="who">${kind === 'action' ? 'Action' : 'Access'}</div><div class="bubble"><b>${t}</b><div style="font-size:11.5px;color:var(--muted);margin-top:3px">${s}</div></div></div>`).join('');
   }
@@ -1403,24 +1405,27 @@
     state.cold = !state.email && !state.accounts;
     const email = state.email, accounts = state.accounts, cold = state.cold;
     const cancelled = state.sub === 'cancelled';
-    // dispute classification (email-sourced)
-    const medNeeds = email && (p === 'found' || p === 'rejected');
-    const disputeWatching = email && (['sent','appealed'].includes(p) || (state.investStarted && p === 'prompt'));
-    const disputeDone = email && p === 'resolved';
+    // The One Medical dispute is the email/bills channel, but it is also reachable via
+    // upload or the Finances transaction row, so it counts as active once engaged
+    // (investStarted), regardless of how it was entered, so its reflections never go missing.
+    const disputeActive = email || state.investStarted;
+    const medNeeds = disputeActive && (p === 'found' || p === 'rejected');
+    const disputeWatching = disputeActive && (['sent','appealed'].includes(p) || (state.investStarted && p === 'prompt'));
+    const disputeDone = disputeActive && p === 'resolved';
     const huluDone = accounts && cancelled;
-    const handoffOn = email && state.handoff === 'sent';
+    const handoffOn = state.handoff === 'sent';
     const watchingZone = disputeWatching || handoffOn || accounts;
 
-    // ── home: dispute caseslot (email), agent-work lead, net-worth glance + review + upcoming (accounts) ──
+    // ── home: dispute caseslot, agent-work lead, net-worth glance + review + upcoming (accounts) ──
     show('promptCard', email && p === 'prompt' && state.origin === 'email' && !state.investStarted);
     const slot = document.getElementById(cold ? 'caseSlotCold' : 'caseSlotWarm');
     const cc = document.getElementById('caseCards');
     if (cc.parentElement !== slot) slot.appendChild(cc);
-    show('attentionBlock', email && p === 'found');
-    show('allClearLine', email && ['sent', 'dismissed', 'appealed', 'resolved'].includes(p));
-    show('rejectedCard', email && p === 'rejected');
-    show('bellDot', email && (p === 'prompt' || p === 'found' || p === 'rejected'));
-    show('tabDot', email && (p === 'prompt' || p === 'found' || p === 'rejected'));
+    show('attentionBlock', disputeActive && p === 'found');
+    show('allClearLine', disputeActive && ['sent', 'dismissed', 'appealed', 'resolved'].includes(p));
+    show('rejectedCard', disputeActive && p === 'rejected');
+    show('bellDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
+    show('tabDot', (email && p === 'prompt') || (disputeActive && (p === 'found' || p === 'rejected')));
     show('mGlance', accounts);
     show('mReview', accounts); show('toReviewHd', accounts);
     show('mUpcoming', accounts); show('mUpcomingHd', accounts);
@@ -1444,15 +1449,15 @@
     // ── activity feed (per source, honest) ──
     show('actEmpty', cold);
     show('actFeed', !cold);
-    show('chatStarter', cold && !state.chatUsed);
-    show('proposedEvent', email && state.investigated && p === 'found');
-    show('rejectedEvent', email && p === 'rejected');
+    show('chatStarter', !state.chatUsed);
+    show('proposedEvent', disputeActive && state.investigated && p === 'found');
+    show('rejectedEvent', disputeActive && p === 'rejected');
     show('pinNeedsHdr', medNeeds && ((state.investigated && p === 'found') || p === 'rejected'));
-    show('dismissedEvent', email && state.investigated && p === 'dismissed');
-    show('pinPausedHdr', email && state.investigated && p === 'dismissed');
-    show('investigatingEvent', email && state.investStarted && p === 'prompt');
-    show('disputeEvent', email && p === 'sent');
-    show('appealEvent', email && p === 'appealed');
+    show('dismissedEvent', disputeActive && state.investigated && p === 'dismissed');
+    show('pinPausedHdr', disputeActive && state.investigated && p === 'dismissed');
+    show('investigatingEvent', disputeActive && state.investStarted && p === 'prompt');
+    show('disputeEvent', disputeActive && p === 'sent');
+    show('appealEvent', disputeActive && p === 'appealed');
     show('handoffEvent', handoffOn);
     show('mSweepWatch', accounts);
     show('pinActiveHdr', watchingZone);
@@ -1460,18 +1465,18 @@
     show('huluEvent', huluDone);
     show('doneRecentHdr', !cold);
     show('mClosedEmpty', !cold && !disputeDone && !huluDone);
-    document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', cold));
+    document.querySelectorAll('.warm').forEach(e => e.classList.add('hideme')); // fabricated demo chat, always hidden (honest first-run)
 
     // honest numbers (accrue from real actions, no fabricated history)
     const recovered = disputeDone ? '$214' : '$0';
-    const actions = (email && ['sent','rejected','appealed','resolved'].includes(p) ? 1 : 0) + (huluDone ? 1 : 0) + (handoffOn ? 1 : 0);
+    const actions = (disputeActive && ['sent','rejected','appealed','resolved'].includes(p) ? 1 : 0) + (huluDone ? 1 : 0) + (handoffOn ? 1 : 0);
     const watching = (disputeWatching ? 1 : 0) + (accounts ? 1 : 0);
     document.getElementById('wkLead').textContent =
       disputeDone ? 'Won, One Medical corrected the bill and $214 is verified back, your first recovery.'
-      : (email && p === 'appealed') ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
-      : (email && p === 'rejected') ? 'One Medical said no, round two is drafted and waiting on you.'
-      : (email && p === 'sent') ? "Dispute filed and being tracked. I'll let you know the moment they respond."
-      : email ? 'I found one bill worth disputing, your call on whether I file it.'
+      : (disputeActive && p === 'appealed') ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
+      : (disputeActive && p === 'rejected') ? 'One Medical said no, round two is drafted and waiting on you.'
+      : (disputeActive && p === 'sent') ? "Dispute filed and being tracked. I'll let you know the moment they respond."
+      : (disputeActive && (p === 'found' || p === 'prompt')) ? 'I found one bill worth disputing, your call on whether I file it.'
       : accounts ? "I'm watching your accounts and subscriptions. Nothing needs you yet."
       : 'Connect a source and I\'ll start finding money worth recovering.';
     const cm = ({prompt:['Open','pend','New bill noticed'], found:['Needs you','pend','Dispute drafted, your call'],
@@ -1613,10 +1618,10 @@
     toast('Okay, it stays in Needs attention');
   }
   function promptDismiss() {
+    state.investigated = true;   // keep a paused record in Activity instead of vanishing
     state.phase = 'dismissed'; render();
-    toast("Okay, I'll leave it. Ask me anytime to take a look");
+    toast("Okay, I'll leave it paused. Pick it back up anytime in Activity");
   }
-  function toggleAttention() { location.reload(); }  // bell = demo restart
   function threadStep(id) {
     document.getElementById(id).classList.remove('hideme');
     const sc = document.getElementById('caseScroll'); sc.scrollTop = sc.scrollHeight;
