@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Steward — Clickable Prototype</title>
+<title>Steward: Clickable Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -240,7 +240,7 @@
       <div class="card" id="promptCard" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">From your email · just now</div>
         <div style="font-size:14.5px;font-weight:600;margin-bottom:4px">One Medical: "Your statement is ready"</div>
-        <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">The email doesn't include the bill itself — it's in their patient portal. Want me to take a look?</p>
+        <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">The email doesn't include the bill itself, it's in their patient portal. Want me to take a look?</p>
         <div class="btnrow" style="margin-top:12px">
           <button class="btn primary" onclick="startInvest()">Take a look</button>
           <button class="btn ghost" onclick="promptDismiss()">Not now</button>
@@ -251,33 +251,33 @@
         <div class="card attention" id="attentionCard">
           <div class="eyebrow">Needs you</div>
           <h4>Your One Medical bill looks overcharged</h4>
-          <p class="evidence">Billed <b class="num">$300</b> — your Anthem EOB says you owe <b class="num">$86</b>. Two line items don't match the claim.</p>
+          <p class="evidence">Billed <b class="num">$300</b>, your Anthem EOB says you owe <b class="num">$86</b>. Two line items don't match the claim.</p>
           <div class="figures">
             <div class="figbox"><div class="l">They billed</div><div class="v num">$300</div></div>
             <div class="figbox"><div class="l">EOB says</div><div class="v num">$86</div></div>
             <div class="figbox"><div class="l">Your recovery</div><div class="v money num">$214</div></div>
           </div>
-          <div class="deadline">Window closes Jun 28 — drafted and ready. ~78% of similar disputes succeed.</div>
+          <div class="deadline">Window closes Jun 28, drafted and ready. ~78% of similar disputes succeed.</div>
           <div class="btnrow">
             <button class="btn primary" onclick="startInvest()">Open the activity</button>
             <button class="btn ghost" onclick="dismissAttention()">Dismiss</button>
           </div>
           <span class="why" onclick="toast('Flagged because the billed CPT rates exceed your plan\'s contracted rates')">Why I flagged this</span>
         </div>
-        <div class="queueline" onclick="toast('Queue view — not in this prototype yet')">2 more need attention<span class="chev">›</span></div>
+        <div class="queueline" onclick="toast('Queue view, not in this prototype yet')">2 more need attention<span class="chev">›</span></div>
       </div>
 
       <div class="card attention" id="rejectedCard" style="display:none">
-        <div class="eyebrow">They said no — round two</div>
+        <div class="eyebrow">They said no, round two</div>
         <h4>One Medical rejected the dispute</h4>
-        <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise — so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Appeals like this succeed ~64%.</p>
+        <p class="evidence">Their reply: "charges are consistent with our rates." Your EOB says otherwise, so the next move is a member appeal directly with <b>Anthem</b>, who enforce the contracted rate. Appeals like this succeed ~64%.</p>
         <div class="btnrow" style="margin-top:12px">
           <button class="btn primary" onclick="startInvest()">Open the activity</button>
           <button class="btn ghost" onclick="dismissRejected()">Let it go</button>
         </div>
       </div>
 
-      <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('activity')"><span class="ok"></span>Nothing needs you — your weekly brief is ready<span class="chev">›</span></div>
+      <div class="statusline" id="allClearLine" style="display:none;cursor:pointer" onclick="go('activity')"><span class="ok"></span>Nothing needs you, your weekly brief is ready<span class="chev">›</span></div>
       </div></div>
 
       <div class="card">
@@ -302,7 +302,7 @@
           <div class="body"><div class="t">Subscription worth a look</div><div class="s">Hulu price rose · 1 more finding</div></div>
           <span class="right num">$18/mo</span><span class="chevron">›</span>
         </div>
-        <div class="row" onclick="toast('Transaction detail — not in this prototype yet')" style="cursor:pointer">
+        <div class="row" onclick="toast('Transaction detail, not in this prototype yet')" style="cursor:pointer">
           <div class="body"><div class="t">Large transaction</div><div class="s">Costco · Jun 9</div></div>
           <span class="right num">$642</span><span class="chevron">›</span>
         </div>
@@ -319,11 +319,11 @@
           <span class="chip draft">Coming soon</span>
         </div>
         <div class="row">
-          <div class="body"><div class="t">FSA balance $410 — expires Dec 31</div><div class="s">I'll plan it down before the deadline</div></div>
+          <div class="body"><div class="t">FSA balance $410, expires Dec 31</div><div class="s">I'll plan it down before the deadline</div></div>
           <span class="chip draft">On my calendar</span>
         </div>
         <div class="row">
-          <div class="body"><div class="t">Open enrollment — November</div><div class="s">I'll compare plans against this year's actual claims</div></div>
+          <div class="body"><div class="t">Open enrollment, November</div><div class="s">I'll compare plans against this year's actual claims</div></div>
           <span class="chip draft">On my calendar</span>
         </div>
       </div>
@@ -338,7 +338,7 @@
           <div class="body"><div class="t">Out-of-pocket max</div><div class="goalbar"><i style="width:47%"></i></div></div>
           <span class="right num" style="color:var(--muted);font-weight:500">$2,830 / $6,000</span>
         </div>
-        <p class="note" style="text-align:left;margin-top:8px">$550 to your deductible — after that, visits cost you 20%, not 100%. Mia's next checkup ≈ <b class="num">$38</b>, not $190.</p>
+        <p class="note" style="text-align:left;margin-top:8px">$550 to your deductible, after that, visits cost you 20%, not 100%. Mia's next checkup ≈ <b class="num">$38</b>, not $190.</p>
       </div>
 
       <div class="card value-card">
@@ -360,7 +360,7 @@
       <div class="day">Today, 9:32 AM</div>
       <div class="msg user warm"><div class="bubble">How much have we spent on medical this year?</div></div>
       <div class="msg steward warm"><div class="who">Steward</div>
-        <div class="bubble"><span class="num"><b>$4,120</b></span> so far — most of it in March (Mia's urgent care visit). You're tracking under last year.</div>
+        <div class="bubble"><span class="num"><b>$4,120</b></span> so far, most of it in March (Mia's urgent care visit). You're tracking under last year.</div>
       </div>
       <div class="inline-card warm">
         <div class="eyebrow">Medical spend · 2026</div>
@@ -372,13 +372,13 @@
         <div class="inline-card">
           <div class="eyebrow">From your email · catching up</div>
           <div class="prog">
-            <div><span class="tick">✓</span>Found the thread — 2 messages</div>
-            <div><span class="tick">·</span><b>Jun 2</b> — you → One Medical billing: disputed the charge</div>
-            <div><span class="tick">·</span><b>Jun 9</b> — One Medical: claim went to <b>Cigna</b>, which is inactive — "please provide current insurance"</div>
+            <div><span class="tick">✓</span>Found the thread, 2 messages</div>
+            <div><span class="tick">·</span><b>Jun 2</b>, you → One Medical billing: disputed the charge</div>
+            <div><span class="tick">·</span><b>Jun 9</b>, One Medical: claim went to <b>Cigna</b>, which is inactive, "please provide current insurance"</div>
           </div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Caught up. They billed your old <b>Cigna</b> plan — inactive since 2023. They need your current <b>Anthem</b> details, then they'll resubmit the claim.</div>
+          <div class="bubble">Caught up. They billed your old <b>Cigna</b> plan, inactive since 2023. They need your current <b>Anthem</b> details, then they'll resubmit the claim.</div>
         </div>
       </div>
 
@@ -395,12 +395,12 @@
 
       <div class="hideme" id="ho3">
         <div class="inline-card action">
-          <div class="eyebrow">Ready to send — your approval</div>
+          <div class="eyebrow">Ready to send, your approval</div>
           <h5>Reply to One Medical billing</h5>
-          <p>"Re: invoice #OM-44218 — this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
+          <p>"Re: invoice #OM-44218, this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
           <div class="btnrow" style="margin-top:10px" id="ho3btns">
             <button class="btn primary" onclick="handoffSend()">Send reply</button>
-            <button class="btn ghost" onclick="toast('Letter editing — not in this prototype yet')">Edit</button>
+            <button class="btn ghost" onclick="toast('Letter editing, not in this prototype yet')">Edit</button>
           </div>
         </div>
       </div>
@@ -408,15 +408,15 @@
       <div class="hideme" id="ho4">
         <div class="msg steward"><div class="who">Steward</div>
           <div class="bubble">Sent through their billing portal at 9:44 AM.
-            <div class="receipt"><span class="tick">✓</span>I'll track the resubmission — typically 2–3 weeks — and verify the corrected claim shows up on your Anthem EOB. It's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+            <div class="receipt"><span class="tick">✓</span>I'll track the resubmission, typically 2–3 weeks, and verify the corrected claim shows up on your Anthem EOB. It's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
         <div class="inline-card">
-          <div class="eyebrow">One more thing — only if you want</div>
+          <div class="eyebrow">One more thing, only if you want</div>
           <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
           <div class="btnrow" style="margin-top:10px" id="ho5btns">
             <button class="btn primary" onclick="openOauth()">Connect email</button>
-            <button class="btn ghost" onclick="toast('No problem — I\'m here when something comes up')">Maybe later</button>
+            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Maybe later</button>
           </div>
         </div>
       </div>
@@ -424,7 +424,7 @@
       <!-- truly-cold handoff: no email connected -->
       <div class="hideme" id="hc1">
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Let's sort it out. I can't see your email yet — upload what they sent you (their reply or the bill) and I'll read it.</div>
+          <div class="bubble">Let's sort it out. I can't see your email yet, upload what they sent you (their reply or the bill) and I'll read it.</div>
         </div>
         <div id="hc1btns" style="max-width:84%;margin-bottom:12px">
           <div class="btnrow">
@@ -438,14 +438,14 @@
         <div class="inline-card">
           <div class="eyebrow">Uploaded · read by Steward</div>
           <div class="prog">
-            <div><span class="tick">✓</span>Claim was submitted to <b>Cigna</b> — marked inactive</div>
+            <div><span class="tick">✓</span>Claim was submitted to <b>Cigna</b>, marked inactive</div>
             <div><span class="tick">✓</span>They'll resubmit once they have your current insurance</div>
           </div>
         </div>
       </div>
       <div class="hideme" id="hc3">
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">So they billed the wrong insurer. They need your current <b>Anthem</b> details. Connect Anthem and I'll pull them — or upload a photo of your insurance card.</div>
+          <div class="bubble">So they billed the wrong insurer. They need your current <b>Anthem</b> details. Connect Anthem and I'll pull them, or upload a photo of your insurance card.</div>
         </div>
         <div id="hc3btns" style="max-width:84%;margin-bottom:12px">
           <div class="btnrow">
@@ -470,10 +470,10 @@
         <div class="inline-card action">
           <div class="eyebrow">Ready when you are</div>
           <h5>Reply to One Medical billing</h5>
-          <p>"Re: invoice #OM-44218 — this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
+          <p>"Re: invoice #OM-44218, this claim was submitted to an inactive Cigna plan. Current coverage: Anthem · Member ID ANT-447-1220 · Group #GA-8812 (card attached). Please resubmit and reissue the statement."</p>
           <div class="btnrow" style="margin-top:10px" id="hc5btns">
             <button class="btn primary" onclick="openCred('omcold')">Submit via their portal</button>
-            <button class="btn ghost" onclick="toast('Copied — paste it into their portal or email')">Copy — I'll send it</button>
+            <button class="btn ghost" onclick="toast('Copied, paste it into their portal or email')">Copy, I'll send it</button>
           </div>
         </div>
       </div>
@@ -483,20 +483,20 @@
           <div class="prog">
             <div><span class="tick">✓</span>Signed in</div>
             <div><span class="tick">✓</span>Reply submitted with corrected insurance</div>
-            <div><span class="tick">✓</span>Tracking — typical resubmission 2–3 weeks</div>
+            <div><span class="tick">✓</span>Tracking, typical resubmission 2–3 weeks</div>
           </div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Done — your first fix. I'll watch for their response and verify the corrected claim.
+          <div class="bubble">Done, your first fix. I'll watch for their response and verify the corrected claim.
             <div class="receipt"><span class="tick">✓</span>It's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
         <div class="inline-card">
-          <div class="eyebrow">One more thing — only if you want</div>
+          <div class="eyebrow">One more thing, only if you want</div>
           <p style="font-size:13px;line-height:1.5;color:var(--ink-2)">Issues like this usually announce themselves in email first. Want me to watch for them so you don't have to bring them to me? Read-only.</p>
           <div class="btnrow" style="margin-top:10px">
             <button class="btn primary" onclick="openOauth()">Connect email</button>
-            <button class="btn ghost" onclick="toast('No problem — I\'m here when something comes up')">Maybe later</button>
+            <button class="btn ghost" onclick="toast('No problem, I\'m here when something comes up')">Maybe later</button>
           </div>
         </div>
       </div>
@@ -504,7 +504,7 @@
     </div>
     <div class="dock">
       <div class="chips" id="chatChips">
-        <span onclick="sendPreset('I have a billing issue with One Medical — they say they billed the wrong insurance')">I have a billing issue…</span>
+        <span onclick="sendPreset('I have a billing issue with One Medical, they say they billed the wrong insurance')">I have a billing issue…</span>
       </div>
       <div class="chatinput">
         <button class="attachbtn" onclick="askUpload()">＋</button>
@@ -523,12 +523,12 @@
     <div class="scroll">
       <div class="card empty" id="actEmpty" style="display:none">
         <div class="eyebrow">Activity</div>
-        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">Nothing yet. Once you bring me something — a bill, a question — every job and conversation lands here, on the record.</p>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2)">Nothing yet. Once you bring me something, a bill, a question, every job and conversation lands here, on the record.</p>
       </div>
       <div id="actFeed">
       <div class="card value-card">
         <div class="eyebrow">Your week · Jun 8–14</div>
-        <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week — two wins verified, and one decision waiting on you.</div>
+        <div style="font-size:14px;font-weight:500;line-height:1.55;color:#fff" id="wkLead">A solid week, two wins verified, and one decision waiting on you.</div>
       </div>
 
       <div class="card summary num">
@@ -551,7 +551,7 @@
             <span class="ico">⚑</span>
             <div class="body">
               <div class="t">Proposed: dispute One Medical bill</div>
-              <div class="s">Billed $300 vs. EOB $86 — draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
+              <div class="s">Billed $300 vs. EOB $86, draft ready, ~78% succeed with Anthem. Window closes Jun 28.</div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -564,7 +564,7 @@
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">One Medical rejected the dispute</div>
-              <div class="s">Their reply is saved. Round 2 — an Anthem member appeal — is drafted and waiting on you. Appeals like this succeed ~64%.</div>
+              <div class="s">Their reply is saved. Round 2, an Anthem member appeal, is drafted and waiting on you. Appeals like this succeed ~64%.</div>
             </div>
             <div class="amt money num">$214</div>
           </div>
@@ -577,7 +577,7 @@
           <div class="event clk" onclick="startInvest()">
             <span class="ico">⏸</span>
             <div class="body">
-              <div class="t">One Medical dispute — paused</div>
+              <div class="t">One Medical dispute, paused</div>
               <div class="s">You set this aside. It's still here whenever you want to pick it back up.</div>
             </div>
             <div class="amt money num">$214</div>
@@ -594,7 +594,7 @@
             <span class="ico">⌕</span>
             <div class="body">
               <div class="t">Looking into a One Medical bill</div>
-              <div class="s" id="invEvtSub">Reading the bill — your EOB is next.</div>
+              <div class="s" id="invEvtSub">Reading the bill, your EOB is next.</div>
             </div>
             <div class="amt"><span class="chip pend">Open</span></div>
           </div>
@@ -607,7 +607,7 @@
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Sent medical bill dispute</div>
-              <div class="s">One Medical billed $300 vs. EOB $86 — you approved at 9:36 AM.</div>
+              <div class="s">One Medical billed $300 vs. EOB $86, you approved at 9:36 AM.</div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -620,7 +620,7 @@
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Filed Anthem member appeal</div>
-              <div class="s">You approved round 2. Anthem must respond within 30 days — I'm watching, and I'll escalate to your state's review board if they miss it.</div>
+              <div class="s">You approved round 2. Anthem must respond within 30 days, I'm watching, and I'll escalate to your state's review board if they miss it.</div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -633,7 +633,7 @@
             <span class="ico">⇪</span>
             <div class="body">
               <div class="t">Took over your One Medical billing issue</div>
-              <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details — you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
+              <div class="s">Claim went to inactive Cigna plan. Sent your current Anthem details, you approved at 9:44 AM. Tracking the resubmission, ~2–3 weeks.</div>
             </div>
             <div class="amt"><span class="chip pend">Watching</span></div>
           </div>
@@ -644,8 +644,8 @@
         <div class="event clk" onclick="openSess('sarah')">
           <span class="ico">S</span>
           <div class="body">
-            <div class="t">Sarah — dentist dispute</div>
-            <div class="s">Out-of-network rates billed in error. She approved from her phone — sent and watching.</div>
+            <div class="t">Sarah, dentist dispute</div>
+            <div class="s">Out-of-network rates billed in error. She approved from her phone, sent and watching.</div>
           </div>
           <div class="amt"><span class="chip pend">Watching</span></div>
         </div>
@@ -659,7 +659,7 @@
           <div class="event clk" onclick="startInvest()">
             <span class="ico">✓</span>
             <div class="body">
-              <div class="t">One Medical dispute — closed, won</div>
+              <div class="t">One Medical dispute, closed, won</div>
               <div class="s">Anthem ruled in your favor; corrected bill verified at $86. The whole history is right there.</div>
             </div>
             <div class="amt money num">+$214</div>
@@ -673,7 +673,7 @@
             <span class="ico">✕</span>
             <div class="body">
               <div class="t">Cancelled Hulu</div>
-              <div class="s">Price crept to $18 and your Disney+ bundle already includes it. Confirmation #4F7-220 — active until Jul 7; I'll verify no charge after Jul 8.</div>
+              <div class="s">Price crept to $18 and your Disney+ bundle already includes it. Confirmation #4F7-220, active until Jul 7; I'll verify no charge after Jul 8.</div>
             </div>
             <div class="amt money num">+$18/mo</div>
           </div>
@@ -686,7 +686,7 @@
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">Medical spend this year</div>
-            <div class="s">You asked how much you've spent on medical — $4,120, mostly March.</div>
+            <div class="s">You asked how much you've spent on medical, $4,120, mostly March.</div>
           </div>
         </div>
       </div>
@@ -697,7 +697,7 @@
           <span class="ico">✓</span>
           <div class="body">
             <div class="t">Recovered overdraft fee</div>
-            <div class="s">Chase charged $45 on Jun 8. I requested a waiver — refund posted yesterday and I verified it on your statement.</div>
+            <div class="s">Chase charged $45 on Jun 8. I requested a waiver, refund posted yesterday and I verified it on your statement.</div>
           </div>
           <div class="amt money num">+$45</div>
         </div>
@@ -705,7 +705,7 @@
           <span class="ico">✕</span>
           <div class="body">
             <div class="t">Cancelled Paramount+</div>
-            <div class="s">Unused 4 months. You approved Mon — cancellation confirmed, and I verified no charge on your June statement.</div>
+            <div class="s">Unused 4 months. You approved Mon, cancellation confirmed, and I verified no charge on your June statement.</div>
           </div>
           <div class="amt money num">+$12/mo</div>
         </div>
@@ -713,7 +713,7 @@
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">Can we afford the kitchen remodel?</div>
-            <div class="s">We talked it through — yes, around $40k, with your emergency fund untouched.</div>
+            <div class="s">We talked it through, yes, around $40k, with your emergency fund untouched.</div>
           </div>
         </div>
       </div>
@@ -723,7 +723,7 @@
         <div class="event clk" onclick="openSess('sweep')">
           <span class="ico">☰</span>
           <div class="body">
-            <div class="t">Weekly sweep — all clear</div>
+            <div class="t">Weekly sweep, all clear</div>
             <div class="s">Checked 41 new charges against your patterns and merchants. Nothing unusual.</div>
           </div>
           <div class="amt"><span class="chip ok">Done</span></div>
@@ -731,8 +731,8 @@
         <div class="event clk" onclick="openSess('correction')">
           <span class="ico">↺</span>
           <div class="body">
-            <div class="t">Correction — flag withdrawn</div>
-            <div class="s">I'd flagged a $45 lab fee as a duplicate. On a closer read of the EOB it's two distinct draws — the bill is right. Nothing was sent; flag withdrawn.</div>
+            <div class="t">Correction, flag withdrawn</div>
+            <div class="s">I'd flagged a $45 lab fee as a duplicate. On a closer read of the EOB it's two distinct draws, the bill is right. Nothing was sent; flag withdrawn.</div>
           </div>
           <div class="amt"><span class="chip ok">Self-caught</span></div>
         </div>
@@ -740,7 +740,7 @@
           <span class="ico">💬</span>
           <div class="body">
             <div class="t">How do HSAs actually work?</div>
-            <div class="s">Tax-free going in, grows untaxed, tax-free out for medical — and it's yours to keep.</div>
+            <div class="s">Tax-free going in, grows untaxed, tax-free out for medical, and it's yours to keep.</div>
           </div>
         </div>
       </div>
@@ -761,41 +761,41 @@
         <div class="eyebrow">Standing instructions</div>
         <div class="row" style="border:none">
           <div class="body"><div class="t">"Don't surface findings under $25"</div><div class="s">set Jun 2, in chat</div></div>
-          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed — I\'ll surface everything again')">Remove</a>
+          <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed, I\'ll surface everything again')">Remove</a>
         </div>
         <div class="row">
-          <div class="body"><div class="t">"Always keep HBO Max — the kids use it"</div><div class="s">set May 14, in chat</div></div>
+          <div class="body"><div class="t">"Always keep HBO Max, the kids use it"</div><div class="s">set May 14, in chat</div></div>
           <a style="font-size:11.5px;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer" onclick="toast('Removed')">Remove</a>
         </div>
-        <div class="note" style="text-align:left;margin-top:8px">Tell me in chat how you want things handled — I'll remember it here.</div>
+        <div class="note" style="text-align:left;margin-top:8px">Tell me in chat how you want things handled, I'll remember it here.</div>
       </div>
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">Your Steward address</div>
         <div class="row" style="border:none;padding:6px 0">
           <div class="body"><div class="t num" style="font-size:15px">bills@tim.yoursteward.com</div>
-          <div class="s">Forward any bill or notice — no app needed. Set it as your billing email at providers and I become the system of record.</div></div>
+          <div class="s">Forward any bill or notice, no app needed. Set it as your billing email at providers and I become the system of record.</div></div>
         </div>
         <div class="btnrow" style="margin-top:6px">
-          <button class="btn ghost" style="flex:none;padding:8px 16px" onclick="toast('Copied — paste it into any billing portal')">Copy address</button>
+          <button class="btn ghost" style="flex:none;padding:8px 16px" onclick="toast('Copied, paste it into any billing portal')">Copy address</button>
         </div>
       </div>
 
       <div class="card">
         <div class="eyebrow">Household</div>
-        <div class="row" style="border:none"><div class="body"><div class="t">Tim</div><div class="s">Owner — approves everything</div></div></div>
-        <div class="row"><div class="body"><div class="t">Sarah</div><div class="s">Partner — sees everything, approves her own items</div></div><span class="chip ok">Active</span></div>
-        <div class="row"><div class="body"><div class="t">Mia &amp; Jonah</div><div class="s">Dependents — their bills route to you both</div></div></div>
-        <div class="note" style="text-align:left;margin-top:6px"><u style="cursor:pointer" onclick="toast('Invites — not in this prototype yet')">Invite someone</u> — accountants and aging parents are next.</div>
+        <div class="row" style="border:none"><div class="body"><div class="t">Tim</div><div class="s">Owner, approves everything</div></div></div>
+        <div class="row"><div class="body"><div class="t">Sarah</div><div class="s">Partner, sees everything, approves her own items</div></div><span class="chip ok">Active</span></div>
+        <div class="row"><div class="body"><div class="t">Mia &amp; Jonah</div><div class="s">Dependents, their bills route to you both</div></div></div>
+        <div class="note" style="text-align:left;margin-top:6px"><u style="cursor:pointer" onclick="toast('Invites, not in this prototype yet')">Invite someone</u>, accountants and aging parents are next.</div>
       </div>
 
       <div class="card" style="padding:6px 16px">
-        <div class="row" style="cursor:pointer" onclick="toast('Chase changed their sign-in — 30 seconds to reconnect, then I\'m caught up')">
+        <div class="row" style="cursor:pointer" onclick="toast('Chase changed their sign-in, 30 seconds to reconnect, then I\'m caught up')">
           <div class="body"><div class="t">Connected accounts</div><div class="s">6 institutions · <span style="color:var(--amber);font-weight:600">Chase needs a fresh sign-in</span></div></div>
           <span class="chevron">›</span>
         </div>
-        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out — we cancel subscriptions for a living')">
-          <div class="body"><div class="t">Your plan</div><div class="s">$20/mo — it's returned 4.7× that this year</div></div>
+        <div class="row" style="cursor:pointer" onclick="toast('One tap and you\'re out, we cancel subscriptions for a living')">
+          <div class="body"><div class="t">Your plan</div><div class="s">$20/mo, it's returned 4.7× that this year</div></div>
           <span class="chevron">›</span>
         </div>
       </div>
@@ -813,7 +813,7 @@
       <div id="invThread">
       <div id="invEmailOpen">
         <div class="msg steward"><div class="who">Steward</div>
-        <div class="bubble">One Medical emailed — "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
+        <div class="bubble">One Medical emailed, "Your statement is ready." The bill itself isn't in the email; it lives in their patient portal. Want me to sign in and pull it?</div>
       </div>
       <div id="inv1" style="max-width:84%;margin-bottom:12px">
         <div class="btnrow">
@@ -825,7 +825,7 @@
       </div>
       <div class="hideme" id="invAskOpen">
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Picking up from <b>Ask Steward</b> — I read <b>one-medical-bill.pdf</b>: <b class="num">$300</b> for the Jun 3 visit, two line items.</div>
+          <div class="bubble">Picking up from <b>Ask Steward</b>, I read <b>one-medical-bill.pdf</b>: <b class="num">$300</b> for the Jun 3 visit, two line items.</div>
         </div>
       </div>
 
@@ -834,7 +834,7 @@
         <div class="inline-card">
           <div class="eyebrow">Uploaded · read by Steward</div>
           <div class="prog">
-            <div><span class="tick">✓</span>Statement read — <b class="num">$300</b> due · visit of Jun 3</div>
+            <div><span class="tick">✓</span>Statement read, <b class="num">$300</b> due · visit of Jun 3</div>
             <div><span class="tick">✓</span>Saved to your documents</div>
           </div>
         </div>
@@ -844,7 +844,7 @@
         <div class="eyebrow">One Medical · patient portal</div>
         <div class="prog">
           <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Statement found — <b class="num">$300</b> due · visit of Jun 3</div>
+          <div><span class="tick">✓</span>Statement found, <b class="num">$300</b> due · visit of Jun 3</div>
           <div><span class="tick">✓</span>Saved to your documents</div>
         </div>
       </div>
@@ -855,7 +855,7 @@
         </div>
         <div class="btnrow" id="inv3btns" style="max-width:84%;margin-bottom:12px">
           <button class="btn primary" onclick="openCred('an')">Connect Anthem</button>
-          <button class="btn ghost" onclick="toast('Okay — I\'ll keep the bill on file unchecked')">Skip for now</button>
+          <button class="btn ghost" onclick="toast('Okay, I\'ll keep the bill on file unchecked')">Skip for now</button>
         </div>
       </div>
 
@@ -869,7 +869,7 @@
           </div>
         </div>
         <div class="hideme" id="invMfaDone">
-          <div class="prog"><div><span class="tick">✓</span>Code verified — session resumed</div></div>
+          <div class="prog"><div><span class="tick">✓</span>Code verified, session resumed</div></div>
         </div>
       </div>
 
@@ -884,14 +884,14 @@
 
       <div class="hideme" id="inv5">
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b> — your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
+          <div class="bubble">Found a problem. One Medical billed <b class="num">$300</b>, your EOB says you owe <b class="num">$86</b>. Two line items are above your plan's contracted rate.</div>
         </div>
         <div class="inline-card action">
           <div class="eyebrow">Needs you</div>
-          <h5>One Medical billed $300 — EOB says $86</h5>
+          <h5>One Medical billed $300, EOB says $86</h5>
           <p>I've drafted a dispute. Nothing is sent until you approve it.</p>
           <div class="recover num">$214 back<small>projected</small></div>
-          <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem — based on outcomes from cases like yours.</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:6px">Disputes like this succeed ~78% with Anthem, based on outcomes from cases like yours.</p>
           <div class="btnrow" style="margin-top:10px" id="inv5btns">
             <button class="btn primary" onclick="fileDispute()">File the dispute</button>
             <button class="btn ghost" onclick="go('home',true)">Later</button>
@@ -905,19 +905,19 @@
           <div class="eyebrow">One Medical · billing portal</div>
           <div class="prog">
             <div><span class="tick">✓</span>Signed in</div>
-            <div><span class="tick">✓</span>Dispute filed — confirmation <b>#D-7741</b></div>
+            <div><span class="tick">✓</span>Dispute filed, confirmation <b>#D-7741</b></div>
             <div><span class="tick">✓</span>EOB attached as evidence</div>
           </div>
         </div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days — I'll keep checking the portal and report back here, in this session.</div>
+          <div class="bubble">Filed, as you asked. They typically answer in 7–10 days, I'll keep checking the portal and report back here, in this session.</div>
         </div>
         <div class="why" onclick="threadStep('inv7')">A few days pass ›</div>
       </div>
       <div class="hideme" id="inv7">
         <div class="day">Jun 17</div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Checking your dispute status — One Medical wants a fresh code first.</div>
+          <div class="bubble">Checking your dispute status, One Medical wants a fresh code first.</div>
         </div>
         <div class="inline-card">
           <div class="eyebrow">One Medical · verification</div>
@@ -928,7 +928,7 @@
             </div>
           </div>
           <div class="hideme" id="mfa2Done">
-            <div class="prog"><div><span class="tick">✓</span>Verified — status: <b>under review</b>. I'll check again Friday.</div></div>
+            <div class="prog"><div><span class="tick">✓</span>Verified, status: <b>under review</b>. I'll check again Friday.</div></div>
           </div>
         </div>
         <div class="why hideme" id="d2link" onclick="threadStep('inv8'); state.phase='rejected'; render()">Their answer arrives ›</div>
@@ -936,7 +936,7 @@
       <div class="hideme" id="inv8">
         <div class="day">Jun 22</div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">They answered — <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b> — they enforce the contracted rate. Appeals like this succeed ~64%.</div>
+          <div class="bubble">They answered, <b>rejected</b>: "charges are consistent with our rates." Your EOB says otherwise. Round 2 is a <b>member appeal with Anthem</b>, they enforce the contracted rate. Appeals like this succeed ~64%.</div>
         </div>
         <div class="btnrow" id="inv8btns" style="max-width:84%;margin-bottom:12px">
           <button class="btn primary" onclick="fileAppeal()">File the appeal</button>
@@ -947,8 +947,8 @@
         <div class="inline-card">
           <div class="eyebrow">Anthem · member appeal</div>
           <div class="prog">
-            <div><span class="tick">✓</span>Appeal filed — both documents attached</div>
-            <div><span class="tick">✓</span>Anthem must respond within 30 days — I'm on the clock</div>
+            <div><span class="tick">✓</span>Appeal filed, both documents attached</div>
+            <div><span class="tick">✓</span>Anthem must respond within 30 days, I'm on the clock</div>
           </div>
         </div>
         <div class="why" onclick="threadStep('inv9'); resolveCase()">Anthem rules ›</div>
@@ -956,8 +956,8 @@
       <div class="hideme" id="inv9">
         <div class="day">Jul 8</div>
         <div class="msg steward"><div class="who">Steward</div>
-          <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b> — I checked the corrected statement myself. That's <b class="num">$214</b> back.
-            <div class="receipt"><span class="tick">✓</span>Verified · activity closed — it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+          <div class="bubble">Anthem ruled in your favor. One Medical reissued the bill at <b class="num">$86</b>, I checked the corrected statement myself. That's <b class="num">$214</b> back.
+            <div class="receipt"><span class="tick">✓</span>Verified · activity closed, it's in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
           </div>
         </div>
       </div>
@@ -965,7 +965,7 @@
     </div>
     <div class="dock">
       <div class="chatinput">
-        <button class="attachbtn" onclick="toast('Attach anything about this bill — it stays with this session')">＋</button>
+        <button class="attachbtn" onclick="toast('Attach anything about this bill, it stays with this session')">＋</button>
         <input id="caseBox" placeholder="Message this session…" onkeydown="if(event.key==='Enter')caseSend()">
         <button onclick="caseSend()">➤</button>
       </div>
@@ -979,7 +979,7 @@
       <div style="flex:1"><div class="title" id="sessTitle">Session</div><div class="sub" id="sessSub"></div></div>
     </div>
     <div class="scroll" id="sessScroll"></div>
-    <div class="dock"><div class="chatpill" onclick="toast('This session is on the record — message to reopen it')">Message this session…</div></div>
+    <div class="dock"><div class="chatpill" onclick="toast('This session is on the record, message to reopen it')">Message this session…</div></div>
   </section>
 
   <!-- ── SUBSCRIPTIONS AUDIT ── -->
@@ -1033,7 +1033,7 @@
       <div class="card">
         <div class="eyebrow">Why it's flagged</div>
         <div class="prog">
-          <div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b class="num">$13 → $18</b> in May — no notice in your email</div>
+          <div><span class="tick" style="color:var(--amber)">▲</span>Price rose <b class="num">$13 → $18</b> in May, no notice in your email</div>
           <div><span class="tick" style="color:var(--amber)">▲</span>Your Disney+ bundle (<b class="num">$10.99</b>) already includes Hulu with ads</div>
           <div><span class="tick">·</span><b class="num">12</b> charges since Jul 2025 · <b class="num">$187</b> total</div>
         </div>
@@ -1041,9 +1041,9 @@
       <div class="card">
         <div class="eyebrow">The plan</div>
         <div class="steps">
-          <div class="step">Sign in to your Hulu account — I'll ask for the login next.</div>
+          <div class="step">Sign in to your Hulu account, I'll ask for the login next.</div>
           <div class="step">Cancel the standalone plan. It stays active until the period ends Jul 7.</div>
-          <div class="step">Verify no charge appears after Jul 8 — then report back in Activity.</div>
+          <div class="step">Verify no charge appears after Jul 8, then report back in Activity.</div>
         </div>
       </div>
       <div class="card" style="border-color:var(--ink)" id="subBtns">
@@ -1058,15 +1058,15 @@
         <div class="eyebrow">Hulu · account portal</div>
         <div class="prog">
           <div><span class="tick">✓</span>Signed in</div>
-          <div><span class="tick">✓</span>Cancelled — confirmation <b>#4F7-220</b></div>
+          <div><span class="tick">✓</span>Cancelled, confirmation <b>#4F7-220</b></div>
           <div><span class="tick">✓</span>Plan active until <b>Jul 7</b></div>
         </div>
       </div>
       <div class="hideme" id="subDone">
         <div class="msg steward" style="max-width:100%"><div class="who">Steward</div>
-          <div class="bubble">Done — that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
+          <div class="bubble">Done, that's <b class="num">$216/yr</b> back. I'll check your statement after Jul 8 to confirm no charge, and it's all in your <u style="cursor:pointer" onclick="go('activity')">Activity log</u>.</div>
         </div>
-        <div class="btnrow" style="margin-top:2px"><button class="btn ghost" onclick="resubHulu()">Undo — resubscribe</button></div>
+        <div class="btnrow" style="margin-top:2px"><button class="btn ghost" onclick="resubHulu()">Undo, resubscribe</button></div>
       </div>
     </div>
   </section>
@@ -1082,26 +1082,26 @@
         <div class="eyebrow">Why it's flagged</div>
         <div class="prog">
           <div><span class="tick" style="color:var(--amber)">▲</span>Your Apple One family plan (<b class="num">$19.95</b>) includes <b>2TB iCloud</b></div>
-          <div><span class="tick" style="color:var(--amber)">▲</span>The separate iCloud+ plan duplicates it — <b class="num">$36/yr</b> for nothing</div>
+          <div><span class="tick" style="color:var(--amber)">▲</span>The separate iCloud+ plan duplicates it, <b class="num">$36/yr</b> for nothing</div>
         </div>
       </div>
       <div class="card hardblock" style="background:rgba(20,58,61,.04);border-color:var(--hairline)">
         <div class="t" style="color:var(--ink)">Only you can cancel this one</div>
-        <p>Apple doesn't let anyone cancel an Apple-billed subscription except you — even with your approval. It takes about 20 seconds:</p>
+        <p>Apple doesn't let anyone cancel an Apple-billed subscription except you, even with your approval. It takes about 20 seconds:</p>
         <div class="steps" style="margin-top:8px">
           <div class="step">Open <b>Settings</b> → tap your name</div>
           <div class="step"><b>Subscriptions</b> → <b>iCloud+</b></div>
-          <div class="step">Tap <b>Cancel subscription</b> — your Apple One storage takes over automatically</div>
+          <div class="step">Tap <b>Cancel subscription</b>, your Apple One storage takes over automatically</div>
         </div>
       </div>
       <div class="card" style="border-color:var(--ink)" id="appleBtns">
         <div class="btnrow">
-          <button class="btn primary" onclick="appleDone()">Done — I cancelled it</button>
-          <button class="btn ghost" onclick="toast('Noted — saved as a standing instruction: keep both')">Keep both</button>
+          <button class="btn primary" onclick="appleDone()">Done, I cancelled it</button>
+          <button class="btn ghost" onclick="toast('Noted, saved as a standing instruction: keep both')">Keep both</button>
         </div>
       </div>
       <div class="card hideme" id="appleWatch">
-        <div class="prog"><span class="tick">✓</span>Got it — I'll confirm it on your next Apple charge and report in Activity.</div>
+        <div class="prog"><span class="tick">✓</span>Got it, I'll confirm it on your next Apple charge and report in Activity.</div>
       </div>
     </div>
   </section>
@@ -1122,25 +1122,25 @@
 
       <div class="card" style="border-left:3px solid var(--ink)">
         <div class="eyebrow">A bill that looks wrong</div>
-        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">Send it to me — I'll check it against what you actually owe and fight it if it's off. Or connect your email and I'll catch new bills, statements &amp; EOBs as they arrive.</p>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:12px">Send it to me, I'll check it against what you actually owe and fight it if it's off. Or connect your email and I'll catch new bills, statements &amp; EOBs as they arrive.</p>
         <div class="btnrow">
-          <button class="btn primary" onclick="go('chat',true)">Send me a bill — I'll check it</button>
+          <button class="btn primary" onclick="go('chat',true)">Send me a bill, I'll check it</button>
         </div>
-        <div class="why" onclick="openOauth()">or connect email — I'll watch for bills &amp; statements</div>
+        <div class="why" onclick="openOauth()">or connect email, I'll watch for bills &amp; statements</div>
       </div>
 
       <div class="card empty">
         <div class="eyebrow">Net worth</div>
-        <p>See your whole picture here — accounts, investments, your home. Read-only, via Plaid.</p>
+        <p>See your whole picture here, accounts, investments, your home. Read-only, via Plaid.</p>
         <div class="btnrow">
           <button class="btn primary" onclick="openPlaid()">Connect accounts</button>
         </div>
-        <div class="why" onclick="toast('Tell me your address in chat — I\'ll estimate your home\'s value, no connection needed')">or start manually — try your home address</div>
+        <div class="why" onclick="toast('Tell me your address in chat, I\'ll estimate your home\'s value, no connection needed')">or start manually, try your home address</div>
       </div>
 
       <div class="card empty">
         <div class="eyebrow">Subscriptions</div>
-        <p>I'll spot recurring subscriptions and price creep in your transactions — connect your accounts, read-only via Plaid.</p>
+        <p>Connect your accounts and I'll spot recurring subscriptions and price creep in your transactions, read-only via Plaid.</p>
         <div class="btnrow">
           <button class="btn primary" onclick="openPlaid()">Connect accounts</button>
         </div>
@@ -1164,12 +1164,12 @@
 
   <div class="sheet-back" id="plaidSheet">
     <div class="sheet">
-      <h4>Connect accounts — via Plaid</h4>
+      <h4>Connect accounts, via Plaid</h4>
       <div class="sub2">Read-only access to balances and transactions.</div>
       <div class="prog">
         <div><span class="tick">✓</span>See balances, transactions &amp; recurring charges</div>
-        <div><span class="tick" style="color:var(--red)">✕</span>Move money — not possible with this access</div>
-        <div><span class="tick" style="color:var(--red)">✕</span>See your bank password — Plaid tokenizes it</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>Move money, not possible with this access</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>See your bank password, Plaid tokenizes it</div>
       </div>
       <div class="vaultnote"><span class="lock">🔒</span><span>Disconnect anytime in You → Connected accounts.</span></div>
       <div class="btnrow">
@@ -1181,12 +1181,12 @@
 
   <div class="sheet-back" id="oauthSheet">
     <div class="sheet">
-      <h4>Connect Google — tim@tjsnyder.com</h4>
+      <h4>Connect Google, tim@tjsnyder.com</h4>
       <div class="sub2">Steward is requesting <b>read-only</b> access to your mail.</div>
       <div class="prog">
         <div><span class="tick">✓</span>Read bills, statements &amp; financial notices</div>
         <div><span class="tick" style="color:var(--red)">✕</span>Send, delete, or move anything</div>
-        <div><span class="tick" style="color:var(--red)">✕</span>Train on your data — ever</div>
+        <div><span class="tick" style="color:var(--red)">✕</span>Train on your data, ever</div>
       </div>
       <div class="vaultnote"><span class="lock">🔒</span><span>Revoke anytime in You → Connected accounts. Every access is in your audit log.</span></div>
       <div class="btnrow">
@@ -1199,16 +1199,16 @@
   <div class="sheet-back" id="paySheet">
     <div class="sheet">
       <h4>Let Steward act</h4>
-      <div class="sub2">Watching &amp; finding stays free. Acting — canceling, disputing, re-shopping — is the full plan.</div>
+      <div class="sub2">Watching &amp; finding stays free. Acting, canceling, disputing, re-shopping, is the full plan.</div>
       <div class="price num">$20<small>/mo · or $192/yr</small></div>
       <div class="prog">
         <div><span class="tick">✓</span>Every playbook, unlimited actions</div>
-        <div><span class="tick">✓</span>Always asks before acting — nothing automatic</div>
+        <div><span class="tick">✓</span>Always asks before acting, nothing automatic</div>
         <div><span class="tick">✓</span>Cancel in one tap. No retention games.</div>
       </div>
       <div class="vaultnote"><span>★</span><span><b>First-year promise:</b> if I don't find you more than I cost, year two is free.</span></div>
       <div class="btnrow">
-        <button class="btn primary" onclick="paySubscribe()">Start — $20/mo</button>
+        <button class="btn primary" onclick="paySubscribe()">Start, $20/mo</button>
         <button class="btn ghost" onclick="payFree()">Stay free</button>
       </div>
     </div>
@@ -1216,7 +1216,7 @@
 
   <div class="sheet-back" id="credSheet">
     <div class="sheet">
-      <h4 id="credTitle">One Medical — patient portal</h4>
+      <h4 id="credTitle">One Medical, patient portal</h4>
       <div class="sub2" id="credSub">Steward signs in as you, only to retrieve your documents.</div>
       <label>Username or email</label>
       <input id="credUser" placeholder="tim@tjsnyder.com">
@@ -1277,20 +1277,20 @@
     show('actFeed', !state.cold);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
-      p === 'resolved' ? 'Won — One Medical corrected the bill, $214 verified back. Activity closed.'
-      : p === 'appealed' ? "Round 2 is in — appeal filed with Anthem, and I'm watching the clock for you."
-      : p === 'rejected' ? 'One Medical said no — round two is drafted and waiting on you.'
-      : p === 'sent' ? 'A productive week — dispute sent and being tracked, and two wins verified on your statements.'
-      : (state.investigated ? 'A solid week — two wins verified, and one decision waiting on you.'
-      : 'A quiet week — two wins verified, and one thing worth a look.');
-    const cm = ({prompt:['Open','pend','New bill noticed'], found:['Needs you','pend','Dispute drafted — your call'],
-      sent:['Watching','pend','Filed · response typically 7–10 days'], rejected:['Needs you','pend','Rejected — round 2 ready'],
-      appealed:['Watching','pend','Appeal with Anthem · 30-day clock'], dismissed:['Paused','draft','Paused — your call'],
-      resolved:['Closed','ok','Won — $214 verified back']})[p] || ['Open','pend','New bill noticed'];
+      p === 'resolved' ? 'Won, One Medical corrected the bill, $214 verified back. Activity closed.'
+      : p === 'appealed' ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
+      : p === 'rejected' ? 'One Medical said no, round two is drafted and waiting on you.'
+      : p === 'sent' ? 'A productive week, dispute sent and being tracked, and two wins verified on your statements.'
+      : (state.investigated ? 'A solid week, two wins verified, and one decision waiting on you.'
+      : 'A quiet week, two wins verified, and one thing worth a look.');
+    const cm = ({prompt:['Open','pend','New bill noticed'], found:['Needs you','pend','Dispute drafted, your call'],
+      sent:['Watching','pend','Filed · response typically 7–10 days'], rejected:['Needs you','pend','Rejected, round 2 ready'],
+      appealed:['Watching','pend','Appeal with Anthem · 30-day clock'], dismissed:['Paused','draft','Paused, your call'],
+      resolved:['Closed','ok','Won, $214 verified back']})[p] || ['Open','pend','New bill noticed'];
     show('investigatingEvent', state.investStarted && p === 'prompt');
     document.getElementById('invEvtSub').textContent = state.origin === 'ask'
-      ? 'Opened from Ask Steward — bill read, your EOB is next.'
-      : 'From the email notice — pulling the bill from their portal.';
+      ? 'Opened from Ask Steward, bill read, your EOB is next.'
+      : 'From the email notice, pulling the bill from their portal.';
     document.getElementById('ctSub').textContent = cm[0] + ' · ' + cm[2];
     document.getElementById('activityCount').textContent =
       8 + (['sent', 'rejected'].includes(p) ? 1 : 0) + (['appealed', 'resolved'].includes(p) ? 2 : 0)
@@ -1322,14 +1322,14 @@
     render();
   }
   const MSESS = {
-    sarah:{title:"Sarah — dentist dispute",sub:"Watching",lines:["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone — I've sent it and I'm watching for the response. Household members approve their own items."]},
-    overdraft:{title:"Recovered overdraft fee",sub:"Closed · +$45",lines:["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver — granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]},
-    paramount:{title:"Cancelled Paramount+",sub:"Closed · +$12/mo",lines:["Paramount+ went unused for 4 months.","You approved the cancellation Monday — confirmed, and I verified no charge on your June statement. That's $12/mo back."]},
-    sweep:{title:"Weekly sweep",sub:"Done · all clear",lines:["Weekly sweep — I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]},
-    correction:{title:"Correction — flag withdrawn",sub:"Self-caught · nothing sent",lines:["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws — the charge is correct. I withdrew the flag before anything went out."]},
-    kitchen:{title:"Kitchen remodel",sub:"Chat · Tuesday",lines:["You asked whether you could afford the kitchen remodel.","Short version: yes — about $40k works, with your emergency fund untouched and on the timeline you mentioned."]},
-    hsa:{title:"How HSAs work",sub:"Chat · Jun 5",lines:["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical — and the balance is yours to keep, no use-it-or-lose-it."]},
-    hulu:{title:"Hulu",sub:"Cancelled · +$18/mo",lines:["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","I cancelled the standalone plan — confirmation #4F7-220. It stays active until Jul 7, and I'll verify no charge after Jul 8. That's $216/yr back."]},
+    sarah:{title:"Sarah, dentist dispute",sub:"Watching",lines:["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone, I've sent it and I'm watching for the response. Household members approve their own items."]},
+    overdraft:{title:"Recovered overdraft fee",sub:"Closed · +$45",lines:["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver, granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]},
+    paramount:{title:"Cancelled Paramount+",sub:"Closed · +$12/mo",lines:["Paramount+ went unused for 4 months.","You approved the cancellation Monday, confirmed, and I verified no charge on your June statement. That's $12/mo back."]},
+    sweep:{title:"Weekly sweep",sub:"Done · all clear",lines:["Weekly sweep, I checked 41 new charges against your patterns and merchants.","Nothing unusual. All clear. I run this every week and only surface what's worth your time."]},
+    correction:{title:"Correction, flag withdrawn",sub:"Self-caught · nothing sent",lines:["I'd flagged a $45 lab fee on your One Medical bill as a possible duplicate.","On a closer read of the EOB, it's two distinct blood draws, the charge is correct. I withdrew the flag before anything went out."]},
+    kitchen:{title:"Kitchen remodel",sub:"Chat · Tuesday",lines:["You asked whether you could afford the kitchen remodel.","Short version: yes, about $40k works, with your emergency fund untouched and on the timeline you mentioned."]},
+    hsa:{title:"How HSAs work",sub:"Chat · Jun 5",lines:["You asked how HSAs work.","Tax-free going in, grows untaxed, and tax-free coming out for medical, and the balance is yours to keep, no use-it-or-lose-it."]},
+    hulu:{title:"Hulu",sub:"Cancelled · +$18/mo",lines:["Hulu's price crept from $13 to $18, and your Disney+ bundle already includes Hulu with ads.","I cancelled the standalone plan, confirmation #4F7-220. It stays active until Jul 7, and I'll verify no charge after Jul 8. That's $216/yr back."]},
   };
   function openSess(id){
     const m = MSESS[id];
@@ -1340,7 +1340,7 @@
     go('session');
   }
   function askUpload() {
-    if (state.investStarted) { toast('Already tracking that bill — it has a thread'); return; }
+    if (state.investStarted) { toast('Already tracking that bill, it has a thread'); return; }
     state.origin = 'ask';
     state.investStarted = true;
     const sc = document.getElementById('chatScroll');
@@ -1348,9 +1348,9 @@
     const add = html => { const d = document.createElement('div'); d.innerHTML = html;
       while (d.firstChild) sc.insertBefore(d.firstChild, anchor); sc.scrollTop = sc.scrollHeight; };
     add('<div class="msg user"><div class="bubble">📄 one-medical-bill.pdf</div></div>');
-    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it — a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened a session for it.</div></div>'), 600);
+    setTimeout(() => add('<div class="msg steward"><div class="who">Steward</div><div class="bubble">Got it, a <b class="num">$300</b> One Medical bill. This needs tracking, so I opened a session for it.</div></div>'), 600);
     setTimeout(() => {
-      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New session</div><h5>One Medical dispute</h5><p>I\'ll track the whole job here — every step, until it\'s closed. Tap to follow it.</p></div>');
+      add('<div class="inline-card action" style="cursor:pointer" onclick="go(\'casethread\')"><div class="eyebrow">New session</div><h5>One Medical dispute</h5><p>I\'ll track the whole job here, every step, until it\'s closed. Tap to follow it.</p></div>');
       document.getElementById('invEmailOpen').classList.add('hideme');
       document.getElementById('invAskOpen').classList.remove('hideme');
       document.getElementById('inv3').classList.remove('hideme');
@@ -1380,8 +1380,8 @@
   function closePlaid() { document.getElementById('plaidSheet').classList.remove('open'); }
   function plaidAllow() {
     closePlaid();
-    state.cold = false;  // accounts connected — the home graduates
-    toast('6 accounts connected — building your picture, 7 subscriptions flagged');
+    state.cold = false;  // accounts connected, the home graduates
+    toast('6 accounts connected, building your picture, 7 subscriptions flagged');
     go('home', true);
   }
   function oauthAllow() {
@@ -1389,17 +1389,17 @@
     state.cold = false;  // any connection graduates the home off the cold state
     closeOauth();
     go('home', true);
-    toast('Email connected — I\'ll catch new bills, statements & EOBs as they arrive');
+    toast('Email connected, I\'ll catch new bills, statements & EOBs as they arrive');
   }
   function openPay() { document.getElementById('paySheet').classList.add('open'); }
   function paySubscribe() {
     document.getElementById('paySheet').classList.remove('open');
-    toast("Welcome aboard — let's go get that $340");
+    toast("Welcome aboard, let's go get that $340");
     go('home', true);
   }
   function payFree() {
     document.getElementById('paySheet').classList.remove('open');
-    toast("Staying free — I'll keep finding; upgrade whenever");
+    toast("Staying free, I'll keep finding; upgrade whenever");
     go('home', true);
   }
   function back() { go(stack.pop() || 'home', false); stack.pop(); }
@@ -1414,11 +1414,11 @@
     const card = document.getElementById('attentionCard');
     card.classList.add('bye');
     setTimeout(() => { state.phase = 'dismissed'; card.classList.remove('bye'); render(); }, 260);
-    toast('Okay — it stays in Needs attention');
+    toast('Okay, it stays in Needs attention');
   }
   function promptDismiss() {
     state.phase = 'dismissed'; render();
-    toast("Okay — I'll leave it. Ask me anytime to take a look");
+    toast("Okay, I'll leave it. Ask me anytime to take a look");
   }
   function toggleAttention() { location.reload(); }  // bell = demo restart
   function threadStep(id) {
@@ -1439,7 +1439,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives here, in its session. For anything else — budgets, spending, a new bill — ask me in chat.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">Everything about this dispute lives here, in its session. For anything else, budgets, spending, a new bill, ask me in chat.</div>';
       setTimeout(() => { sc.appendChild(r); sc.scrollTop = sc.scrollHeight; }, 450);
     }
     sc.scrollTop = sc.scrollHeight;
@@ -1456,15 +1456,15 @@
     document.getElementById('mfa2Form').classList.add('hideme');
     document.getElementById('mfa2Done').classList.remove('hideme');
     document.getElementById('d2link').classList.remove('hideme');
-    toast('Verified — checking status');
+    toast('Verified, checking status');
   }
   function resolveCase() {
     state.phase = 'resolved'; render();
-    toast('Closed — $214 back, verified');
+    toast('Closed, $214 back, verified');
   }
   function dismissRejected() {
     state.phase = 'dismissed'; render();
-    toast('Okay — round 2 stays available until Jul 30');
+    toast('Okay, round 2 stays available until Jul 30');
   }
   function fileAppeal() {
     document.getElementById('inv8btns').classList.add('hideme');
@@ -1479,7 +1479,7 @@
     document.getElementById('invMfaDone').classList.remove('hideme');
     const sc = document.getElementById('caseScroll');
     const reveal = id => { document.getElementById(id).classList.remove('hideme'); sc.scrollTop = sc.scrollHeight; };
-    toast('Verified — continuing');
+    toast('Verified, continuing');
     setTimeout(() => reveal('inv4'), 500);
     setTimeout(() => { reveal('inv5'); state.phase = 'found'; state.investigated = true; render(); }, 1400);
   }
@@ -1488,11 +1488,11 @@
   function openCred(which) {
     credTarget = which;
     const meta = {
-      om:     ['One Medical — patient portal', 'Steward signs in as you, only to retrieve your documents.'],
-      an:     ['Anthem — member portal', 'Steward signs in as you, only to retrieve your documents.'],
-      hulu:   ['Hulu — your account', 'Steward signs in as you, only to cancel this subscription.'],
-      ancold: ['Anthem — member portal', 'Steward signs in as you, only to read your coverage details.'],
-      omcold: ['One Medical — billing portal', 'Steward signs in as you, only to submit your reply.'],
+      om:     ['One Medical, patient portal', 'Steward signs in as you, only to retrieve your documents.'],
+      an:     ['Anthem, member portal', 'Steward signs in as you, only to retrieve your documents.'],
+      hulu:   ['Hulu, your account', 'Steward signs in as you, only to cancel this subscription.'],
+      ancold: ['Anthem, member portal', 'Steward signs in as you, only to read your coverage details.'],
+      omcold: ['One Medical, billing portal', 'Steward signs in as you, only to submit your reply.'],
     }[which];
     document.getElementById('credTitle').textContent = meta[0];
     document.getElementById('credSub').textContent = meta[1];
@@ -1545,10 +1545,10 @@
     document.getElementById('subDone').classList.add('hideme');
     document.getElementById('huluChip').textContent = 'FLAGGED';
     render();
-    toast('Resubscribed — Hulu is active again');
+    toast('Resubscribed, Hulu is active again');
   }
   function keepHulu() {
-    toast('Noted — saved as a standing instruction: keep Hulu');
+    toast('Noted, saved as a standing instruction: keep Hulu');
     back();
   }
   function appleDone() {
@@ -1598,7 +1598,7 @@
     } else {
       const r = document.createElement('div');
       r.className = 'msg steward';
-      r.innerHTML = '<div class="who">Steward</div><div class="bubble">I\'d answer that from your financial graph. Your One Medical dispute has its own session — everything about it stays there.</div>';
+      r.innerHTML = '<div class="who">Steward</div><div class="bubble">I\'d answer that from your financial graph. Your One Medical dispute has its own session, everything about it stays there.</div>';
       setTimeout(() => { scroll.insertBefore(r, document.getElementById('ho1')); scroll.scrollTop = scroll.scrollHeight; }, 450);
     }
     scroll.scrollTop = scroll.scrollHeight;
@@ -1622,7 +1622,7 @@
     empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
 
-  // Boot straight into the empty (cold) state — no onboarding.
+  // Boot straight into the empty (cold) state, no onboarding.
   state.cold = true;
   go('home', true);
 </script>
