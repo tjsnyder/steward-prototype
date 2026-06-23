@@ -497,6 +497,17 @@
         </div>
       </div>
 
+      <div class="card" id="dManual" data-cat="needs" style="display:none;padding:4px 18px;border-left:3px solid var(--ink)">
+        <div class="event clk" onclick="openSession('om')">
+          <span class="ico">⚑</span>
+          <div class="body">
+            <div class="t">One Medical dispute, needs you</div>
+            <div class="s">Their portal balked, I've handed you the ready-to-send dispute. Submit it and tell me.</div>
+          </div>
+          <div class="amt money num">$214</div>
+        </div>
+      </div>
+
       <div class="daylabel" id="dWatchHdr" data-cat="watching">On it · watching</div>
       <div class="card" id="dWatchCard" data-cat="watching" style="padding:4px 18px">
         <div class="event clk" id="dDispute" style="display:none" onclick="openSession('om')">
@@ -690,9 +701,10 @@
 
 <script>
   // Per-source progressive fill (D16): email lights bills/EOBs; accounts (Plaid) lights net worth, spending, subscriptions.
-  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false, plan: 'paid' };
+  const state = { phase: 'found', attention: true, sub: 'open', handoff: null, filter: 'all', email: false, accounts: false, plan: 'paid', chase: 'needs' };
   let active = 'ask';
   const isCold = () => !state.email && !state.accounts;
+  function requirePaid() { if (state.plan === 'paid') return true; toast('Acting is on the $20/mo plan, watching & finding stays free'); nav('plan'); return false; }
 
   let lastView = 'home';
   function nav(view) {
@@ -818,8 +830,8 @@
     const p = state.phase;
     const cold = isCold();
     const email = state.email, accounts = state.accounts;
-    const medNeeds = email && (p === 'found' || p === 'rejected');
-    const disputeWatching = email && ['verifying','sent','appealed','manual'].includes(p);
+    const medNeeds = email && ['found','rejected','manual'].includes(p);
+    const disputeWatching = email && ['verifying','sent','appealed'].includes(p);
     const disputeDone = email && p === 'resolved';
 
     // section empty-state gating (per source: finances needs accounts; home/activity need anything)
@@ -838,7 +850,7 @@
     document.getElementById('atWork').style.display = cold ? 'none' : '';
     document.getElementById('homeGlance').style.display = accounts ? '' : 'none';
     document.getElementById('homeReview').style.display = accounts ? '' : 'none';
-    document.getElementById('homeUpcoming').style.display = (accounts || email) ? '' : 'none';
+    document.getElementById('homeUpcoming').style.display = accounts ? '' : 'none';
     const rest = document.getElementById('homeConnectRest');
     if (!cold && !email) {
       rest.style.display = '';
@@ -868,19 +880,19 @@
     document.getElementById('dRejected').style.display = (email && p === 'rejected') ? '' : 'none';
     document.getElementById('dPausedHdr').style.display = (email && p === 'dismissed') ? '' : 'none';
     document.getElementById('dPaused').style.display = (email && p === 'dismissed') ? '' : 'none';
-    document.getElementById('dDispute').style.display = (email && ['verifying','sent','manual'].includes(p)) ? '' : 'none';
-    if (email && ['verifying','sent','manual'].includes(p)) {
+    document.getElementById('dManual').style.display = (email && p === 'manual') ? '' : 'none';
+    document.getElementById('dDispute').style.display = (email && ['verifying','sent'].includes(p)) ? '' : 'none';
+    if (email && ['verifying','sent'].includes(p)) {
       document.querySelector('#dDispute .t').textContent = p === 'sent' ? 'Sent medical bill dispute' : 'Filing dispute with One Medical';
       document.querySelector('#dDispute .s').textContent =
         p === 'verifying' ? 'Verifying your identity to file, finishing now.'
-        : p === 'manual' ? 'Their portal needs a hand, I gave you the ready-to-send dispute.'
         : 'One Medical billed $300 vs. EOB $86, you approved. Tracking the response, typically 7–10 days.';
     }
     document.getElementById('dAppeal').style.display = (email && p === 'appealed') ? '' : 'none';
     document.getElementById('dSweepWatch').style.display = accounts ? '' : 'none';
     document.getElementById('dWatchHdr').style.display = (disputeWatching || accounts) ? '' : 'none';
     document.getElementById('dWatchCard').style.display = (disputeWatching || accounts) ? '' : 'none';
-    document.getElementById('dDoneHdr').style.display = disputeDone ? '' : 'none';
+    document.getElementById('dDoneHdr').style.display = (!cold) ? '' : 'none';
     document.getElementById('dResolvedCard').style.display = disputeDone ? '' : 'none';
     document.getElementById('dClosedEmpty').style.display = (!cold && !disputeDone) ? '' : 'none';
 
@@ -889,11 +901,12 @@
     document.getElementById('dWatchCount').textContent = watching;
     document.getElementById('dCharges').textContent = accounts ? '41' : '0';
     document.getElementById('wkLead').textContent =
-      p === 'resolved' ? 'Won, One Medical corrected the bill and $214 is verified back, your first recovery.'
-      : p === 'appealed' ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
-      : p === 'rejected' ? 'One Medical said no, round two is drafted and waiting on you.'
-      : p === 'sent' ? "Dispute filed and being tracked. I'll let you know the moment they respond."
-      : email ? 'I found one bill worth disputing, your call on whether I file it.'
+      (email && p === 'resolved') ? 'Won, One Medical corrected the bill and $214 is verified back, your first recovery.'
+      : (email && p === 'appealed') ? "Round 2 is in, appeal filed with Anthem, and I'm watching the clock for you."
+      : (email && p === 'rejected') ? 'One Medical said no, round two is drafted and waiting on you.'
+      : (email && p === 'sent') ? "Dispute filed and being tracked. I'll let you know the moment they respond."
+      : (email && (p === 'found' || p === 'manual')) ? 'I found one bill worth disputing, your call on whether I file it.'
+      : accounts ? "I'm watching your accounts and subscriptions. Nothing needs you yet."
       : 'Connect a source and I\'ll start finding money worth recovering.';
 
     document.getElementById('subHuluRev').innerHTML = state.sub === 'cancelled'
@@ -922,7 +935,7 @@
     empty.style.display = (state.filter !== 'all' && !anyVisible) ? '' : 'none';
   }
   function dismissD() { state.phase = 'dismissed'; render(); toast('Paused, it stays an open decision in Activity'); }
-  function sendD() { state.phase = 'verifying'; render(); openSession('om'); toast('One Medical needs a verification code'); }
+  function sendD() { if (!requirePaid()) return; state.phase = 'verifying'; render(); openSession('om'); toast('One Medical needs a verification code'); }
   function webMfaSubmit() {
     const c = (document.getElementById('webMfa') || {}).value || '';
     if (c.trim().length < 4) { toast('Enter the code One Medical texted you'); return; }
@@ -933,9 +946,9 @@
     const msg = {rejected:'One Medical replied, rejected. Round 2 ready.', appealed:'Appeal filed ✓ Watching the 30-day clock', resolved:'Won, $214 back, verified', found:'Resumed, back on your call', manual:'Their portal balked, here\'s the ready-to-send dispute', sent:'Logged as sent, I\'ll track the response'}[ph];
     if (msg) toast(msg);
   }
-  function webCancelHulu(){ state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
+  function webCancelHulu(){ if (!requirePaid()) return; state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
   function webResubHulu(){ state.sub = 'open'; render(); openSession('hulu'); toast('Resubscribed, Hulu is active again'); }
-  function webHandoffSend(){ state.handoff = 'sent'; render(); openSession('handoff'); toast('Sent ✓ Tracking the resubmission'); }
+  function webHandoffSend(){ if (!requirePaid()) return; state.handoff = 'sent'; render(); openSession('handoff'); toast('Sent ✓ Tracking the resubmission'); }
   function dSend() {
     const box = document.getElementById('dChatBox');
     const text = box.value.trim(); if (!text) return;
@@ -974,7 +987,7 @@
     if (!state.email && !state.accounts) return '<p class="note" style="margin:0">Nothing connected yet. Connect a source from Home or Finances, I only ever get read-only access.</p>';
     if (state.email) h += connRow('Email · tim@tjsnyder.com', 'Read-only · bills, statements &amp; EOBs · last read 2m ago', 'active', 'email');
     if (state.accounts) {
-      h += connRow('Chase · checking + savings', 'Read-only · balances &amp; transactions · sign-in expired', 'needs', 'chase');
+      h += connRow('Chase · checking + savings', state.chase === 'needs' ? 'Read-only · balances &amp; transactions · sign-in expired' : 'Read-only · balances &amp; transactions · synced just now', state.chase, 'chase');
       h += connRow('5 more institutions · via Plaid', 'Read-only · balances &amp; transactions · synced 1h ago', 'active', 'accounts');
     }
     return h;
@@ -984,7 +997,7 @@
     render();
     toast(key === 'email' ? 'Email disconnected, I\'ve stopped reading your mail' : 'Accounts disconnected, access revoked');
   }
-  function reconnect(key) { toast('Reconnected, Chase is syncing again'); }
+  function reconnect(key) { if (key === 'chase') state.chase = 'active'; render(); toast('Reconnected, Chase is syncing again'); }
   function buildAudit() {
     const p = state.phase, ev = [];
     if (state.accounts) { ev.push(['Connected 6 accounts via Plaid', 'read-only · balances & transactions', 'access']); ev.push(['Weekly sweep ran', 'checked 41 charges against your patterns, nothing flagged', 'action']); }
