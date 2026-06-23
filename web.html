@@ -333,6 +333,11 @@
       <div class="pagehead">
         <h1>Finances</h1>
       </div>
+      <div class="askbar">
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <input id="finAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')askSend('finAsk')">
+        <button class="send" onclick="askSend('finAsk')">➤</button>
+      </div>
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
           <div class="eyebrow" style="margin-bottom:8px">Finances</div>
@@ -439,6 +444,11 @@
     <section class="dview" data-view="activity">
       <div class="pagehead">
         <h1>Activity</h1>
+      </div>
+      <div class="askbar">
+        <button class="attach" onclick="toast('Attach any bill or document, I\'ll read it')">＋</button>
+        <input id="actAsk" placeholder="Message Steward… or send a bill" onkeydown="if(event.key==='Enter')askSend('actAsk')">
+        <button class="send" onclick="askSend('actAsk')">➤</button>
       </div>
       <div class="coldempty">
         <div class="card" style="text-align:center;padding:38px 22px">
@@ -806,8 +816,9 @@
     const s = document.getElementById('chatSuggest'); if (s) s.remove();
     document.getElementById('dChatBox').value = t; dSend();
   }
-  function homeAskSend() {
-    const box = document.getElementById('homeAsk');
+  function homeAskSend() { askSend('homeAsk'); }
+  function askSend(id) {
+    const box = document.getElementById(id);
     const text = box.value.trim();
     box.value = '';
     newChat(text);
