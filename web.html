@@ -728,10 +728,11 @@
   }
   function omBuild() {
     const p = state.phase;
-    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won', dismissed:'Paused · your call'}[p] || 'Needs you';
+    const head = {found:'Needs you', verifying:'Verifying with One Medical', sent:'Filed · watching', rejected:'Needs you · round 2', appealed:'Watching · appeal filed', resolved:'Closed · won', dismissed:'Paused · your call', manual:'Portal trouble · ready for you'}[p] || 'Needs you';
     let body = '';
-    if (p === 'found') body = `<div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">File the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
-    else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821. Enter it and I'll finish filing.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div>`;
+    if (p === 'found') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">I can log in to One Medical's portal and submit this for you. You've given me read-only access so far, so I'll ask before each portal action.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="sendD()">Yes, log in and file it</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Not now</button></div>`;
+    else if (p === 'verifying') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical texted a code to ···4821 to authorize the sign-in. Enter it and I'll finish filing, I'll wait as long as you need.</div><div style="margin-top:8px;display:flex;gap:8px"><input id="webMfa" inputmode="numeric" maxlength="6" placeholder="123456" style="flex:1;border:1px solid var(--hairline);border-radius:6px;padding:8px 10px;font-size:14px;letter-spacing:.25em;font-family:inherit;background:var(--canvas)"><button class="btn primary" style="padding:7px 14px;font-size:12px" onclick="webMfaSubmit()">Continue</button></div><div class="advance" onclick="webPhase('manual')">▸ Can't get the code, or portal won't cooperate? I'll hand you the ready-to-send dispute</div>`;
+    else if (p === 'manual') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">One Medical's portal rejected the automated sign-in, their site changed since last time. I'm not stuck: here's your dispute, ready to paste into their portal or send by email. I'll track the response either way.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="toast('Copied, paste it into One Medical\\'s portal or email')">Copy the dispute</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="webPhase('sent')">I've sent it</button></div>`;
     else if (p === 'sent') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Filed at 9:36 AM · confirmation #D-7741. Tracking the response (7–10 days).</div><div class="advance" onclick="webPhase('rejected')">▸ their answer arrives</div>`;
     else if (p === 'rejected') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">They said no, "charges are consistent with our rates." Your EOB says otherwise, so round 2 is an Anthem member appeal, and your EOB is the strongest version of the argument.</div><div style="margin-top:8px;display:flex;gap:8px"><button class="btn primary" style="padding:7px 12px;font-size:12px" onclick="webPhase('appealed')">File the appeal</button><button class="btn ghost" style="padding:7px 12px;font-size:12px" onclick="dismissD()">Let it go</button></div>`;
     else if (p === 'appealed') body = `<div style="margin-top:8px;font-size:12px;color:var(--ink-2)">✓ Appeal filed with Anthem, 30-day clock. I'll escalate to state review if they miss it.</div><div class="advance" onclick="webPhase('resolved')">▸ Anthem rules</div>`;
@@ -744,7 +745,7 @@
   }
   const SMETA = {
     ask:    { title: 'Ask Steward',           sub: () => '',                                          build: askBuild },
-    om:     { title: 'One Medical dispute',   sub: () => ({found:'Needs you · draft ready',verifying:'Verifying…',sent:'Watching · filed',rejected:'Needs you · round 2',appealed:'Watching · appeal',resolved:'Closed · won',dismissed:'Paused · your call'}[state.phase] || ''), build: omBuild },
+    om:     { title: 'One Medical dispute',   sub: () => ({found:'Needs you · draft ready',verifying:'Verifying…',sent:'Watching · filed',rejected:'Needs you · round 2',appealed:'Watching · appeal',resolved:'Closed · won',dismissed:'Paused · your call',manual:'Action needed · ready for you'}[state.phase] || ''), build: omBuild },
     sarah:  { title: 'Sarah, dentist dispute',sub: () => 'Watching · she approved',                    build: () => recap(["Sarah's dentist billed out-of-network rates in error.","She reviewed and approved the dispute from her phone, I've sent it and I'm watching for the response. Household members approve their own items."]) },
     overdraft:{ title:'Recovered overdraft fee', sub: () => 'Closed · +$45',                             build: () => recap(["Chase charged a $45 overdraft fee on Jun 8.","I requested a waiver, granted on first request (you're a 12-year customer). The refund posted, and I verified it on your statement."]) },
     paramount:{ title:'Cancelled Paramount+',  sub: () => 'Closed · +$12/mo',                          build: () => recap(["Paramount+ went unused for 4 months.","You approved the cancellation Monday, confirmed, and I verified no charge on your June statement. That's $12/mo back."]) },
@@ -818,7 +819,7 @@
     const cold = isCold();
     const email = state.email, accounts = state.accounts;
     const medNeeds = email && (p === 'found' || p === 'rejected');
-    const disputeWatching = email && ['verifying','sent','appealed'].includes(p);
+    const disputeWatching = email && ['verifying','sent','appealed','manual'].includes(p);
     const disputeDone = email && p === 'resolved';
 
     // section empty-state gating (per source: finances needs accounts; home/activity need anything)
@@ -867,10 +868,13 @@
     document.getElementById('dRejected').style.display = (email && p === 'rejected') ? '' : 'none';
     document.getElementById('dPausedHdr').style.display = (email && p === 'dismissed') ? '' : 'none';
     document.getElementById('dPaused').style.display = (email && p === 'dismissed') ? '' : 'none';
-    document.getElementById('dDispute').style.display = (email && ['verifying','sent'].includes(p)) ? '' : 'none';
-    if (email && ['verifying','sent'].includes(p)) {
-      document.querySelector('#dDispute .t').textContent = p === 'verifying' ? 'Filing dispute with One Medical' : 'Sent medical bill dispute';
-      document.querySelector('#dDispute .s').textContent = p === 'verifying' ? 'Verifying your identity to file, finishing now.' : 'One Medical billed $300 vs. EOB $86, you approved. Tracking the response, typically 7–10 days.';
+    document.getElementById('dDispute').style.display = (email && ['verifying','sent','manual'].includes(p)) ? '' : 'none';
+    if (email && ['verifying','sent','manual'].includes(p)) {
+      document.querySelector('#dDispute .t').textContent = p === 'sent' ? 'Sent medical bill dispute' : 'Filing dispute with One Medical';
+      document.querySelector('#dDispute .s').textContent =
+        p === 'verifying' ? 'Verifying your identity to file, finishing now.'
+        : p === 'manual' ? 'Their portal needs a hand, I gave you the ready-to-send dispute.'
+        : 'One Medical billed $300 vs. EOB $86, you approved. Tracking the response, typically 7–10 days.';
     }
     document.getElementById('dAppeal').style.display = (email && p === 'appealed') ? '' : 'none';
     document.getElementById('dSweepWatch').style.display = accounts ? '' : 'none';
@@ -926,7 +930,7 @@
   }
   function webPhase(ph) {
     state.phase = ph; render(); openSession('om');
-    const msg = {rejected:'One Medical replied, rejected. Round 2 ready.', appealed:'Appeal filed ✓ Watching the 30-day clock', resolved:'Won, $214 back, verified', found:'Resumed, back on your call'}[ph];
+    const msg = {rejected:'One Medical replied, rejected. Round 2 ready.', appealed:'Appeal filed ✓ Watching the 30-day clock', resolved:'Won, $214 back, verified', found:'Resumed, back on your call', manual:'Their portal balked, here\'s the ready-to-send dispute', sent:'Logged as sent, I\'ll track the response'}[ph];
     if (msg) toast(msg);
   }
   function webCancelHulu(){ state.sub = 'cancelled'; render(); openSession('hulu'); toast('Cancelled Hulu ✓ $216/yr back · I\'ll verify no charge after Jul 8'); }
