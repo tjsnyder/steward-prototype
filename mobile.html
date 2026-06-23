@@ -8,9 +8,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --canvas:#F7F8FA; --card:#FFFFFF; --ink:#143A3D; --ink-2:#334E50;
+    --canvas:#EDF0F3; --card:#FFFFFF; --ink:#143A3D; --ink-2:#334E50;
     --money:#0A7C5A; --text:#1C2526; --muted:#66757A; --hairline:#E2E7EA;
-    --amber:#B07C10; --red:#B0421A; --r:8px;
+    --amber:#B07C10; --red:#B0421A; --r:10px; --rc:16px;
+    --shadow:0 1px 2px rgba(20,58,61,.05), 0 6px 20px rgba(20,58,61,.06);
+    --shadow-sm:0 1px 2px rgba(20,58,61,.05), 0 2px 8px rgba(20,58,61,.05);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   :focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:4px}
@@ -37,16 +39,20 @@
   .bell .dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--amber);border:1.5px solid var(--canvas)}
   .avatar{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none}
   .navhead{display:flex;align-items:center;gap:12px;padding:8px 20px 14px;flex:none}
-  .navhead .back{font-size:24px;color:var(--ink);line-height:1;cursor:pointer;background:none;border:none;font-family:inherit;padding:0 4px}
+  .navhead .back{width:40px;height:40px;margin-left:-8px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;color:var(--ink);line-height:1;cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
   .navhead .title{font-size:17px;font-weight:700;color:var(--ink)}
   .navhead .sub{font-size:11px;color:var(--muted);margin-top:1px}
+  /* iOS-style large title on the primary surfaces (navheads without a back button) */
+  .navhead:not(:has(.back)){padding-top:12px;padding-bottom:8px}
+  .navhead:not(:has(.back)) .title{font-size:28px;letter-spacing:-.022em;line-height:1.1}
+  .navhead:not(:has(.back)) .sub{font-size:13px;margin-top:3px}
 
   .eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
   .chip{font-size:10.5px;font-weight:600;letter-spacing:.04em;border-radius:4px;padding:2px 7px;flex:none}
   .chip.ok{color:var(--money);background:rgba(10,124,90,.08)}
   .chip.pend{color:var(--amber);background:rgba(176,124,16,.1)}
   .chip.draft{color:var(--ink-2);background:rgba(51,78,80,.08);border:1px solid var(--hairline)}
-  .card{background:var(--card);border:1px solid var(--hairline);border-radius:var(--r);padding:16px;margin-bottom:12px}
+  .card{background:var(--card);border-radius:var(--rc);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
   .btn{border-radius:6px;padding:11px 0;font-size:14px;font-weight:600;text-align:center;cursor:pointer;font-family:inherit}
   .btn.primary{background:var(--ink);color:#fff;border:1px solid var(--ink)}
   .btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--hairline)}
@@ -91,7 +97,7 @@
   .attention h4{font-size:17px;font-weight:700;margin:2px 0 8px}
   .attention .evidence{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
   .figures{display:flex;gap:12px;margin:14px 0}
-  .figbox{flex:1;border:1px solid var(--hairline);border-radius:6px;padding:10px 12px;background:#FAFBFC}
+  .figbox{flex:1;border-radius:9px;padding:10px 12px;background:var(--canvas)}
   .figbox .l{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .figbox .v{font-size:17px;font-weight:700;margin-top:3px}
   .figbox .v.money{color:var(--money)}
@@ -102,6 +108,7 @@
 
   /* dock + tabs */
   .dock{border-top:1px solid var(--hairline);background:var(--card);padding:10px 16px 6px;flex:none}
+  body.immersive .view.active .dock{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
   .chatpill{display:flex;align-items:center;gap:10px;border:1px solid var(--hairline);border-radius:22px;
             padding:10px 16px;font-size:13.5px;color:var(--muted);background:var(--canvas);cursor:pointer}
   .tabbar{display:flex;justify-content:space-around;padding:8px 8px calc(14px + env(safe-area-inset-bottom));background:var(--card);flex:none;border-top:1px solid var(--hairline)}
@@ -116,13 +123,13 @@
   .msg .bubble{border-radius:10px;padding:11px 14px;font-size:14px;line-height:1.5}
   .msg.user{margin-left:auto}
   .msg.user .bubble{background:var(--ink);color:#fff;border-bottom-right-radius:3px}
-  .msg.steward .bubble{background:var(--card);border:1px solid var(--hairline);border-bottom-left-radius:3px}
+  .msg.steward .bubble{background:var(--card);box-shadow:var(--shadow-sm);border-bottom-left-radius:3px}
   .msg .who{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 4px 4px}
-  .inline-card{background:var(--card);border:1px solid var(--hairline);border-radius:10px;padding:14px;margin:4px 0 12px;max-width:92%}
-  .inline-card.action{border-color:var(--ink);border-left:3px solid var(--ink)}
+  .inline-card{background:var(--card);border-radius:14px;padding:14px;margin:4px 0 12px;max-width:92%;box-shadow:var(--shadow-sm)}
+  .inline-card.action{box-shadow:var(--shadow);border-left:3px solid var(--ink)}
   .inline-card h5{font-size:14.5px;font-weight:700;margin-bottom:4px}
   .inline-card p{font-size:13px;line-height:1.5;color:var(--ink-2)}
-  .recover{font-size:18px;font-weight:700;color:var(--money);margin:8px 0 2px}
+  .recover{font-size:18px;font-weight:700;color:var(--amber);margin:8px 0 2px}
   .recover small{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-left:6px;text-transform:uppercase}
   .bars{display:flex;align-items:flex-end;gap:7px;height:64px;margin:12px 2px 4px}
   .bars i{flex:1;background:rgba(10,124,90,.18);border-radius:2px 2px 0 0}
@@ -222,15 +229,23 @@
   /* toast */
   #toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;
          font-size:13px;font-weight:600;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;
-         transition:opacity .25s,transform .25s;white-space:nowrap;z-index:50}
+         transition:opacity .25s,transform .4s cubic-bezier(.16,1.3,.5,1);white-space:nowrap;z-index:50}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
   .toast-undo{margin-left:14px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:700}
   .coldlead{padding:2px 2px 6px}
   .coldlead h2{font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:6px;line-height:1.2}
   .coldlead > p{font-size:13.5px;line-height:1.55;color:var(--ink-2);margin-bottom:10px}
   .guardstrip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-  .guardstrip span{font-size:11px;font-weight:600;color:var(--ink-2);background:var(--card);border:1px solid var(--hairline);border-radius:20px;padding:3px 9px}
+  .guardstrip span{font-size:11px;font-weight:600;color:var(--ink-2);background:var(--card);border-radius:20px;padding:4px 10px;box-shadow:var(--shadow-sm)}
   .costline{font-size:12px;color:var(--muted);margin-bottom:4px}
+  /* motion */
+  @keyframes viewin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .view.active{animation:viewin .3s cubic-bezier(.22,1,.36,1)}
+  @keyframes stepin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .prog>div{animation:stepin .42s both cubic-bezier(.22,1,.36,1)}
+  .prog>div:nth-child(2){animation-delay:.12s}
+  .prog>div:nth-child(3){animation-delay:.24s}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -297,7 +312,7 @@
       <div class="card" id="mAtWork" style="border-left:3px solid var(--money)">
         <div class="eyebrow">Steward at work</div>
         <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 12px">
-          <span class="hero-amount money num" id="mRecovered" style="font-size:30px">$259</span>
+          <span class="hero-amount money num" id="mRecovered" style="font-size:30px">$0</span>
           <span style="font-size:13px;color:var(--muted)">recovered in June</span>
         </div>
         <div class="hero-split">
@@ -1078,9 +1093,13 @@
         <div class="hero-amount num">$284,610</div>
         <span class="delta num">▲ $3,120 (1.1%) this month</span>
         <div class="spark">
-          <svg width="100%" height="44" viewBox="0 0 330 44" preserveAspectRatio="none">
-            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6" fill="none" stroke="#0A7C5A" stroke-width="2"/>
-            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6 L330,44 L0,44 Z" fill="rgba(10,124,90,.06)"/>
+          <svg width="100%" height="50" viewBox="0 0 330 50" preserveAspectRatio="none">
+            <defs><linearGradient id="nwgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0A7C5A" stop-opacity="0.22"/>
+              <stop offset="1" stop-color="#0A7C5A" stop-opacity="0"/>
+            </linearGradient></defs>
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6 L330,50 L0,50 Z" fill="url(#nwgrad)"/>
+            <path d="M0,36 C30,34 45,28 70,29 C95,30 110,22 140,23 C170,24 185,15 215,17 C245,19 260,10 290,9 C305,8.5 320,7 330,6" fill="none" stroke="#0A7C5A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
           </svg>
         </div>
         <div class="hero-split">
@@ -1089,7 +1108,7 @@
         </div>
         <div class="hero-split" style="margin-top:8px">
           <div><div class="mini-label">Home (est.)</div><div class="mini-val num">$612,000</div></div>
-          <div><div class="mini-label">Mortgage</div><div class="mini-val num" style="color:var(--red)">−$492,530</div></div>
+          <div><div class="mini-label">Mortgage</div><div class="mini-val num" style="color:var(--ink-2)">−$492,530</div></div>
         </div>
       </div>
 
@@ -1498,7 +1517,7 @@
     document.querySelectorAll('.warm').forEach(e => e.classList.add('hideme')); // fabricated demo chat, always hidden (honest first-run)
 
     // honest numbers (accrue from real actions, no fabricated history)
-    const recovered = disputeDone ? '$214' : '$0';
+    const recovered = disputeDone ? 214 : 0;
     const actions = (disputeActive && ['sent','rejected','appealed','resolved'].includes(p) ? 1 : 0) + (huluDone ? 1 : 0) + (handoffOn ? 1 : 0);
     const watching = (disputeWatching ? 1 : 0) + (accounts ? 1 : 0);
     document.getElementById('wkLead').textContent =
@@ -1521,7 +1540,7 @@
     document.getElementById('actCharges').textContent = accounts ? '41' : '0';
     document.getElementById('activityTotal').textContent = recovered;
     // Steward-at-work tiles on the home lead (D18)
-    document.getElementById('mRecovered').textContent = recovered;
+    countUp(document.getElementById('mRecovered'), recovered);
     document.getElementById('mNeeds').textContent = medNeeds ? 1 : 0;
     document.getElementById('mWatch').textContent = watching;
     document.getElementById('mActions').textContent = actions;
@@ -1530,7 +1549,7 @@
     applyFilter();
   }
 
-  const COLD = [];
+  const IMMERSIVE = ['chat', 'casethread', 'session', 'subdetail', 'subapple'];
   function go(view, fromTab) {
     if (view === 'home' && state.cold) view = 'coldhome';
     if (view === current) return;
@@ -1541,7 +1560,9 @@
     document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === view));
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.target === tabView));
     document.querySelectorAll('.view.active .scroll').forEach(s => s.scrollTop = 0);
-    document.getElementById('tabbar').style.display = COLD.includes(view) ? 'none' : '';
+    const immersive = IMMERSIVE.includes(view);
+    document.getElementById('tabbar').style.display = immersive ? 'none' : '';
+    document.body.classList.toggle('immersive', immersive);
     render();
   }
 
@@ -1623,6 +1644,20 @@
   }
   function back() { go(stack.pop() || 'home', false); stack.pop(); }
 
+  function countUp(el, target) {
+    if (!el || el._ctTarget === target) return;
+    el._ctTarget = target;
+    const from = parseInt((el.textContent || '').replace(/[^0-9]/g, ''), 10) || 0;
+    const finalTxt = '$' + target.toLocaleString();
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if (from === target || document.hidden || reduce) { el.textContent = finalTxt; return; }
+    const start = performance.now(), dur = 650;
+    (function tick(t) {
+      const p = Math.min(1, (t - start) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = p >= 1 ? finalTxt : '$' + Math.round(from + (target - from) * e).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    })(start);
+  }
   function toast(msg, undoFn) {
     const el = document.getElementById('toast');
     el.textContent = msg;
