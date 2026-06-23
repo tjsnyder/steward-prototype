@@ -357,6 +357,14 @@
       <div><div class="title">Ask Steward</div></div>
     </div>
     <div class="scroll" id="chatScroll">
+      <div id="chatStarter" style="display:none">
+        <div class="msg steward"><div class="who">Steward</div><div class="bubble">Hi Tim, ask me anything about your money, or send a bill and I'll check it.</div></div>
+        <div class="chips" style="flex-wrap:wrap;padding:2px 2px 6px">
+          <span onclick="sendPreset('I have a billing issue with One Medical, they say they billed the wrong insurance')">I have a billing issue…</span>
+          <span onclick="sendPreset('How much did we spend on medical this year?')">How much did we spend on medical?</span>
+          <span onclick="sendPreset('Which subscriptions can I cancel?')">Which subscriptions can I cancel?</span>
+        </div>
+      </div>
       <div class="day">Today, 9:32 AM</div>
       <div class="msg user warm"><div class="bubble">How much have we spent on medical this year?</div></div>
       <div class="msg steward warm"><div class="who">Steward</div>
@@ -503,9 +511,6 @@
 
     </div>
     <div class="dock">
-      <div class="chips" id="chatChips">
-        <span onclick="sendPreset('I have a billing issue with One Medical, they say they billed the wrong insurance')">I have a billing issue…</span>
-      </div>
       <div class="chatinput">
         <button class="attachbtn" onclick="askUpload()">＋</button>
         <input id="chatBox" placeholder="Message Steward…" onkeydown="if(event.key==='Enter')sendChat()">
@@ -1235,7 +1240,7 @@
 
 <script>
   // phase: prompt → (invest flow) → found → sent | dismissed
-  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false, origin: 'email', filter: 'all' };
+  const state = { phase: 'prompt', sub: 'open', apple: 'open', handoff: null, cold: true, email: false, investigated: false, investStarted: false, origin: 'email', filter: 'all', chatUsed: false };
   const stack = [];
   let current = 'home';
   let credTarget = null;
@@ -1275,6 +1280,7 @@
     show('doneRecentHdr', p === 'resolved' || cancelled);
     show('actEmpty', state.cold);
     show('actFeed', !state.cold);
+    show('chatStarter', state.cold && !state.chatUsed);
     document.querySelectorAll('.warm').forEach(e => e.classList.toggle('hideme', state.cold));
     document.getElementById('wkLead').textContent =
       p === 'resolved' ? 'Won, One Medical corrected the bill, $214 verified back. Activity closed.'
@@ -1573,6 +1579,9 @@
     const text = box.value.trim();
     if (!text) return;
     box.value = '';
+    state.chatUsed = true;
+    const starter = document.getElementById('chatStarter');
+    if (starter) starter.style.display = 'none';
     const scroll = document.getElementById('chatScroll');
     const m = document.createElement('div');
     m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
@@ -1581,7 +1590,6 @@
     scroll.insertBefore(m, document.getElementById('ho1'));
     if (/billing issue|wrong insurance|insurance issue/i.test(text) && !state.handoff) {
       state.handoff = 'active';
-      document.getElementById('chatChips').classList.add('hideme');
       const reveal = id => { document.getElementById(id).classList.remove('hideme'); scroll.scrollTop = scroll.scrollHeight; };
       if (state.cold) {
         setTimeout(() => reveal('hc1'), 600);

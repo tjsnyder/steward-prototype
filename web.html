@@ -151,6 +151,9 @@
   .shead .t{font-size:16px;font-weight:700;color:var(--ink)}
   .shead .s{font-size:11.5px;color:var(--muted);margin-top:2px}
   .thread{flex:1;overflow-y:auto;padding:16px 2px;display:flex;flex-direction:column;gap:10px}
+  .suggrid{display:flex;flex-wrap:wrap;gap:8px;margin:2px}
+  .suggrid span{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:16px;border:1px solid var(--hairline);color:var(--ink);background:var(--card);cursor:pointer}
+  .suggrid span:hover{background:var(--canvas)}
   .msg{max-width:90%}
   .msg .bubble{border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.5}
   .msg.user{margin-left:auto}
@@ -692,15 +695,29 @@
   }
   function openSession(id) { buildSession(id); nav('session'); }
   // "Message Steward" on the home screen, always available, starts a fresh session.
+  const SUGGEST = [
+    ['I have a billing issue…', 'I have a billing issue with One Medical, they say they billed the wrong insurance'],
+    ['How much did we spend on medical?', 'How much did we spend on medical this year?'],
+    ['Which subscriptions can I cancel?', 'Which subscriptions can I cancel?'],
+  ];
   function newChat(text) {
     active = 'ask';
     document.getElementById('sessTitle').textContent = 'Ask Steward';
     document.getElementById('sessSub').textContent = 'New chat';
-    document.getElementById('dThread').innerHTML =
-      '<div class="msg steward"><div class="who">Steward</div><div class="bubble">Hi Tim, ask me anything about your money, or send a bill and I\'ll check it.</div></div>';
+    let html = '<div class="msg steward"><div class="who">Steward</div><div class="bubble">Hi Tim, ask me anything about your money, or send a bill and I\'ll check it.</div></div>';
+    if (!text) {
+      html += '<div class="suggrid" id="chatSuggest">' +
+        SUGGEST.map(([label, prompt]) => `<span onclick="suggest('${prompt.replace(/'/g, "\\'")}')">${label}</span>`).join('') +
+        '</div>';
+    }
+    document.getElementById('dThread').innerHTML = html;
     nav('session');
     if (text) { document.getElementById('dChatBox').value = text; dSend(); }
     else document.getElementById('dChatBox').focus();
+  }
+  function suggest(t) {
+    const s = document.getElementById('chatSuggest'); if (s) s.remove();
+    document.getElementById('dChatBox').value = t; dSend();
   }
   function homeAskSend() {
     const box = document.getElementById('homeAsk');
@@ -784,6 +801,7 @@
     const box = document.getElementById('dChatBox');
     const text = box.value.trim(); if (!text) return;
     box.value = '';
+    const sg = document.getElementById('chatSuggest'); if (sg) sg.remove();
     const th = document.getElementById('dThread');
     const m = document.createElement('div');
     m.className = 'msg user'; m.innerHTML = '<div class="bubble"></div>';
